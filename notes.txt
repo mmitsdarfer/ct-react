@@ -1,0 +1,90 @@
+The what:
+- A program that scrapes the scores of multiple sports games and gives the link to the closest score. If multiple with same score delta, closest to the end of game or highest in standings
+- It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
+
+known errors:
+-still get:
+   "if((time[2].includes('OT')))
+                  ^
+   TypeError: Cannot read properties of undefined (reading 'includes') "
+         I think this is when period or quarter is shown without "End of" (eg "3rd" on its own)
+            Use NaN and length so if it's just 3rd (for example) vs 3:01 - 3rd I can differentiate (?)
+- 'hidden.json' created randomly and/or when all jsons are first made
+- rapidly refreshing (before puppeteer can finish scraping) creates duplicates of all the game data
+   - Maybe add some timeout like with getCookies() in server.js
+- when some games have channel links and others don't the columns become misaligned
+   - I think they all have chananels (except NBA which has none), so this shouldn't be an issue
+      - Starting to see channels for NBA sometimes
+
+To do:
+- I have diffsWithTimes in scrape.js but probably should be more flexible to incorporate standings
+- See what happens when cookies don't yet exist
+- (do if any new links show up) Add streaming/other online links for non-NHL sports
+- Scrape each league from the home page so at least some data is ready for when that page opens?
+   - Use the preferences json to just scrape top league? Or in order from most visited to least?
+   - Have to make sure it's sequential because overlap messes up the data
+- Add timer to auto refresh 
+   - Run scrape in the background on its own and have refresh just implement those scraped values
+      - Do I want to refresh the page (and in turn data) without clicking refresh?
+ - Add team logos
+ - (Evergreen) Document code and get rid of unneeded parts
+ - implement standings variable 
+   - Maybe the average of both team's overall standing position (eg 2nd place vs 4th place [3] prioritized over 1st vs 6th [3.5])
+   - !! Score page I scrape from (espn.com/[LEAGUE/scoreboard]) has team records so I could average and mergesort these
+      - Can either just do wins + ties - losses or program in leagues' point systems
+   - Use standings to sort unstarted games if that's top priority
+- Check out bootstrap for cleaner UI
+   - At least change fonts
+      - Make dropdown same as everything else?
+   - Use platform computing notes for a guide
+   - https://bootstrapshuffle.com/classes
+- Sometimes NBA does have channels, so check for channel instead of a whole league either having them or not
+- Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
+- Display current preference in league pages?
+   - Leaning towards no
+- [decide from platform HW 3] Host on netlify?
+- Pie in the sky/longterm:   
+   - Try to scrape ESPN+ links so it actually goes to the game, not just to  ESPN+
+      - Add option to automatically follow link to closest game (in new tab)
+   - Combine multiple sports 
+      - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
+      - Or could show the 1st of each sport, then the 2nd, and so on
+
+League page setup
+Header: "[League] Games"
+Logo image
+Date
+"Closest Game(s)"
+   Each game format:
+   Team 1   Score
+   Team 2   Score
+   Time left   Link
+
+Standings scraping:
+call function w/ puppeteer call to league standings page and return standings?
+
+To do but this time it's specific:
+0. Test the 2/18 WIWWO entry
+1. Figure out how to scrape standings and implement that
+- Record is beneath team on espn score page -> make timeConversion-like function that adds wins/losses/ties/ot losses/etc
+   -> OR open https://www.espn.com/nhl/standings and search for teams
+   -> average all the standings     -> make function for doing this 1st, 2nd, and 3rd (in terms of priority)
+2. Ensure different priority orders work and work together
+- Maybe just make them more flexible so order matter less
+3. Figure out how to update scores when they load
+
+
+WIWWO: 
+2/18: Think dropdowns are set but can test more
+   Think I fixed lack of links, but ran out of notEnded games before I could test
+2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
+since I can't use require
+   -> This method might not be possible because idk how I'd trigger the update from the html
+      -> Refresh button gets the scores but still has to wait
+   -> What about updating a cookie after scrape is done and have html constantly checking for that cookie?
+      -> Wouldn't want scores to be on cookie tho. Too much info and formatting concerns
+      -> But if a scoresUpdated cookie exists, how would it get scores?
+1/30: when json doesn't exist an error is given while json is made -> make json before showing this error
+         use fs.existsSync for each league?
+
+REMEMBER TO ZIP AND SAVE TO DRIVE IF USING HOME PC!!!
