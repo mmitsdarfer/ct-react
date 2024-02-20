@@ -17,6 +17,7 @@ known errors:
       - Starting to see channels for NBA sometimes
 
 To do:
+- Make json for each kind of priority? Probably not but still have to Figure out delay
 - I have diffsWithTimes in scrape.js but probably should be more flexible to incorporate standings
 - See what happens when cookies don't yet exist
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
@@ -64,7 +65,6 @@ Standings scraping:
 call function w/ puppeteer call to league standings page and return standings?
 
 To do but this time it's specific:
-0. Test the 2/18 WIWWO entry
 1. Figure out how to scrape standings and implement that
 - Record is beneath team on espn score page -> make timeConversion-like function that adds wins/losses/ties/ot losses/etc
    -> OR open https://www.espn.com/nhl/standings and search for teams
@@ -73,10 +73,8 @@ To do but this time it's specific:
 - Maybe just make them more flexible so order matter less
 3. Figure out how to update scores when they load
 
-
 WIWWO: 
-2/18: Think dropdowns are set but can test more
-   Think I fixed lack of links, but ran out of notEnded games before I could test
+2/19: Standings works, but currently shows games of all progresses together
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
@@ -88,3 +86,4 @@ since I can't use require
          use fs.existsSync for each league?
 
 REMEMBER TO ZIP AND SAVE TO DRIVE IF USING HOME PC!!!
+

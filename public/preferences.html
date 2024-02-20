@@ -1,0 +1,87 @@
+<DOCTYPE html>
+    <html>
+        <head>
+            <title>Crunch Time</title>
+            <link type="text/css" rel="stylesheet" href="css/main.css">
+            <script type="text/javascript" src="localStorage.js"></script>   
+        </head>   
+        <body onload="startup()">
+            <button class="home" type="submit" onclick="window.location.href='//localhost:8000';"> 
+                <br><img type="image" width="70" height="70" src="images/goHome.png"/>
+            </button> 
+            <h1>Preferences</h1>
+            <p1>Priority:
+                <br id="priority-break"> 
+                <div class="priority">
+                    Top:&nbsp;
+                    <select class="selectPriority" onchange="topPriority()">
+                        {{%DROP0%}}
+                    </select>
+                    <br><br>
+                    2nd:&nbsp;
+                    <select class="selectPriority" onchange="midPriority()">
+                        {{%DROP1%}}
+                    </select>
+                    <br><br>
+                    3rd:&nbsp;
+                    <select class="selectPriority" onchange="lastPriority()">
+                        {{%DROP2%}}
+                    </select>
+                    <br><br>
+                </div>
+                <div id="explainer">
+                    Sort by games with closest scores (diffs),<br> closest to ending (times), <br> or highest average of 2 teams' league rankings (standings)
+                </div>                  
+                <br>              
+                <button class="reset"type="button" onclick="reset()"> 
+                    Reset preference data 
+                </button> <br><br>
+            </p1>
+            <div id="times-visited">
+                <br><br><br>Times<br>Visited
+                </div>
+            <div class="row">                   
+                <div class="column">
+                    <div class="logos">
+                        <button class="logo-img" type="submit" onclick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
+                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
+                        </button> 
+                        <div class="hits">  <!--named so localStorage.js can getElementByClassName, doesn't have its own style-->
+                            <br><br>{{%HITS%}}
+                        </div>
+                    </div>                    
+                </div> 
+                <div class="column">
+                    <div class="logos">
+                        <button class="logo-img" type="submit" onclick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
+                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
+                        </button> 
+                        <div class="hits">
+                            <br><br>{{%HITS%}}
+                        </div>
+                    </div> 
+                </div> 
+                <div class="column">
+                    <div class="logos">
+                        <button class="logo-img" type="submit" onclick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
+                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
+                        </button> 
+                        <div class="hits">
+                            <br><br>{{%HITS%}}
+                        </div>
+                    </div> 
+                </div> 
+                <div class="column">
+                    <div class="logos">
+                        <button class="logo-img" type="submit" onclick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
+                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
+                        </button> 
+                        <div class="hits">
+                            <br><br>{{%HITS%}}
+                        </div> 
+                    </div> 
+                </div> 
+            </div>
+        </body>   
+    </html>
+</DOCTYPE>

@@ -1,0 +1,43 @@
+<DOCTYPE html>
+    <html>
+        <head>
+            <title>Crunch Time</title>
+            <link type="text/css" rel="stylesheet" href="public/css/league.css">       
+        </head>
+        <body>
+            <div class="page-content">
+                <button class="home" type="submit" onclick="window.location.href='//localhost:8000';"> 
+                    <br><img type="image" width="70" height="70" src="../public/images/goHome.png"/>
+                </button> 
+                <button class="prefs" type="submit" onclick="window.location.href='//localhost:8000/preferences';">
+                    Preferences <img type="image" width="60" height="60" src="public/images/podium.png"/>
+                </button>
+                <h1>{{%LEAGUE%}} Games</h1>     
+                              
+            </div>                          
+            
+            <button class="regbutton" type="submit" onclick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
+                <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
+            </button>
+            <h2>Click the league logo to refresh the scores</h2>
+            <div class="date">
+                <h2>{{%DATE%}}</h2>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <h3>{{%CONTENT0%}}</h3>
+                </div>
+                <div class="column" id="alt-column">
+                    <h3>{{%CONTENT1%}}</h3>
+                </div>
+                <div class="column">
+                    <h3>{{%CONTENT2%}}</h3>
+                </div>
+                <div class="column" id="alt-column">
+                    <h3>{{%CONTENT3%}}</h3>
+                </div>
+            </div>
+            <p>Currently sorting by: <br>1. {{%PRIORITY0%}}<br>2. {{%PRIORITY1%}}<br>3. {{%PRIORITY2%}}</p>
+        </body>
+    </html>
+</DOCTYPE>
