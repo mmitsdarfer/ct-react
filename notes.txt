@@ -90,4 +90,5 @@ REMEMBER TO ZIP AND SAVE TO DRIVE IF USING HOME PC!!!
 Using git:
 1. Make changes to code
 2. Commit
-3. Push to origin (remote git)
+3. Branch -> merge
+4. Compare and confirm merge/pull
