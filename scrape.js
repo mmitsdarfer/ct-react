@@ -10,7 +10,7 @@ var data = {};  //object json data will be stored in
 //league and priority come from preferencs.json on original call
 if (fs.existsSync('json/preferences.json')) {
     const parsedPrefs = JSON.parse(fs.readFileSync('json/preferences.json', 'utf-8'));
-    league = parsedPrefs[parsedPrefs.length-1][0];
+    league = parsedPrefs[0];
     priority = parsedPrefs[1];
 }
 else{   //current, priority, ranked leagues with time visited
@@ -21,19 +21,76 @@ else{   //current, priority, ranked leagues with time visited
     league = prefData[0];
     priority = prefData[1];
 }
-standingsScrape(league);
-async function standingsScrape(league){
-    console.log('Current ' + league + ' standings');
-    url = 'https://www.espn.com/'+league.toLowerCase()+'/standings';
+
+
+async function standingsScrape(league, url, numGames, teams, scores, progress, times, nets, channels, date){
+    console.log(league + ' standings');
+    console.log(url);
+    
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var teamRanks = [];
+    let teamRanks = [];
     teamRanks = await page.evaluate(() => {
-        var test = document.querySelectorAll('#fitt-analytics > div > div.HeaderScoreboardWrapper > div > section > div > div:nth-child(1) > div > select.dropdown__select.dropdown__select--sizing.absolute.w-auto > option');
+        let standings = document.querySelectorAll('span.hide-mobile > a');
+        standArr = Array.from(standings);
+        standArr = standArr.map(game => game.textContent);
+    return standArr;
     });
-    console.log(teamRanks);
+    
+    let standingAvg = [];
+    for(let i = 0; i < teamRanks.length; i++){
+        for(let j = 0; j < teamRanks.length; j++){
+            if(teamRanks[i].includes(teams[j])){        
+                teamRanks[i] = teams[j];      
+            }
+        }
+    }
+
+    for(let i = 0; i < numGames; i++){
+        standingAvg[i] = (teamRanks.indexOf(teams[2*i]) + teamRanks.indexOf(teams[2*i+1])) / 2; 
+    }
+
+    let sortedAvgs = mergeSort(standingAvg);
+    let position = [];
+    for(let i = 0; i < numGames; i++){
+        position[i] = [];
+        for(let j = 0; j < numGames; j++){
+            if(sortedAvgs.indexOf(standingAvg[j]) == i){
+                position[i].push([standingAvg[j], j]);
+            }
+        }
+    }
+
+    for(let i = 0; i < numGames; i++){
+        for(let j = 0; j < numGames; j++){
+            if(position[i][j] != undefined){
+                toJson(teams[2*position[i][j][1]], teams[2*position[i][j][1] +1],
+                    scores[2*position[i][j][1]], scores[2*position[i][j][1] + 1],
+                    progress[position[i][j][1]], times[position[i][j][1]],
+                    nets[position[i][j][1]], channels[position[i][j][1]]);
+                if(nets[position[i][j][1]] != undefined){
+                    console.log(nets[position[i][j][1]] + ': ' + channels[position[i][j][1]]);
+                }
+                console.log(times[position[i][j][1]] + '\nProgress: ' + 
+                    progress[position[i][j][1]] + '\n' + teams[2*position[i][j][1]]
+                    + '  ' + scores[2*position[i][j][1]] + '\n' + teams[2*position[i][j][1]+1]
+                    + '  ' + scores[2*position[i][j][1]+1] + '\n');
+            }
+        }
+    }
+
+    data.table.push({date: date});
+    fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
+        if(err) throw err;
+    }); 
+
+    //close puppeteer browser
+    await browser.close();
+
+    
 }
+
 
 var scrape = async function scrape(league, priority){
     console.log('Current league: ' + league);
@@ -84,7 +141,7 @@ var scrape = async function scrape(league, priority){
         notEnded = teamLen - endedLen;
 
         //put scores in array
-        for(let j = 0; j < scoreLen - endedLen; j++){
+        for(let j = 0; j < scoreLen; j++){
             scores[j] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[j];    
             if(scores[j] == null){
                 scores[j] = '-';
@@ -118,6 +175,7 @@ var scrape = async function scrape(league, priority){
 
         return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, league, unstarted];
     });
+
 
     //date with day of the week stripped off
     let i = 0;
@@ -161,7 +219,6 @@ var scrape = async function scrape(league, priority){
     var diffTies;
     var diffTimes;
     var endedSort = mergeSort(endedDiffs); 
-    
     if(priority[0] == 'diffs'){
         [diffTies, diffTimes] = diffSort(ongoingDiffs, times, diffs, progress);
         
@@ -169,18 +226,28 @@ var scrape = async function scrape(league, priority){
         diffsWithTimes(diffTies, diffTimes, progress, teams, scores, times, nets, channels);
         showUnstarted(numGames, progress, teams, scores, times, nets, channels);
         endedDiffSort(endedDiffs, progress, endedSort, diffs, teams, scores, times, nets, channels, numGames);
+    data.table.push({date: date});
+
     }
     else if(priority[0] == 'times'){
         getTimeTies(times, progress, teams, scores, nets, channels);
         showUnstarted(numGames, progress, teams, scores, times, nets, channels);
         timesThenDiffs(endedSort, numGames, diffs, teams, scores, progress, times, nets, channels);
+    data.table.push({date: date});
+
     }
     else if(priority[0] == 'standings'){
+        const parsedPrefs = JSON.parse(fs.readFileSync('json/preferences.json', 'utf-8'));
+        league = parsedPrefs[0];
+        let standingsUrl = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+        standingsScrape(league, standingsUrl, numGames, teams, scores, progress, times, nets, channels, date);
+
+
         //TODO: SORT BY STANDINGS
     }
     
     //create json file
-    data.table.push({date: date});
+
     
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
@@ -448,9 +515,11 @@ function timeConversion(league, time){
     else if(time.includes('Halftime')){
         time = [0, 0, (unitMax/2).toString()];
     }
+    else if(time.includes('Delayed')){
+        time = [unitLen/60, 0, (1).toString()];
+    }
     else{    
         time = time.split(' - ');
-        
         if(time[0].includes(':')){
             let hold = time[0].split(':');
             time = time.concat(hold);
