@@ -6,6 +6,8 @@ var priority;
 var url;
 var prefData;
 var data = {};  //object json data will be stored in
+var gameData = {};
+
 
 //league and priority come from preferencs.json on original call
 if (fs.existsSync('json/preferences.json')) {
@@ -20,6 +22,14 @@ else{   //current, priority, ranked leagues with time visited
     }); 
     league = prefData[0];
     priority = prefData[1];
+}
+
+function getSorts(data){
+    for(let i = 0; i < data.length; i++){
+        console.log(data[i].progress);
+    }
+    
+
 }
 
 
@@ -215,7 +225,25 @@ var scrape = async function scrape(league, priority){
     }
 
     var channels = netToLink(nets, teams, progress, numGames);
-
+    gameData.table = [];
+    var gameObj = {};
+    //!!!get standings first to add to obj -> need new standings function
+    for(let i = 0; i < numGames; i++){
+        gameObj = {
+            team1: teams[2*i],
+            score1: scores[2*i],
+            team2: teams[2*i+1],
+            score2: scores[2*i+1],
+            progress: progress[i],  //unstarted, ended, ongoing
+            time: times[i],   //time left or start time
+            network: nets[i],
+            link: channels[i],
+            diff: diffs[i]
+        }
+        gameData.table.push(gameObj);
+    }
+    getSorts(gameData.table);
+    
     var diffTies;
     var diffTimes;
     var endedSort = mergeSort(endedDiffs); 
