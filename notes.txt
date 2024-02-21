@@ -10,6 +10,7 @@ known errors:
          I think this is when period or quarter is shown without "End of" (eg "3rd" on its own)
             Use NaN and length so if it's just 3rd (for example) vs 3:01 - 3rd I can differentiate (?)
 - 'hidden.json' created randomly and/or when all jsons are first made
+   - Need to use async to make sure I get league from preferences.json at top of scrape.js
 - rapidly refreshing (before puppeteer can finish scraping) creates duplicates of all the game data
    - Maybe add some timeout like with getCookies() in server.js
 - when some games have channel links and others don't the columns become misaligned
@@ -47,6 +48,7 @@ To do:
 - Pie in the sky/longterm:   
    - Try to scrape ESPN+ links so it actually goes to the game, not just to  ESPN+
       - Add option to automatically follow link to closest game (in new tab)
+      - Add to switch to preferences
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd, and so on
@@ -68,11 +70,14 @@ To do but this time it's specific:
 3. Figure out how to update scores when they load
 
 WIWWO: 
+2/21: Just finished converting to military time and negative so I can know that negs are start times as well
+         as show them last
+         - Meant to do diffs first, but either way need to start reording objects based on priorities
 2/20: Working on new-standings branch
       -> Trying to find way to update gameData even though standingsScrape is async
       -> Could have each priority write to json since I can't return out of async standingsScrape
          and have the other priorities read the json
-   Bottom of webpage not properly showing priority order
+      -> Create standings json and use that then update it later?
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html

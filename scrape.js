@@ -24,13 +24,6 @@ else{   //current, priority, ranked leagues with time visited
     priority = prefData[1];
 }
 
-function getSorts(data){
-    for(let i = 0; i < data.length; i++){
-        console.log(data[i].progress);
-    }
-    
-
-}
 
 async function standingsScrape(data, league){
     console.log(league + ' standings');
@@ -48,7 +41,6 @@ async function standingsScrape(data, league){
     return standArr;
     });
     
-    let standingAvg = [];
     let gameRanks = [];
     for(let i = 0; i < data.length; i++){
         gameRanks[i] = [];
@@ -64,15 +56,60 @@ async function standingsScrape(data, league){
         }
         data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
     }
-    
-   
 
     //close puppeteer browser
     await browser.close();
-
-    console.log(data);
 }
 
+function timeToObj(data, league){   //rename when merging files
+    //data[data.length-1].time = '7:00 - 3rd';      use to compare game starts with game progress during off times of day
+    for(let i = 0; i < data.length; i++){
+        data[i].time = timeConversion(league, data[i].time).toString();
+    }
+}
+
+function militaryTime(time){
+    time = time.split(':');
+    time[0] = parseInt(time[0]);
+    if(time[1].includes('PM')){
+        time[0] += 12;
+    }
+    time[0] *= -60;
+    time = time[0] + parseInt(time[1]);
+
+    return time;
+}
+
+function newTimeSort(data){ //RENAME
+    var sorted = {};
+    var times = [];
+    for(let i = 0; i < data.length; i++){
+        if(data[i].time.includes('PM')){
+            times[i] = militaryTime(data[i].time);
+        }
+        else{
+            times[i] = data[i].time;
+        }
+    }
+    times = mergeSort(times).reverse();
+    //if something appears more than once, make them an array and sort by next priority
+    console.log(times);
+}
+
+function chooseOrder(data, priority){
+    //call the functions with variable data and have them return sorted so I can just send ties
+    //eg if there are multiple 3 goal games, newTimeSort([just these 3 goal games])
+    //IDK if that makes sense, but didn't want to forget JIC
+    if(priority[0] == 'diffs'){
+       // newDiffSort(data);  //RENAME
+    }
+    else if(priority[0] == 'times'){
+        newTimeSort(data);  //RENAME
+    }
+    else if(priority[0] == 'standings'){
+
+    }
+}
 
 var scrape = async function scrape(league, priority){
     console.log('Current league: ' + league);
@@ -84,7 +121,7 @@ var scrape = async function scrape(league, priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, league, unstarted;
+    var fullDate, teams, times, scores, nets, numGames, unstarted;
     
     [fullDate, teams, times, scores, nets, numGames, league, unstarted] = await page.evaluate(() => {
         league = document.querySelectorAll('#fitt-analytics > div > div.HeaderScoreboardWrapper > div > section > div > div:nth-child(1) > div > select.dropdown__select.dropdown__select--sizing.absolute.w-auto > option');
@@ -215,9 +252,21 @@ var scrape = async function scrape(league, priority){
         }
         gameData.table.push(gameObj);
     }
-    standingsScrape(gameData.table, league);
-    console.log(gameData);
-    getSorts(gameData.table);
+
+    const callStandings = async () => {
+        const result = await standingsScrape(gameData.table, league);
+        //console.log(gameData);
+
+        timeToObj(gameData.table, league);
+        console.log(gameData.table);
+        chooseOrder(gameData.table, priority);
+
+        // do something else here after standingsScrape completes
+        //put everything else in here to ensure standings are collected
+      }
+      
+    callStandings();
+
     
     var diffTies;
     var diffTimes;
@@ -245,12 +294,10 @@ var scrape = async function scrape(league, priority){
         let standingsUrl = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
 
 
-        //TODO: SORT BY STANDINGS
     }
     
-    //create json file
-
-    
+    //write to json file 
+    console.log('!!!' + league);
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
     }); 
@@ -483,6 +530,7 @@ function mergeSort(arr){
 
 //take in time left in a game and convert it in order to compare
 function timeConversion(league, time){
+    
     time = String(time);
     let convertedTime = 0;
     let units = null;
@@ -508,6 +556,7 @@ function timeConversion(league, time){
         units = 'innings'
         unitMax = 9;
     }
+    
     if(time.includes('End')){
         time = [0, 0, (parseInt(time.slice(-3))).toString()];
     }
@@ -519,6 +568,9 @@ function timeConversion(league, time){
     }
     else if(time.includes('Delayed')){
         time = [unitLen/60, 0, (1).toString()];
+    }
+    else if(time.includes('AM') || time.includes('PM')){
+        return time;
     }
     else{    
         time = time.split(' - ');
