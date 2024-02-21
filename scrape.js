@@ -32,9 +32,9 @@ function getSorts(data){
 
 }
 
-
-async function standingsScrape(league, url, numGames, teams, scores, progress, times, nets, channels, date){
+async function standingsScrape(data, league){
     console.log(league + ' standings');
+    let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
     console.log(url);
     
     const browser = await puppeteer.launch();
@@ -49,56 +49,28 @@ async function standingsScrape(league, url, numGames, teams, scores, progress, t
     });
     
     let standingAvg = [];
-    for(let i = 0; i < teamRanks.length; i++){
+    let gameRanks = [];
+    for(let i = 0; i < data.length; i++){
+        gameRanks[i] = [];
         for(let j = 0; j < teamRanks.length; j++){
-            if(teamRanks[i].includes(teams[j])){        
-                teamRanks[i] = teams[j];      
+            if(teamRanks[j].includes(data[i].team1)){        
+                gameRanks[i].push(data[i].team1, j);      
             }
         }
-    }
-
-    for(let i = 0; i < numGames; i++){
-        standingAvg[i] = (teamRanks.indexOf(teams[2*i]) + teamRanks.indexOf(teams[2*i+1])) / 2; 
-    }
-
-    let sortedAvgs = mergeSort(standingAvg);
-    let position = [];
-    for(let i = 0; i < numGames; i++){
-        position[i] = [];
-        for(let j = 0; j < numGames; j++){
-            if(sortedAvgs.indexOf(standingAvg[j]) == i){
-                position[i].push([standingAvg[j], j]);
+        for(let j = 0; j < teamRanks.length; j++){
+            if(teamRanks[j].includes(data[i].team2)){        
+                gameRanks[i].push(data[i].team2, j);      
             }
         }
+        data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
     }
-
-    for(let i = 0; i < numGames; i++){
-        for(let j = 0; j < numGames; j++){
-            if(position[i][j] != undefined){
-                toJson(teams[2*position[i][j][1]], teams[2*position[i][j][1] +1],
-                    scores[2*position[i][j][1]], scores[2*position[i][j][1] + 1],
-                    progress[position[i][j][1]], times[position[i][j][1]],
-                    nets[position[i][j][1]], channels[position[i][j][1]]);
-                if(nets[position[i][j][1]] != undefined){
-                    console.log(nets[position[i][j][1]] + ': ' + channels[position[i][j][1]]);
-                }
-                console.log(times[position[i][j][1]] + '\nProgress: ' + 
-                    progress[position[i][j][1]] + '\n' + teams[2*position[i][j][1]]
-                    + '  ' + scores[2*position[i][j][1]] + '\n' + teams[2*position[i][j][1]+1]
-                    + '  ' + scores[2*position[i][j][1]+1] + '\n');
-            }
-        }
-    }
-
-    data.table.push({date: date});
-    fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
-        if(err) throw err;
-    }); 
+    
+   
 
     //close puppeteer browser
     await browser.close();
 
-    
+    console.log(data);
 }
 
 
@@ -225,6 +197,7 @@ var scrape = async function scrape(league, priority){
     }
 
     var channels = netToLink(nets, teams, progress, numGames);
+
     gameData.table = [];
     var gameObj = {};
     //!!!get standings first to add to obj -> need new standings function
@@ -242,6 +215,8 @@ var scrape = async function scrape(league, priority){
         }
         gameData.table.push(gameObj);
     }
+    standingsScrape(gameData.table, league);
+    console.log(gameData);
     getSorts(gameData.table);
     
     var diffTies;
@@ -268,7 +243,6 @@ var scrape = async function scrape(league, priority){
         const parsedPrefs = JSON.parse(fs.readFileSync('json/preferences.json', 'utf-8'));
         league = parsedPrefs[0];
         let standingsUrl = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
-        standingsScrape(league, standingsUrl, numGames, teams, scores, progress, times, nets, channels, date);
 
 
         //TODO: SORT BY STANDINGS

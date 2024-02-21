@@ -43,7 +43,7 @@ To do:
 - Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
 - Display current preference in league pages?
    - Leaning towards no
-- [decide from platform HW 3] Host on netlify?
+- Host on netlify?
 - Pie in the sky/longterm:   
    - Try to scrape ESPN+ links so it actually goes to the game, not just to  ESPN+
       - Add option to automatically follow link to closest game (in new tab)
@@ -62,16 +62,17 @@ Date
    Time left   Link
 
 To do but this time it's specific:
-1. Figure out how to scrape standings and implement that
-- Record is beneath team on espn score page -> make timeConversion-like function that adds wins/losses/ties/ot losses/etc
-   -> OR open https://www.espn.com/nhl/standings and search for teams
-   -> average all the standings     -> make function for doing this 1st, 2nd, and 3rd (in terms of priority)
+1. 
 2. Ensure different priority orders work and work together
 - Maybe just make them more flexible so order matter less
 3. Figure out how to update scores when they load
 
 WIWWO: 
-2/19: Standings works, but currently shows games of all progresses together
+2/20: Working on new-standings branch
+      -> Trying to find way to update gameData even though standingsScrape is async
+      -> Could have each priority write to json since I can't return out of async standingsScrape
+         and have the other priorities read the json
+   Bottom of webpage not properly showing priority order
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
