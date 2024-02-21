@@ -41,7 +41,7 @@ function mergeSort(arr){
     return merge(left, right);
 }
 
-function jsonHtml(league){
+function jsonHtml(league, priority){
     var jsonParsed;
     if (existsSync('json/' + league.toLowerCase() + '.json', 'utf-8')) {
         jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
@@ -147,7 +147,9 @@ function jsonHtml(league){
 
     var leagueRes = leagueIndex.replace('{{%CONTENT0%}}', leagueOut0).replace('{{%CONTENT1%}}', leagueOut1).replace('{{%CONTENT2%}}', leagueOut2).replace('{{%CONTENT3%}}', leagueOut3);
     leagueRes = leagueRes.replace('{{%LEAGUE%}}', league).replace('{{%LEAGUE%}}', league.toLowerCase()).replace('{{%WIDTH%}}', currentLogo[0])
-    .replace('{{%HEIGHT%}}', currentLogo[1]).replace('{{%LOGO%}}', currentLogo[2]).replace('{{%DATE%}}', jsonParsed.table[len-1].date);
+    .replace('{{%HEIGHT%}}', currentLogo[1]).replace('{{%LOGO%}}', currentLogo[2]).replace('{{%DATE%}}', jsonParsed.table[len-1].date)
+    .replace('{{%PRIORITY0%}}', priority[0].charAt(0).toUpperCase() + priority[0].slice(1)).replace('{{%PRIORITY1%}}', priority[1].charAt(0).toUpperCase() + priority[1].slice(1))
+    .replace('{{%PRIORITY2%}}', priority[2].charAt(0).toUpperCase() + priority[2].slice(1));
 
     return leagueRes;
 }
@@ -273,7 +275,7 @@ app.get('/nhl', (req, res) => {
             current = parse(req.url).pathname.replace('/', '').toUpperCase();
             preferences(current);   
             callScrape(current, priority);
-            var nhlRes = jsonHtml(current);
+            var nhlRes = jsonHtml(current, priority);
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.end(nhlRes);          
         }, 100);       
@@ -302,7 +304,7 @@ app.get('/nfl', (req, res) => {
             current = parse(req.url).pathname.replace('/', '').toUpperCase();
             preferences(current);
             callScrape(current, priority);
-            var nflRes = jsonHtml(current);
+            var nflRes = jsonHtml(current, priority);
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.end(nflRes);    
         }, 100);
@@ -331,7 +333,7 @@ app.get('/nba', (req, res) => {
             current = parse(req.url).pathname.replace('/', '').toUpperCase();
             preferences(current);
             callScrape(current, priority);
-            var nbaRes = jsonHtml(current);
+            var nbaRes = jsonHtml(current, priority);
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.end(nbaRes);         
         }, 100);     
@@ -360,7 +362,7 @@ app.get('/mlb', (req, res) => {
             current = parse(req.url).pathname.replace('/', '').toUpperCase();
             preferences(current);
             callScrape(current, priority);
-            var mlbRes = jsonHtml(current);
+            var mlbRes = jsonHtml(current, priority);
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.end(mlbRes);          
         }, 100);     
