@@ -62,7 +62,8 @@ async function standingsScrape(data, league){
 }
 
 function timeToObj(data, league){   //rename when merging files
-    //data[data.length-1].time = '7:00 - 3rd';      use to compare game starts with game progress during off times of day
+    data[data.length-2].time = '7:30 - 1st';
+    //data[data.length-1].time = '7:00 - 3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
         data[i].time = timeConversion(league, data[i].time).toString();
     }
@@ -74,37 +75,64 @@ function militaryTime(time){
     if(time[1].includes('PM')){
         time[0] += 12;
     }
+    if(time[1].includes('Final')){
+
+    }
     time[0] *= -60;
-    time = time[0] + parseInt(time[1]);
+    time = time[0] - parseInt(time[1]);
 
     return time;
 }
 
 function newTimeSort(data){ //RENAME
-    var sorted = {};
-    var times = [];
+    let sorted = [];
+    let times = [];
+    
     for(let i = 0; i < data.length; i++){
-        if(data[i].time.includes('PM')){
+        if(data[i].time.includes('PM') || data[i].time.includes('AM')){
             times[i] = militaryTime(data[i].time);
+        }
+        else if(data[i].time.includes('Final')){
+            times[i] = '0';
         }
         else{
             times[i] = data[i].time;
         }
     }
-    times = mergeSort(times).reverse();
-    //if something appears more than once, make them an array and sort by next priority
-    console.log(times);
+
+    sorted = mergeSort(times).reverse();
+
+    for(let i = 0; i < data.length; i++){
+        for(let j = 0; j < data.length; j++){
+            if(sorted[j] == times[i] && !data[i].time.includes('Final')){
+                data[i].timeRank = j;
+            }
+            else if(data[i].time.includes('Final')){
+                data[i].timeRank = data.length;
+            }
+        }
+    }
+
+    return data;
+}
+
+function newDiffSort(data){
+    return data;
 }
 
 function chooseOrder(data, priority){
     //call the functions with variable data and have them return sorted so I can just send ties
     //eg if there are multiple 3 goal games, newTimeSort([just these 3 goal games])
     //IDK if that makes sense, but didn't want to forget JIC
+
+    data = newTimeSort(data);  //RENAME
+    data = newDiffSort(data);  //RENAME
     if(priority[0] == 'diffs'){
-       // newDiffSort(data);  //RENAME
+    
     }
     else if(priority[0] == 'times'){
-        newTimeSort(data);  //RENAME
+        
+        console.log(data);
     }
     else if(priority[0] == 'standings'){
 
@@ -258,7 +286,7 @@ var scrape = async function scrape(league, priority){
         //console.log(gameData);
 
         timeToObj(gameData.table, league);
-        console.log(gameData.table);
+        //console.log(gameData.table);
         chooseOrder(gameData.table, priority);
 
         // do something else here after standingsScrape completes
@@ -530,7 +558,7 @@ function mergeSort(arr){
 
 //take in time left in a game and convert it in order to compare
 function timeConversion(league, time){
-    
+    console.log(time);
     time = String(time);
     let convertedTime = 0;
     let units = null;
@@ -569,7 +597,7 @@ function timeConversion(league, time){
     else if(time.includes('Delayed')){
         time = [unitLen/60, 0, (1).toString()];
     }
-    else if(time.includes('AM') || time.includes('PM')){
+    else if(time.includes('AM') || time.includes('PM') || time.includes('Final')){
         return time;
     }
     else{    

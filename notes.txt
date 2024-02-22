@@ -70,9 +70,7 @@ To do but this time it's specific:
 3. Figure out how to update scores when they load
 
 WIWWO: 
-2/21: Just finished converting to military time and negative so I can know that negs are start times as well
-         as show them last
-         - Meant to do diffs first, but either way need to start reording objects based on priorities
+2/22: Just finished newTimeSort, need to work on newDiffSort and newStandingSort too I guess
 2/20: Working on new-standings branch
       -> Trying to find way to update gameData even though standingsScrape is async
       -> Could have each priority write to json since I can't return out of async standingsScrape
