@@ -158,14 +158,34 @@ app.use(cookieParser());
 
 //eventually have every page get cookies so it updates when leaving preferences
 function getCookies(req, res){
+    
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
+    if(priority[0] === undefined){
+        priority[0] = 'diffs';
+        res.cookie('Priority0', 'diffs');
+    }
+    if(priority[1] === undefined){
+        priority[1] = 'times';
+        res.cookie('Priority1', 'times');
+    }
+    if(priority[2] === undefined){
+        priority[2] = 'standings';
+        res.cookie('Priority2', 'standings');
+    }
+
+    let reset = (req.cookies.Reset);
+    if(reset === undefined){
+        reset = 'false';
+        res.cookie('Reset', 'false');
+    }
+
     if (!existsSync('json/preferences.json')) {
         prefReset(priority);
     }
-    let reset = (req.cookies.Reset);
+    
     let parsedPrefs;
     function callReset(){    
         res.cookie('Reset', 'false');
@@ -181,7 +201,7 @@ function getCookies(req, res){
     else{
         parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
     }
-
+    
     let prefsOut = parsedPrefs;
     prefsOut[1] = priority;
     writeFile('json/preferences.json', (JSON.stringify(prefsOut)), function(err){
@@ -427,6 +447,7 @@ function prefsJsonHtml(priority){
 
 app.get('/preferences', (req, res) => {
     let priority = [];
+    getCookies(req, res);
     priority[0] = (req.cookies.Priority0); 
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 

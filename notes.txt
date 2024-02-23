@@ -3,6 +3,8 @@ The what:
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+-when cookies don't exist they can only be creatd on home page & /preferences, but /preferences doesn't populate dropdowns
+   until refreshing
 -still get:
    "if((time[2].includes('OT')))
                   ^
@@ -70,7 +72,11 @@ To do but this time it's specific:
 3. Figure out how to update scores when they load
 
 WIWWO: 
-2/22: Just finished newTimeSort, need to work on newDiffSort and newStandingSort too I guess
+2/23: working on final sort. the nested loops are leading to repeated (x10) instances but the final answer seems to be right for 1st 2 prefs
+2/22: sorting by standings clears preferences.json then kills the program
+         -> I think this is just because the old sorts only had functions that use toJson for diffs and times and I had to clear out standings
+old sorts show only 1 game multiple times if score and time are both same
+Just finished newTimeSort, need to work on newDiffSort and newStandingSort too I guess
 2/20: Working on new-standings branch
       -> Trying to find way to update gameData even though standingsScrape is async
       -> Could have each priority write to json since I can't return out of async standingsScrape
@@ -86,7 +92,6 @@ since I can't use require
 1/30: when json doesn't exist an error is given while json is made -> make json before showing this error
          use fs.existsSync for each league?
 
-REMEMBER TO ZIP AND SAVE TO DRIVE IF USING HOME PC!!!
 
 Using git:
 1. Make changes to code
@@ -107,3 +112,175 @@ Or create game object with all game data plus where it ranks for each priority
 game 1 team1, team2, ... [diff, diffRank], [time, timeRank], [standings, standingsRank]
 Replace 'data' with 'gameData'
 |__
+
+
+
+
+[  0
+  [], 0.0
+  [   0.1
+    {
+      team1: 'Maple Leafs',
+      score1: '0',
+      team2: 'Golden Knights',
+      score2: '0',
+      progress: 'ongoing',
+      time: '123',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 0,
+      avgStanding: 8.5,
+      timeRank: 3,
+      diffRank: 1,
+      standRank: 0
+    },
+    {
+      team1: 'Canucks',
+      score1: '0',
+      team2: 'Kraken',
+      score2: '0',
+      progress: 'ongoing',
+      time: '76',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 0,
+      avgStanding: 11,
+      timeRank: 0,
+      diffRank: 1,
+      standRank: 1
+    }
+  ],
+  [
+    {
+      team1: 'Bruins',
+      score1: '1',
+      team2: 'Flames',
+      score2: '2',
+      progress: 'ongoing',
+      time: '1512',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 1,
+      avgStanding: 12.5,
+      timeRank: 2,
+      diffRank: 2,
+      standRank: 2
+    }
+  ],
+  [
+    {
+      team1: 'Islanders',
+      score1: '0',
+      team2: 'Blues',
+      score2: '3',
+      progress: 'ongoing',
+      time: '2948',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 3,
+      avgStanding: 16,
+      timeRank: 1,
+      diffRank: 3,
+      standRank: 3
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      team1: 'Predators',
+      score1: '-',
+      team2: 'Kings',
+      score2: '-',
+      progress: 'unstarted',
+      time: '10:30 PM',
+      network: 'ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 100,
+      avgStanding: 15.5,
+      timeRank: 10,
+      diffRank: 9,
+      standRank: 4
+    },
+    {
+      team1: 'Stars',
+      score1: '1',
+      team2: 'Senators',
+      score2: '4',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 3,
+      avgStanding: 15,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 9
+    },
+    {
+      team1: 'Avalanche',
+      score1: '1',
+      team2: 'Red Wings',
+      score2: '2',
+      progress: 'ended',
+      time: 'Final/OT',
+      network: undefined,
+      link: undefined,
+      diff: 1,
+      avgStanding: 9,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 6
+    },
+    {
+      team1: 'Capitals',
+      score1: '5',
+      team2: 'Lightning',
+      score2: '3',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 2,
+      avgStanding: 15,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 9
+    },
+    {
+      team1: 'Rangers',
+      score1: '5',
+      team2: 'Devils',
+      score2: '1',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 4,
+      avgStanding: 9.5,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 7
+    },
+    {
+      team1: 'Canadiens',
+      score1: '1',
+      team2: 'Penguins',
+      score2: '4',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 3,
+      avgStanding: 22.5,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 10
+    }
+  ],
+  [],
+  []
+]

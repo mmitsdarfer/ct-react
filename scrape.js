@@ -28,7 +28,6 @@ else{   //current, priority, ranked leagues with time visited
 async function standingsScrape(data, league){
     console.log(league + ' standings');
     let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
-    console.log(url);
     
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -62,7 +61,7 @@ async function standingsScrape(data, league){
 }
 
 function timeToObj(data, league){   //rename when merging files
-    data[data.length-2].time = '7:30 - 1st';
+    //data[data.length-2].time = '7:30 - 1st';
     //data[data.length-1].time = '7:00 - 3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
         data[i].time = timeConversion(league, data[i].time).toString();
@@ -117,25 +116,197 @@ function newTimeSort(data){ //RENAME
 }
 
 function newDiffSort(data){
+    let ongoingDiffs = [];
+    let endedDiffs = [];
+    let unstartedLen = 0;
+
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ongoing'){
+            ongoingDiffs[i] = data[i].diff;
+        }
+        else if(data[i].progress == 'unstarted'){
+            data[i].diffRank = data.length;
+            unstartedLen++;
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ended'){
+            endedDiffs[i-unstartedLen-ongoingDiffs.length] = data[i].diff;
+        }
+    }
+
+    let ongoingSort = mergeSort(ongoingDiffs);
+    
+    let endedSort  = mergeSort(endedDiffs);
+    
+    for(let i = 0; i < data.length; i++){
+        for(let j = 0; j < ongoingSort.length; j++){
+            if(data[i].diff == ongoingSort[j] && data[i].progress == 'ongoing'){
+                data[i].diffRank = j;
+            }
+        }
+        for(let j = 0; j < endedSort.length; j++){
+            if(data[i].diff == endedSort[j] && data[i].progress == 'ended'){
+                data[i].diffRank = j + ongoingSort.length;
+            }
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        
+    }
+
     return data;
 }
 
-function chooseOrder(data, priority){
+function newStandingsSort(data){
+    let ongoingStands = [];
+    let unstartedStands = [];
+    let endedStands = [];
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ongoing'){
+            ongoingStands[i] = data[i].avgStanding;
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'unstarted'){
+            unstartedStands[i-ongoingStands.length] = data[i].avgStanding;
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ended'){
+            endedStands[i-ongoingStands.length-unstartedStands.length] = data[i].avgStanding;
+        }
+    }
+    
+    let onStandsSort = mergeSort(ongoingStands);
+    let unstartStandsSort = mergeSort(unstartedStands);
+    let endStandsSort = mergeSort(endedStands);
+
+    for(let i = 0; i < data.length; i++){
+        for(let j = 0; j < ongoingStands.length; j++){
+            if(data[i].avgStanding == onStandsSort[j]){
+                data[i].standRank = j
+            }
+        }
+        for(let j = 0; j < unstartedStands.length; j++){
+            if(data[i].avgStanding == unstartStandsSort[j]){
+                data[i].standRank = j + ongoingStands.length;
+            }
+        }
+        for(let j = 0; j < endedStands.length; j++){
+            if(data[i].avgStanding == endStandsSort[j]){
+                data[i].standRank = j + ongoingStands.length + unstartedStands.length;
+            }
+        }
+    }
+
+    return data;
+}
+
+function finalSort(data, priority){
     //call the functions with variable data and have them return sorted so I can just send ties
     //eg if there are multiple 3 goal games, newTimeSort([just these 3 goal games])
     //IDK if that makes sense, but didn't want to forget JIC
 
     data = newTimeSort(data);  //RENAME
     data = newDiffSort(data);  //RENAME
+    data = newStandingsSort(data);
+    //console.log(data);
+
+    let sorted = [];
+    let midSorted = [];
+    let lastSorted = [];
+
     if(priority[0] == 'diffs'){
-    
+        for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
+            sorted[i] = [];
+            midSorted[i] = [];
+            lastSorted[i] = [];
+            for(let j = 0; j < data.length; j++){
+                if(data[j].diffRank == i){
+                    sorted[i].push(data[j]);
+                }
+            }
+            if(sorted[i] !== undefined && sorted[i].length > 1){
+                for(let j = 0; j < data.length+1; j++){
+                    if(priority[1] == 'times'){
+                        for(let k = 0; k < sorted[i].length; k++){
+                            if(sorted[i][k].timeRank == j){
+                                midSorted[i].push(sorted[i][k]);
+                            }
+                        }
+                        
+                    }
+                    else if(priority[1] == 'standings'){
+                        for(let k = 0; k < sorted[i].length; k++){
+                            if(sorted[i][k].standRank == j){
+                              midSorted[i].push(sorted[i][k]);
+                            }
+                        }
+                    }
+                    
+                }
+                if(midSorted[i] !== undefined && midSorted[i].length > 1){
+                    for(let j = 0; j < data.length+1; j++){
+                        if(priority[2] == 'standings'){
+                            for(let k = 0; k < midSorted[i].length; k++){
+                                if(midSorted[i][k].standRank == j){
+                                    lastSorted[i].push(midSorted[i][k]);
+                                }
+                            }
+                        }
+                        
+                    }
+                     
+                    midSorted[i] = lastSorted[i];
+            }
+            sorted[i] = midSorted[i];
+        }
+        console.log(midSorted);
+    }
     }
     else if(priority[0] == 'times'){
-        
-        console.log(data);
+        for(let i = 0; i < data.length+1; i++){    
+            sorted[i] = [];
+            midSorted[i] = [];   
+            for(let j = 0; j < data.length; j++){
+                if(data[j].timeRank == i){
+                    sorted[i].push(data[j]);
+                }
+            }
+            if(sorted[i] !== undefined && sorted[i].length > 1){
+                console.log(sorted[i][0].diffRank);
+                for(let j = 0; j < data.length+1; j++){
+                    for(let k = 0; k < sorted[i].length; k++){
+                        if(sorted[i][k].diffRank == j){
+                            midSorted[i].push(sorted[i][k]);
+                        }
+                    }
+                    for(let k = 0; k < sorted[i].length; k++){
+                        if(sorted[i][k].standRank == j){
+                        //    midSorted[i].push(sorted[i][k]);
+                        }
+                    }
+                }     
+                sorted[i] = midSorted[i];
+            }
+        }
+        console.log(sorted);
     }
     else if(priority[0] == 'standings'){
-
+        for(let i = 0; i < data.length; i++){       
+            for(let j = 0; j < data.length; j++){
+                if(data[j].standRank == i){
+                    sorted.push(data[j]);
+                }
+            }
+        }
+    }
+   // console.log('SORTED');
+   
+    for(let i = 0; i < sorted.length; i++){
+      //  console.log(sorted[i].length);
+       // console.log(sorted[i]);
     }
 }
 
@@ -151,12 +322,7 @@ var scrape = async function scrape(league, priority){
     await page.goto(url);
     var fullDate, teams, times, scores, nets, numGames, unstarted;
     
-    [fullDate, teams, times, scores, nets, numGames, league, unstarted] = await page.evaluate(() => {
-        league = document.querySelectorAll('#fitt-analytics > div > div.HeaderScoreboardWrapper > div > section > div > div:nth-child(1) > div > select.dropdown__select.dropdown__select--sizing.absolute.w-auto > option');
-        
-        leagueArr = Array.from(league);
-        leagueArr = leagueArr.map(game => game.textContent);
-        league = leagueArr[0];
+    [fullDate, teams, times, scores, nets, numGames, unstarted] = await page.evaluate((league) => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
@@ -220,9 +386,8 @@ var scrape = async function scrape(league, priority){
         netArr = Array.from(nets);
         netArr = netArr.map(game => game.textContent);
 
-        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, league, unstarted];
-    });
-
+        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, unstarted];
+    }, league);
 
     //date with day of the week stripped off
     let i = 0;
@@ -281,19 +446,7 @@ var scrape = async function scrape(league, priority){
         gameData.table.push(gameObj);
     }
 
-    const callStandings = async () => {
-        const result = await standingsScrape(gameData.table, league);
-        //console.log(gameData);
-
-        timeToObj(gameData.table, league);
-        //console.log(gameData.table);
-        chooseOrder(gameData.table, priority);
-
-        // do something else here after standingsScrape completes
-        //put everything else in here to ensure standings are collected
-      }
-      
-    callStandings();
+    
 
     
     var diffTies;
@@ -306,14 +459,14 @@ var scrape = async function scrape(league, priority){
         diffsWithTimes(diffTies, diffTimes, progress, teams, scores, times, nets, channels);
         showUnstarted(numGames, progress, teams, scores, times, nets, channels);
         endedDiffSort(endedDiffs, progress, endedSort, diffs, teams, scores, times, nets, channels, numGames);
-    data.table.push({date: date});
+        data.table.push({date: date});
 
     }
     else if(priority[0] == 'times'){
         getTimeTies(times, progress, teams, scores, nets, channels);
         showUnstarted(numGames, progress, teams, scores, times, nets, channels);
         timesThenDiffs(endedSort, numGames, diffs, teams, scores, progress, times, nets, channels);
-    data.table.push({date: date});
+        data.table.push({date: date});
 
     }
     else if(priority[0] == 'standings'){
@@ -325,10 +478,24 @@ var scrape = async function scrape(league, priority){
     }
     
     //write to json file 
-    console.log('!!!' + league);
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
     }); 
+
+    const callStandings = async () => {
+        await standingsScrape(gameData.table, league);
+        //gameData.table.push({date: date});
+        //console.log(gameData);
+
+        timeToObj(gameData.table, league);
+        //console.log(gameData.table);
+        finalSort(gameData.table, priority);
+
+        // do something else here after standingsScrape completes
+        //put everything else in here to ensure standings are collected
+      }
+      
+    callStandings();
 
     //close puppeteer browser
     await browser.close();
@@ -585,6 +752,7 @@ function timeConversion(league, time){
         unitMax = 9;
     }
     
+    //format: mins, seconds, period or quarter
     if(time.includes('End')){
         time = [0, 0, (parseInt(time.slice(-3))).toString()];
     }
@@ -599,6 +767,9 @@ function timeConversion(league, time){
     }
     else if(time.includes('AM') || time.includes('PM') || time.includes('Final')){
         return time;
+    }
+    else if(time.length == 3){
+        time = [0, 0, parseInt(time) + 1];
     }
     else{    
         time = time.split(' - ');
@@ -621,6 +792,7 @@ function timeConversion(league, time){
         time[0] = parseInt(time[0]);
         time[1] = parseInt(time[1]);
     }
+    
     if((time[2].includes('OT'))){
         if(!isNaN(parseInt(time[2]))){
             time[2] = parseInt(time[2]);    //if multiple OTs, which one
