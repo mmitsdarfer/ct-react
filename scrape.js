@@ -232,7 +232,9 @@ function finalSort(data, priority){
                     if(priority[1] == 'times'){
                         for(let k = 0; k < sorted[i].length; k++){
                             if(sorted[i][k].timeRank == j){
-                                midSorted[i].push(sorted[i][k]);
+                               // console.log(sorted[i][k]);
+                               // console.log(j);
+                                midSorted[j].push(sorted[i][k]);
                             }
                         }
                         
@@ -240,12 +242,17 @@ function finalSort(data, priority){
                     else if(priority[1] == 'standings'){
                         for(let k = 0; k < sorted[i].length; k++){
                             if(sorted[i][k].standRank == j){
-                              midSorted[i].push(sorted[i][k]);
+                              midSorted[j].push(sorted[i][k]);
                             }
                         }
-                    }
-                    
+                    }     
+                    sorted[j] = midSorted[j];
+                    //console.log(midSorted[j]);            
                 }
+                
+               // console.log('l above');
+
+                /*
                 if(midSorted[i] !== undefined && midSorted[i].length > 1){
                     for(let j = 0; j < data.length+1; j++){
                         if(priority[2] == 'standings'){
@@ -258,11 +265,12 @@ function finalSort(data, priority){
                         
                     }
                      
-                    midSorted[i] = lastSorted[i];
+                   // midSorted[i] = lastSorted[i];
             }
-            sorted[i] = midSorted[i];
+            */
+            
         }
-        console.log(midSorted);
+        console.log(sorted);
     }
     }
     else if(priority[0] == 'times'){

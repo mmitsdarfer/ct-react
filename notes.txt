@@ -72,7 +72,8 @@ To do but this time it's specific:
 3. Figure out how to update scores when they load
 
 WIWWO: 
-2/23: working on final sort. the nested loops are leading to repeated (x10) instances but the final answer seems to be right for 1st 2 prefs
+2/23: First 2 priorities work (perfectly), but 3rd might need to be completely rewritten. This is for finalSort btw
+working on final sort. the nested loops are leading to repeated (x10) instances but the final answer seems to be right for 1st 2 prefs
 2/22: sorting by standings clears preferences.json then kills the program
          -> I think this is just because the old sorts only had functions that use toJson for diffs and times and I had to clear out standings
 old sorts show only 1 game multiple times if score and time are both same
