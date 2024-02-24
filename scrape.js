@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { all } from 'axios';
 
 var league;
 var priority;
@@ -211,6 +212,7 @@ function finalSort(data, priority){
     let sorted = [];
     let midSorted = [];
     let lastSorted = [];
+    let allSorted = [];
 
     if(priority[0] == 'diffs'){
         for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
@@ -223,31 +225,54 @@ function finalSort(data, priority){
         }
         if(priority[1] == 'times'){
             for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){
+                if(sorted[i] !== undefined && sorted[i].length > 1){    
                     for(let j = 0; j < data.length+1; j++){
                         midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){
+                        for(let k = 0; k < sorted[i].length; k++){                        
                             if(sorted[i][k].timeRank == j){
                                 midSorted[j].push(sorted[i][k]);
                             }
                         } 
-                    }
-                    //[3]
-                    if(midSorted[i] !== undefined && midSorted[i].length > 1){
-                        sorted[i] = midSorted[i];
+                        allSorted.push(midSorted[j]);
                     }
                 }
-             //   else if()
-             if(sorted[i] !== undefined && sorted[i].length == 0){
-                sorted.splice(i, 1);
+                else{
+                    allSorted.push(sorted[i]);
+                }
             }
-            }
-           
-           
+            for(let i = 0; i < data.length+1; i++){
+               // if(sorted[i] !== undefined && sorted[i].length > 1)
+            }        
+        }
+        else if(priority[1] == 'standings'){
+            for(let i = 0; i < data.length+1; i++){
+                if(sorted[i] !== undefined && sorted[i].length > 1){    
+                    for(let j = 0; j < data.length+1; j++){
+                        midSorted[j] = [];
+                        for(let k = 0; k < sorted[i].length; k++){                        
+                            if(sorted[i][k].standRank == j){
+                                midSorted[j].push(sorted[i][k]);
+                            }
+                        } 
+                        allSorted.push(midSorted[j]);
+                    }
+                }
+                else{
+                    allSorted.push(sorted[i]);
+                }
+            }        
         }
 
-
-        console.log(sorted);
+        //move here to end of if diff block after if/elses
+        for(let i = 0; i < allSorted.length; i++){
+            if(allSorted[i] !== undefined && allSorted[i].length == 0){
+                allSorted.splice(i, 1);
+            }
+        }
+        console.log('__allSorted below__');
+        console.log(allSorted);
+    }
+        
 
             /*
             if(sorted[i] !== undefined && sorted[i].length > 1){
@@ -295,7 +320,6 @@ function finalSort(data, priority){
      //   console.log(sorted[sorted.length-1]);
     }
     */
-    }
     else if(priority[0] == 'times'){
         for(let i = 0; i < data.length+1; i++){    
             sorted[i] = [];
@@ -509,7 +533,6 @@ var scrape = async function scrape(league, priority){
     }
     
     //write to json file 
-    console.log('HEREEE');
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
     }); 
