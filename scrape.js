@@ -220,6 +220,36 @@ function finalSort(data, priority){
                     sorted[i].push(data[j]);
                 }
             }
+        }
+        if(priority[1] == 'times'){
+            for(let i = 0; i < data.length+1; i++){
+                if(sorted[i] !== undefined && sorted[i].length > 1){
+                    for(let j = 0; j < data.length+1; j++){
+                        midSorted[j] = [];
+                        for(let k = 0; k < sorted[i].length; k++){
+                            if(sorted[i][k].timeRank == j){
+                                midSorted[j].push(sorted[i][k]);
+                            }
+                        } 
+                    }
+                    //[3]
+                    if(midSorted[i] !== undefined && midSorted[i].length > 1){
+                        sorted[i] = midSorted[i];
+                    }
+                }
+             //   else if()
+             if(sorted[i] !== undefined && sorted[i].length == 0){
+                sorted.splice(i, 1);
+            }
+            }
+           
+           
+        }
+
+
+        console.log(sorted);
+
+            /*
             if(sorted[i] !== undefined && sorted[i].length > 1){
                 for(let j = 0; j < data.length+1; j++){
                     midSorted[j] = [];
@@ -264,6 +294,7 @@ function finalSort(data, priority){
         }
      //   console.log(sorted[sorted.length-1]);
     }
+    */
     }
     else if(priority[0] == 'times'){
         for(let i = 0; i < data.length+1; i++){    
