@@ -54,6 +54,8 @@ To do:
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd, and so on
+   - Some people preach against for loops so maybe try forEach, map, and/or filter
+      - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 League page setup
 Header: "[League] Games"
@@ -73,7 +75,9 @@ To do but this time it's specific:
 
 WIWWO: 
 2/23: First 2 priorities work (perfectly), but 3rd might need to be completely rewritten. This is for finalSort btw
-working on final sort. the nested loops are leading to repeated (x10) instances but the final answer seems to be right for 1st 2 prefs
+      -> working on final sort. the nested loops are leading to repeated (x10) instances but the final answer seems to be right for 1st 2 prefs
+      -> need to get rid of empty arrays
+   MLB not working
 2/22: sorting by standings clears preferences.json then kills the program
          -> I think this is just because the old sorts only had functions that use toJson for diffs and times and I had to clear out standings
 old sorts show only 1 game multiple times if score and time are both same

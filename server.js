@@ -2,6 +2,7 @@ import express from 'express';
 const app = express();
 const router = express.Router();
 const port = 8000;
+import fs from 'fs';
 import { join } from 'path';
 import { dirname } from 'path';
 import { parse } from 'url';
@@ -43,9 +44,23 @@ function mergeSort(arr){
 
 function jsonHtml(league, priority){
     var jsonParsed;
-    if (existsSync('json/' + league.toLowerCase() + '.json', 'utf-8')) {
+    async function writeJson(){
+        setTimeout(() => {   
+            callScrape(league, priority);
+            jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
+            return jsonParsed;
+        }, );
+        
+       
+    }
+    if(existsSync('json/' + league.toLowerCase() + '.json', 'utf-8')) {
         jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
     }
+    else{
+        console.log('NOPE');
+        jsonParsed = writeJson();    
+    }
+    console.log(jsonParsed);
     
     var leagueHtml = readFileSync('public/league.html', 'utf-8');
     var leagueIndex = readFileSync('public/leagueIndex.html', 'utf-8');
@@ -234,7 +249,6 @@ async function prefReset(priority = ['diffs', 'times', 'standings']){
 
 //increases preference value when league selected and updates preferences.json
 function preferences(league){
-    var data = {};
     var prefData;
     if (existsSync('json/preferences.json')) {
         prefData = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
@@ -274,6 +288,15 @@ function preferences(league){
 }
 
 app.get('/nhl', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    var data = {};
+    data.table = [];
+    data.table.push({"date":"December 21, 2000"});
+    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+            if(err) throw err;
+        }); 
+    }
     getCookies(req, res);
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
@@ -292,7 +315,6 @@ app.get('/nhl', (req, res) => {
     }
     async function writeNhl(){
         setTimeout(function () {
-            current = parse(req.url).pathname.replace('/', '').toUpperCase();
             preferences(current);   
             callScrape(current, priority);
             var nhlRes = jsonHtml(current, priority);
@@ -304,6 +326,15 @@ app.get('/nhl', (req, res) => {
 });
 
 app.get('/nfl', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    var data = {};
+    data.table = [];
+    data.table.push({"date":"December 21, 2000"});
+    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+            if(err) throw err;
+        }); 
+    }
     getCookies(req, res);
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
@@ -321,7 +352,6 @@ app.get('/nfl', (req, res) => {
     }
     async function writeNfl(){
         setTimeout(function () {
-            current = parse(req.url).pathname.replace('/', '').toUpperCase();
             preferences(current);
             callScrape(current, priority);
             var nflRes = jsonHtml(current, priority);
@@ -333,6 +363,15 @@ app.get('/nfl', (req, res) => {
 });
 
 app.get('/nba', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    var data = {};
+    data.table = [];
+    data.table.push({"date":"December 21, 2000"});
+    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+            if(err) throw err;
+        }); 
+    }
     getCookies(req, res);
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
@@ -349,8 +388,7 @@ app.get('/nba', (req, res) => {
         callReset();
     }
     async function writeNba(){
-        setTimeout(function () {
-            current = parse(req.url).pathname.replace('/', '').toUpperCase();
+        setTimeout(function () {     
             preferences(current);
             callScrape(current, priority);
             var nbaRes = jsonHtml(current, priority);
@@ -362,6 +400,15 @@ app.get('/nba', (req, res) => {
 });
 
 app.get('/mlb', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    var data = {};
+    data.table = [];
+    data.table.push({"date":"December 21, 2000"});
+    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+            if(err) throw err;
+        }); 
+    }
     getCookies(req, res);
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
@@ -379,7 +426,7 @@ app.get('/mlb', (req, res) => {
     }
     async function writeMlb(){
         setTimeout(function () {
-            current = parse(req.url).pathname.replace('/', '').toUpperCase();
+
             preferences(current);
             callScrape(current, priority);
             var mlbRes = jsonHtml(current, priority);

@@ -204,14 +204,9 @@ function newStandingsSort(data){
 }
 
 function finalSort(data, priority){
-    //call the functions with variable data and have them return sorted so I can just send ties
-    //eg if there are multiple 3 goal games, newTimeSort([just these 3 goal games])
-    //IDK if that makes sense, but didn't want to forget JIC
-
     data = newTimeSort(data);  //RENAME
     data = newDiffSort(data);  //RENAME
-    data = newStandingsSort(data);
-    //console.log(data);
+    data = newStandingsSort(data); //RENAME
 
     let sorted = [];
     let midSorted = [];
@@ -232,12 +227,21 @@ function finalSort(data, priority){
                     if(priority[1] == 'times'){
                         for(let k = 0; k < sorted[i].length; k++){
                             if(sorted[i][k].timeRank == j){
-                               // console.log(sorted[i][k]);
-                               // console.log(j);
                                 midSorted[j].push(sorted[i][k]);
                             }
                         }
-                        
+                        if(midSorted[j] !== undefined && midSorted[j].length > 1){
+                          //  console.log(midSorted[j]);
+                            for(let m = 0; m < data.length; m++){
+                                for(let n = 0; n < midSorted[j].length; n++){
+                                    if(midSorted[j][n].standRank == m){
+                                     lastSorted[m].push(midSorted[j][n]);
+                                    }
+                                }
+                                //midSorted[m] = lastSorted[m];
+                                //CAN'T DO THIS: TOO BIG ERROR
+                            }
+                        }
                     }
                     else if(priority[1] == 'standings'){
                         for(let k = 0; k < sorted[i].length; k++){
@@ -249,26 +253,13 @@ function finalSort(data, priority){
                     sorted[j] = midSorted[j];
                     //console.log(midSorted[j]);            
                 }
-                
-               // console.log('l above');
 
-                /*
-                if(midSorted[i] !== undefined && midSorted[i].length > 1){
-                    for(let j = 0; j < data.length+1; j++){
-                        if(priority[2] == 'standings'){
-                            for(let k = 0; k < midSorted[i].length; k++){
-                                if(midSorted[i][k].standRank == j){
-                                    lastSorted[i].push(midSorted[i][k]);
-                                }
-                            }
-                        }
-                        
-                    }
-                     
-                   // midSorted[i] = lastSorted[i];
-            }
-            */
             
+        }
+        if(sorted[i].length == 0){
+            sorted.shift();
+            //if no entry, remove from array
+                //but there are nests so have to go 2 levels
         }
         console.log(sorted);
     }
@@ -486,6 +477,7 @@ var scrape = async function scrape(league, priority){
     }
     
     //write to json file 
+    console.log('HEREEE');
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
     }); 
