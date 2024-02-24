@@ -215,8 +215,6 @@ function finalSort(data, priority){
     if(priority[0] == 'diffs'){
         for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
             sorted[i] = [];
-            midSorted[i] = [];
-            lastSorted[i] = [];
             for(let j = 0; j < data.length; j++){
                 if(data[j].diffRank == i){
                     sorted[i].push(data[j]);
@@ -224,6 +222,7 @@ function finalSort(data, priority){
             }
             if(sorted[i] !== undefined && sorted[i].length > 1){
                 for(let j = 0; j < data.length+1; j++){
+                    midSorted[j] = [];
                     if(priority[1] == 'times'){
                         for(let k = 0; k < sorted[i].length; k++){
                             if(sorted[i][k].timeRank == j){
@@ -231,8 +230,8 @@ function finalSort(data, priority){
                             }
                         }
                         if(midSorted[j] !== undefined && midSorted[j].length > 1){
-                          //  console.log(midSorted[j]);
                             for(let m = 0; m < data.length; m++){
+                                lastSorted[m] = [];
                                 for(let n = 0; n < midSorted[j].length; n++){
                                     if(midSorted[j][n].standRank == m){
                                      lastSorted[m].push(midSorted[j][n]);
@@ -245,23 +244,25 @@ function finalSort(data, priority){
                     }
                     else if(priority[1] == 'standings'){
                         for(let k = 0; k < sorted[i].length; k++){
+                            console.log(sorted[i][k]);
+                            console.log(j);
                             if(sorted[i][k].standRank == j){
-                              midSorted[j].push(sorted[i][k]);
+                                midSorted[j].push(sorted[i][k]);
                             }
                         }
                     }     
-                    sorted[j] = midSorted[j];
+                    //sorted[j] = midSorted[j];
                     //console.log(midSorted[j]);            
                 }
 
             
         }
         if(sorted[i].length == 0){
-            sorted.shift();
+           // sorted.shift();
             //if no entry, remove from array
                 //but there are nests so have to go 2 levels
         }
-        console.log(sorted);
+     //   console.log(sorted[sorted.length-1]);
     }
     }
     else if(priority[0] == 'times'){
@@ -725,7 +726,6 @@ function mergeSort(arr){
 
 //take in time left in a game and convert it in order to compare
 function timeConversion(league, time){
-    console.log(time);
     time = String(time);
     let convertedTime = 0;
     let units = null;
