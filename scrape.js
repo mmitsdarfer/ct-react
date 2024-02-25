@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { all } from 'axios';
 
 var league;
 var priority;
@@ -24,18 +25,10 @@ else{   //current, priority, ranked leagues with time visited
     priority = prefData[1];
 }
 
-function getSorts(data){
-    for(let i = 0; i < data.length; i++){
-        console.log(data[i].progress);
-    }
-    
 
-}
-
-
-async function standingsScrape(league, url, numGames, teams, scores, progress, times, nets, channels, date){
+async function standingsScrape(data, league){
     console.log(league + ' standings');
-    console.log(url);
+    let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
     
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -48,59 +41,329 @@ async function standingsScrape(league, url, numGames, teams, scores, progress, t
     return standArr;
     });
     
-    let standingAvg = [];
-    for(let i = 0; i < teamRanks.length; i++){
+    let gameRanks = [];
+    for(let i = 0; i < data.length; i++){
+        gameRanks[i] = [];
         for(let j = 0; j < teamRanks.length; j++){
-            if(teamRanks[i].includes(teams[j])){        
-                teamRanks[i] = teams[j];      
+            if(teamRanks[j].includes(data[i].team1)){        
+                gameRanks[i].push(data[i].team1, j);      
             }
         }
-    }
-
-    for(let i = 0; i < numGames; i++){
-        standingAvg[i] = (teamRanks.indexOf(teams[2*i]) + teamRanks.indexOf(teams[2*i+1])) / 2; 
-    }
-
-    let sortedAvgs = mergeSort(standingAvg);
-    let position = [];
-    for(let i = 0; i < numGames; i++){
-        position[i] = [];
-        for(let j = 0; j < numGames; j++){
-            if(sortedAvgs.indexOf(standingAvg[j]) == i){
-                position[i].push([standingAvg[j], j]);
+        for(let j = 0; j < teamRanks.length; j++){
+            if(teamRanks[j].includes(data[i].team2)){        
+                gameRanks[i].push(data[i].team2, j);      
             }
         }
+        data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
     }
-
-    for(let i = 0; i < numGames; i++){
-        for(let j = 0; j < numGames; j++){
-            if(position[i][j] != undefined){
-                toJson(teams[2*position[i][j][1]], teams[2*position[i][j][1] +1],
-                    scores[2*position[i][j][1]], scores[2*position[i][j][1] + 1],
-                    progress[position[i][j][1]], times[position[i][j][1]],
-                    nets[position[i][j][1]], channels[position[i][j][1]]);
-                if(nets[position[i][j][1]] != undefined){
-                    console.log(nets[position[i][j][1]] + ': ' + channels[position[i][j][1]]);
-                }
-                console.log(times[position[i][j][1]] + '\nProgress: ' + 
-                    progress[position[i][j][1]] + '\n' + teams[2*position[i][j][1]]
-                    + '  ' + scores[2*position[i][j][1]] + '\n' + teams[2*position[i][j][1]+1]
-                    + '  ' + scores[2*position[i][j][1]+1] + '\n');
-            }
-        }
-    }
-
-    data.table.push({date: date});
-    fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
-        if(err) throw err;
-    }); 
 
     //close puppeteer browser
     await browser.close();
-
-    
 }
 
+function timeToObj(data, league){   //rename when merging files
+    //data[data.length-2].time = '7:30 - 1st';
+    //data[data.length-1].time = '7:00 - 3rd';      //use to compare game starts with game progress during off times of day
+    for(let i = 0; i < data.length; i++){
+        data[i].time = timeConversion(league, data[i].time).toString();
+    }
+}
+
+function militaryTime(time){
+    time = time.split(':');
+    time[0] = parseInt(time[0]);
+    if(time[1].includes('PM')){
+        time[0] += 12;
+    }
+    if(time[1].includes('Final')){
+
+    }
+    time[0] *= -60;
+    time = time[0] - parseInt(time[1]);
+
+    return time;
+}
+
+function newTimeSort(data){ //RENAME
+    let sorted = [];
+    let times = [];
+    
+    for(let i = 0; i < data.length; i++){
+        if(data[i].time.includes('PM') || data[i].time.includes('AM')){
+            times[i] = militaryTime(data[i].time);
+        }
+        else if(data[i].time.includes('Final')){
+            times[i] = '0';
+        }
+        else{
+            times[i] = data[i].time;
+        }
+    }
+
+    sorted = mergeSort(times).reverse();
+
+    for(let i = 0; i < data.length; i++){
+        for(let j = 0; j < data.length; j++){
+            if(sorted[j] == times[i] && !data[i].time.includes('Final')){
+                data[i].timeRank = j;
+            }
+            else if(data[i].time.includes('Final')){
+                data[i].timeRank = data.length;
+            }
+        }
+    }
+
+    return data;
+}
+
+function newDiffSort(data){
+    let ongoingDiffs = [];
+    let endedDiffs = [];
+    let unstartedLen = 0;
+
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ongoing'){
+            ongoingDiffs[i] = data[i].diff;
+        }
+        else if(data[i].progress == 'unstarted'){
+            data[i].diffRank = data.length;
+            unstartedLen++;
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ended'){
+            endedDiffs[i-unstartedLen-ongoingDiffs.length] = data[i].diff;
+        }
+    }
+
+    let ongoingSort = mergeSort(ongoingDiffs);
+    
+    let endedSort  = mergeSort(endedDiffs);
+    
+    for(let i = 0; i < data.length; i++){
+        for(let j = 0; j < ongoingSort.length; j++){
+            if(data[i].diff == ongoingSort[j] && data[i].progress == 'ongoing'){
+                data[i].diffRank = j;
+            }
+        }
+        for(let j = 0; j < endedSort.length; j++){
+            if(data[i].diff == endedSort[j] && data[i].progress == 'ended'){
+                data[i].diffRank = j + ongoingSort.length;
+            }
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        
+    }
+
+    return data;
+}
+
+function newStandingsSort(data){
+    let ongoingStands = [];
+    let unstartedStands = [];
+    let endedStands = [];
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ongoing'){
+            ongoingStands[i] = data[i].avgStanding;
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'unstarted'){
+            unstartedStands[i-ongoingStands.length] = data[i].avgStanding;
+        }
+    }
+    for(let i = 0; i < data.length; i++){
+        if(data[i].progress == 'ended'){
+            endedStands[i-ongoingStands.length-unstartedStands.length] = data[i].avgStanding;
+        }
+    }
+    
+    let onStandsSort = mergeSort(ongoingStands);
+    let unstartStandsSort = mergeSort(unstartedStands);
+    let endStandsSort = mergeSort(endedStands);
+
+    for(let i = 0; i < data.length; i++){
+        for(let j = 0; j < ongoingStands.length; j++){
+            if(data[i].avgStanding == onStandsSort[j]){
+                data[i].standRank = j
+            }
+        }
+        for(let j = 0; j < unstartedStands.length; j++){
+            if(data[i].avgStanding == unstartStandsSort[j]){
+                data[i].standRank = j + ongoingStands.length;
+            }
+        }
+        for(let j = 0; j < endedStands.length; j++){
+            if(data[i].avgStanding == endStandsSort[j]){
+                data[i].standRank = j + ongoingStands.length + unstartedStands.length;
+            }
+        }
+    }
+
+    return data;
+}
+
+function finalSort(data, priority){
+    data = newTimeSort(data);  //RENAME
+    data = newDiffSort(data);  //RENAME
+    data = newStandingsSort(data); //RENAME
+
+    let sorted = [];
+    let midSorted = [];
+    let lastSorted = [];
+    let allSorted = [];
+
+    if(priority[0] == 'diffs'){
+        for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
+            sorted[i] = [];
+            for(let j = 0; j < data.length; j++){
+                if(data[j].diffRank == i){
+                    sorted[i].push(data[j]);
+                }
+            }
+        }
+        if(priority[1] == 'times'){
+            for(let i = 0; i < data.length+1; i++){
+                if(sorted[i] !== undefined && sorted[i].length > 1){    
+                    for(let j = 0; j < data.length+1; j++){
+                        midSorted[j] = [];
+                        for(let k = 0; k < sorted[i].length; k++){                        
+                            if(sorted[i][k].timeRank == j){
+                                midSorted[j].push(sorted[i][k]);
+                            }
+                        } 
+                        allSorted.push(midSorted[j]);
+                    }
+                }
+                else{
+                    allSorted.push(sorted[i]);
+                }
+            }
+            for(let i = 0; i < data.length+1; i++){
+               // if(sorted[i] !== undefined && sorted[i].length > 1)
+            }        
+        }
+        else if(priority[1] == 'standings'){
+            for(let i = 0; i < data.length+1; i++){
+                if(sorted[i] !== undefined && sorted[i].length > 1){    
+                    for(let j = 0; j < data.length+1; j++){
+                        midSorted[j] = [];
+                        for(let k = 0; k < sorted[i].length; k++){                        
+                            if(sorted[i][k].standRank == j){
+                                midSorted[j].push(sorted[i][k]);
+                            }
+                        } 
+                        allSorted.push(midSorted[j]);
+                    }
+                }
+                else{
+                    allSorted.push(sorted[i]);
+                }
+            }        
+        }
+
+        //move here to end of if diff block after if/elses
+        for(let i = 0; i < allSorted.length; i++){
+            if(allSorted[i] !== undefined && allSorted[i].length == 0){
+                allSorted.splice(i, 1);
+            }
+        }
+        console.log('__allSorted below__');
+        console.log(allSorted);
+    }
+        
+
+            /*
+            if(sorted[i] !== undefined && sorted[i].length > 1){
+                for(let j = 0; j < data.length+1; j++){
+                    midSorted[j] = [];
+                    if(priority[1] == 'times'){
+                        for(let k = 0; k < sorted[i].length; k++){
+                            if(sorted[i][k].timeRank == j){
+                                midSorted[j].push(sorted[i][k]);
+                            }
+                        }
+                        if(midSorted[j] !== undefined && midSorted[j].length > 1){
+                            for(let m = 0; m < data.length; m++){
+                                lastSorted[m] = [];
+                                for(let n = 0; n < midSorted[j].length; n++){
+                                    if(midSorted[j][n].standRank == m){
+                                     lastSorted[m].push(midSorted[j][n]);
+                                    }
+                                }
+                                //midSorted[m] = lastSorted[m];
+                                //CAN'T DO THIS: TOO BIG ERROR
+                            }
+                        }
+                    }
+                    else if(priority[1] == 'standings'){
+                        for(let k = 0; k < sorted[i].length; k++){
+                            console.log(sorted[i][k]);
+                            console.log(j);
+                            if(sorted[i][k].standRank == j){
+                                midSorted[j].push(sorted[i][k]);
+                            }
+                        }
+                    }     
+                    //sorted[j] = midSorted[j];
+                    //console.log(midSorted[j]);            
+                }
+
+            
+        }
+        if(sorted[i].length == 0){
+           // sorted.shift();
+            //if no entry, remove from array
+                //but there are nests so have to go 2 levels
+        }
+     //   console.log(sorted[sorted.length-1]);
+    }
+    */
+    else if(priority[0] == 'times'){
+        for(let i = 0; i < data.length+1; i++){    
+            sorted[i] = [];
+            midSorted[i] = [];   
+            for(let j = 0; j < data.length; j++){
+                if(data[j].timeRank == i){
+                    sorted[i].push(data[j]);
+                }
+            }
+            if(sorted[i] !== undefined && sorted[i].length > 1){
+                console.log(sorted[i][0].diffRank);
+                for(let j = 0; j < data.length+1; j++){
+                    for(let k = 0; k < sorted[i].length; k++){
+                        if(sorted[i][k].diffRank == j){
+                            midSorted[i].push(sorted[i][k]);
+                        }
+                    }
+                    for(let k = 0; k < sorted[i].length; k++){
+                        if(sorted[i][k].standRank == j){
+                        //    midSorted[i].push(sorted[i][k]);
+                        }
+                    }
+                }     
+                sorted[i] = midSorted[i];
+            }
+        }
+        console.log(sorted);
+    }
+    else if(priority[0] == 'standings'){
+        for(let i = 0; i < data.length; i++){       
+            for(let j = 0; j < data.length; j++){
+                if(data[j].standRank == i){
+                    sorted.push(data[j]);
+                }
+            }
+        }
+    }
+   // console.log('SORTED');
+   
+    for(let i = 0; i < sorted.length; i++){
+      //  console.log(sorted[i].length);
+       // console.log(sorted[i]);
+    }
+}
 
 var scrape = async function scrape(league, priority){
     console.log('Current league: ' + league);
@@ -112,14 +375,9 @@ var scrape = async function scrape(league, priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, league, unstarted;
+    var fullDate, teams, times, scores, nets, numGames, unstarted;
     
-    [fullDate, teams, times, scores, nets, numGames, league, unstarted] = await page.evaluate(() => {
-        league = document.querySelectorAll('#fitt-analytics > div > div.HeaderScoreboardWrapper > div > section > div > div:nth-child(1) > div > select.dropdown__select.dropdown__select--sizing.absolute.w-auto > option');
-        
-        leagueArr = Array.from(league);
-        leagueArr = leagueArr.map(game => game.textContent);
-        league = leagueArr[0];
+    [fullDate, teams, times, scores, nets, numGames, unstarted] = await page.evaluate((league) => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
@@ -183,9 +441,8 @@ var scrape = async function scrape(league, priority){
         netArr = Array.from(nets);
         netArr = netArr.map(game => game.textContent);
 
-        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, league, unstarted];
-    });
-
+        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, unstarted];
+    }, league);
 
     //date with day of the week stripped off
     let i = 0;
@@ -225,6 +482,7 @@ var scrape = async function scrape(league, priority){
     }
 
     var channels = netToLink(nets, teams, progress, numGames);
+
     gameData.table = [];
     var gameObj = {};
     //!!!get standings first to add to obj -> need new standings function
@@ -242,7 +500,9 @@ var scrape = async function scrape(league, priority){
         }
         gameData.table.push(gameObj);
     }
-    getSorts(gameData.table);
+
+    
+
     
     var diffTies;
     var diffTimes;
@@ -254,32 +514,43 @@ var scrape = async function scrape(league, priority){
         diffsWithTimes(diffTies, diffTimes, progress, teams, scores, times, nets, channels);
         showUnstarted(numGames, progress, teams, scores, times, nets, channels);
         endedDiffSort(endedDiffs, progress, endedSort, diffs, teams, scores, times, nets, channels, numGames);
-    data.table.push({date: date});
+        data.table.push({date: date});
 
     }
     else if(priority[0] == 'times'){
         getTimeTies(times, progress, teams, scores, nets, channels);
         showUnstarted(numGames, progress, teams, scores, times, nets, channels);
         timesThenDiffs(endedSort, numGames, diffs, teams, scores, progress, times, nets, channels);
-    data.table.push({date: date});
+        data.table.push({date: date});
 
     }
     else if(priority[0] == 'standings'){
         const parsedPrefs = JSON.parse(fs.readFileSync('json/preferences.json', 'utf-8'));
         league = parsedPrefs[0];
         let standingsUrl = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
-        standingsScrape(league, standingsUrl, numGames, teams, scores, progress, times, nets, channels, date);
 
 
-        //TODO: SORT BY STANDINGS
     }
     
-    //create json file
-
-    
+    //write to json file 
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
     }); 
+
+    const callStandings = async () => {
+        await standingsScrape(gameData.table, league);
+        //gameData.table.push({date: date});
+        //console.log(gameData);
+
+        timeToObj(gameData.table, league);
+        //console.log(gameData.table);
+        finalSort(gameData.table, priority);
+
+        // do something else here after standingsScrape completes
+        //put everything else in here to ensure standings are collected
+      }
+      
+    callStandings();
 
     //close puppeteer browser
     await browser.close();
@@ -534,6 +805,8 @@ function timeConversion(league, time){
         units = 'innings'
         unitMax = 9;
     }
+    
+    //format: mins, seconds, period or quarter
     if(time.includes('End')){
         time = [0, 0, (parseInt(time.slice(-3))).toString()];
     }
@@ -545,6 +818,12 @@ function timeConversion(league, time){
     }
     else if(time.includes('Delayed')){
         time = [unitLen/60, 0, (1).toString()];
+    }
+    else if(time.includes('AM') || time.includes('PM') || time.includes('Final')){
+        return time;
+    }
+    else if(time.length == 3){
+        time = [0, 0, parseInt(time) + 1];
     }
     else{    
         time = time.split(' - ');
@@ -567,6 +846,7 @@ function timeConversion(league, time){
         time[0] = parseInt(time[0]);
         time[1] = parseInt(time[1]);
     }
+    
     if((time[2].includes('OT'))){
         if(!isNaN(parseInt(time[2]))){
             time[2] = parseInt(time[2]);    //if multiple OTs, which one

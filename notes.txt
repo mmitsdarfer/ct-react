@@ -3,6 +3,8 @@ The what:
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+-when cookies don't exist they can only be creatd on home page & /preferences, but /preferences doesn't populate dropdowns
+   until refreshing
 -still get:
    "if((time[2].includes('OT')))
                   ^
@@ -10,6 +12,7 @@ known errors:
          I think this is when period or quarter is shown without "End of" (eg "3rd" on its own)
             Use NaN and length so if it's just 3rd (for example) vs 3:01 - 3rd I can differentiate (?)
 - 'hidden.json' created randomly and/or when all jsons are first made
+   - Need to use async to make sure I get league from preferences.json at top of scrape.js
 - rapidly refreshing (before puppeteer can finish scraping) creates duplicates of all the game data
    - Maybe add some timeout like with getCookies() in server.js
 - when some games have channel links and others don't the columns become misaligned
@@ -43,13 +46,16 @@ To do:
 - Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
 - Display current preference in league pages?
    - Leaning towards no
-- [decide from platform HW 3] Host on netlify?
+- Host on netlify?
 - Pie in the sky/longterm:   
    - Try to scrape ESPN+ links so it actually goes to the game, not just to  ESPN+
       - Add option to automatically follow link to closest game (in new tab)
+      - Add to switch to preferences
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd, and so on
+   - Some people preach against for loops so maybe try forEach, map, and/or filter
+      - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 League page setup
 Header: "[League] Games"
@@ -62,16 +68,16 @@ Date
    Time left   Link
 
 To do but this time it's specific:
-1. Figure out how to scrape standings and implement that
-- Record is beneath team on espn score page -> make timeConversion-like function that adds wins/losses/ties/ot losses/etc
-   -> OR open https://www.espn.com/nhl/standings and search for teams
-   -> average all the standings     -> make function for doing this 1st, 2nd, and 3rd (in terms of priority)
+1. 
 2. Ensure different priority orders work and work together
 - Maybe just make them more flexible so order matter less
 3. Figure out how to update scores when they load
 
 WIWWO: 
-2/19: Standings works, but currently shows games of all progresses together
+2/24: got top 2 priorities working. need 3rd to work
+   still have some empty arrays
+2/23: First 2 priorities work (perfectly), but 3rd might need to be completely rewritten. This is for finalSort btw
+   MLB not working
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
@@ -82,7 +88,6 @@ since I can't use require
 1/30: when json doesn't exist an error is given while json is made -> make json before showing this error
          use fs.existsSync for each league?
 
-REMEMBER TO ZIP AND SAVE TO DRIVE IF USING HOME PC!!!
 
 Using git:
 1. Make changes to code
@@ -103,3 +108,175 @@ Or create game object with all game data plus where it ranks for each priority
 game 1 team1, team2, ... [diff, diffRank], [time, timeRank], [standings, standingsRank]
 Replace 'data' with 'gameData'
 |__
+
+
+
+
+[  0
+  [], 0.0
+  [   0.1
+    {
+      team1: 'Maple Leafs',
+      score1: '0',
+      team2: 'Golden Knights',
+      score2: '0',
+      progress: 'ongoing',
+      time: '123',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 0,
+      avgStanding: 8.5,
+      timeRank: 3,
+      diffRank: 1,
+      standRank: 0
+    },
+    {
+      team1: 'Canucks',
+      score1: '0',
+      team2: 'Kraken',
+      score2: '0',
+      progress: 'ongoing',
+      time: '76',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 0,
+      avgStanding: 11,
+      timeRank: 0,
+      diffRank: 1,
+      standRank: 1
+    }
+  ],
+  [
+    {
+      team1: 'Bruins',
+      score1: '1',
+      team2: 'Flames',
+      score2: '2',
+      progress: 'ongoing',
+      time: '1512',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 1,
+      avgStanding: 12.5,
+      timeRank: 2,
+      diffRank: 2,
+      standRank: 2
+    }
+  ],
+  [
+    {
+      team1: 'Islanders',
+      score1: '0',
+      team2: 'Blues',
+      score2: '3',
+      progress: 'ongoing',
+      time: '2948',
+      network: 'NHLPP|ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 3,
+      avgStanding: 16,
+      timeRank: 1,
+      diffRank: 3,
+      standRank: 3
+    }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [
+    {
+      team1: 'Predators',
+      score1: '-',
+      team2: 'Kings',
+      score2: '-',
+      progress: 'unstarted',
+      time: '10:30 PM',
+      network: 'ESPN+',
+      link: 'https://www.espn.com/watch/',
+      diff: 100,
+      avgStanding: 15.5,
+      timeRank: 10,
+      diffRank: 9,
+      standRank: 4
+    },
+    {
+      team1: 'Stars',
+      score1: '1',
+      team2: 'Senators',
+      score2: '4',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 3,
+      avgStanding: 15,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 9
+    },
+    {
+      team1: 'Avalanche',
+      score1: '1',
+      team2: 'Red Wings',
+      score2: '2',
+      progress: 'ended',
+      time: 'Final/OT',
+      network: undefined,
+      link: undefined,
+      diff: 1,
+      avgStanding: 9,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 6
+    },
+    {
+      team1: 'Capitals',
+      score1: '5',
+      team2: 'Lightning',
+      score2: '3',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 2,
+      avgStanding: 15,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 9
+    },
+    {
+      team1: 'Rangers',
+      score1: '5',
+      team2: 'Devils',
+      score2: '1',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 4,
+      avgStanding: 9.5,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 7
+    },
+    {
+      team1: 'Canadiens',
+      score1: '1',
+      team2: 'Penguins',
+      score2: '4',
+      progress: 'ended',
+      time: 'Final',
+      network: undefined,
+      link: undefined,
+      diff: 3,
+      avgStanding: 22.5,
+      timeRank: 11,
+      diffRank: 9,
+      standRank: 10
+    }
+  ],
+  [],
+  []
+]
