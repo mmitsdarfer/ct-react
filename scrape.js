@@ -265,12 +265,15 @@ function finalSort(data, priority){
 
         //move here to end of if diff block after if/elses
         for(let i = 0; i < allSorted.length; i++){
-            if(allSorted[i] !== undefined && allSorted[i].length == 0){
-                allSorted.splice(i, 1);
+            if(allSorted[i] !== undefined){
+                if(allSorted[i].length == 0){
+                    allSorted.splice(i, 1);
+                    i = 0; //reset since changing length skips numbers
+                }
             }
         }
         console.log('__allSorted below__');
-        console.log(allSorted);
+        console.log(allSorted);  
     }
         
 
