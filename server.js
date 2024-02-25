@@ -57,10 +57,8 @@ function jsonHtml(league, priority){
         jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
     }
     else{
-        console.log('NOPE');
         jsonParsed = writeJson();    
     }
-    console.log(jsonParsed);
     
     var leagueHtml = readFileSync('public/league.html', 'utf-8');
     var leagueIndex = readFileSync('public/leagueIndex.html', 'utf-8');
@@ -249,6 +247,7 @@ async function prefReset(priority = ['diffs', 'times', 'standings']){
 
 //increases preference value when league selected and updates preferences.json
 function preferences(league){
+
     var prefData;
     if (existsSync('json/preferences.json')) {
         prefData = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
@@ -426,7 +425,6 @@ app.get('/mlb', (req, res) => {
     }
     async function writeMlb(){
         setTimeout(function () {
-
             preferences(current);
             callScrape(current, priority);
             var mlbRes = jsonHtml(current, priority);
