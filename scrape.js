@@ -89,11 +89,11 @@ function newTimeSort(data){ //RENAME
     let times = [];
     
     for(let i = 0; i < data.length; i++){
-        if(data[i].time.includes('PM') || data[i].time.includes('AM')){
-            times[i] = militaryTime(data[i].time);
-        }
-        else if(data[i].time.includes('Final')){
+        if(data[i].time.includes('Final')){
             times[i] = '0';
+        }
+        else if(data[i].time.includes('PM') || data[i].time.includes('AM')){
+            times[i] = militaryTime(data[i].time);
         }
         else{
             times[i] = data[i].time;
@@ -204,6 +204,21 @@ function newStandingsSort(data){
     return data;
 }
 
+function dropEmpties(data){
+    for(let i = 0; i < data.length; i++){
+        if(data[i] !== undefined){
+            if(data[i].length == 0){
+                data.splice(i, 1);
+                i = i-1; //reset since changing length skips numbers
+            }
+        }
+        else{
+            data.splice(i, 1);
+                i = i-1;
+        }
+    }
+}
+
 function finalSort(data, priority){
     data = newTimeSort(data);  //RENAME
     data = newDiffSort(data);  //RENAME
@@ -213,6 +228,7 @@ function finalSort(data, priority){
     let midSorted = [];
     let lastSorted = [];
     let allSorted = [];
+    let endSorted = [];
 
     if(priority[0] == 'diffs'){
         for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
@@ -240,9 +256,25 @@ function finalSort(data, priority){
                     allSorted.push(sorted[i]);
                 }
             }
+            
+            dropEmpties(allSorted);
+
             for(let i = 0; i < data.length+1; i++){
-               // if(sorted[i] !== undefined && sorted[i].length > 1)
-            }        
+                if(allSorted[i] !== undefined && allSorted[i].length > 1){    
+                    for(let j = 0; j < data.length+1; j++){
+                        lastSorted[j] = [];
+                        for(let k = 0; k < allSorted[i].length; k++){                        
+                            if(allSorted[i][k].standRank == j){
+                                lastSorted[j].push(allSorted[i][k]);
+                            }
+                        } 
+                        endSorted.push(lastSorted[j]);
+                    }
+                }
+                else{
+                    endSorted.push(lastSorted[i]);
+                }
+            }  
         }
         else if(priority[1] == 'standings'){
             for(let i = 0; i < data.length+1; i++){
@@ -262,18 +294,9 @@ function finalSort(data, priority){
                 }
             }        
         }
-
-        //move here to end of if diff block after if/elses
-        for(let i = 0; i < allSorted.length; i++){
-            if(allSorted[i] !== undefined){
-                if(allSorted[i].length == 0){
-                    allSorted.splice(i, 1);
-                    i = i-1; //reset since changing length skips numbers
-                }
-            }
-        }
-        console.log('__allSorted below__');
-        console.log(allSorted);  
+        dropEmpties(endSorted);
+        console.log('__endSorted below__');
+        console.log(endSorted);  
     }
         
 
@@ -784,7 +807,6 @@ function mergeSort(arr){
 //take in time left in a game and convert it in order to compare
 function timeConversion(league, time){
     time = String(time);
-    let convertedTime = 0;
     let units = null;
     let unitLen = 0;    //in seconds if applicable
     let unitMax;
@@ -792,7 +814,7 @@ function timeConversion(league, time){
         units = 'periods';
         unitLen = 1200;
         unitMax = 3;
-        if(time.includes('SO')) return 5 * unitLen;
+        if(time.includes('SO') && !time.includes('Final')) return 5 * unitLen;
     }
     else if(league == 'NFL'){
         units = 'quarters';
