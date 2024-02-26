@@ -75,7 +75,6 @@ To do but this time it's specific:
 
 WIWWO: 
 2/24: got top 2 priorities working. need 3rd to work
-   still have some empty arrays
 2/23: First 2 priorities work (perfectly), but 3rd might need to be completely rewritten. This is for finalSort btw
    MLB not working
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky

@@ -268,7 +268,7 @@ function finalSort(data, priority){
             if(allSorted[i] !== undefined){
                 if(allSorted[i].length == 0){
                     allSorted.splice(i, 1);
-                    i = 0; //reset since changing length skips numbers
+                    i = i-1; //reset since changing length skips numbers
                 }
             }
         }
