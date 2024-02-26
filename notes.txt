@@ -57,8 +57,8 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-2/26: Think I got diff-time-stand version working for all 3! need more testing
-      -> last nhl game is showing up twice
+2/26: Think I got diff-time-stand and diff-stand-time versions working for all 3! need more testing
+      -> testing with all unstarted games works for all diff-x-y
 2/23: MLB causes crash
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require

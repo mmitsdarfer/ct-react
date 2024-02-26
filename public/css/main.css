@@ -110,13 +110,15 @@ img{
 }
 .selectPriority {
     position: relative;
-    width: 20%;
+    width: 8%;
 }
 .options{
 width: 100%;
 }
 
-/* rest of style section is for switch, above is everything else*/
+/* rest of style section is for switch, above is everything else
+not currently using a switch though
+*/
 .switch {
     position: relative;
     display: block;

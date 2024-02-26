@@ -260,8 +260,8 @@ function finalSort(data, priority){
             dropEmpties(allSorted);
 
             for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
+                if(allSorted[i] !== undefined && allSorted[i].length > 1){  
+                    for(let j = 0; j < data.length+1; j++){                       
                         lastSorted[j] = [];
                         for(let k = 0; k < allSorted[i].length; k++){                        
                             if(allSorted[i][k].standRank == j){
@@ -269,10 +269,11 @@ function finalSort(data, priority){
                             }
                         } 
                         endSorted.push(lastSorted[j]);
+                       
                     }
                 }
                 else{
-                    endSorted.push(lastSorted[i]);
+                    endSorted.push(allSorted[i]);
                 }
             }  
         }
@@ -281,7 +282,7 @@ function finalSort(data, priority){
                 if(sorted[i] !== undefined && sorted[i].length > 1){    
                     for(let j = 0; j < data.length+1; j++){
                         midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                        
+                        for(let k = 0; k < sorted[i].length; k++){                                            
                             if(sorted[i][k].standRank == j){
                                 midSorted[j].push(sorted[i][k]);
                             }
@@ -292,60 +293,34 @@ function finalSort(data, priority){
                 else{
                     allSorted.push(sorted[i]);
                 }
-            }        
-        }
+            }   
+            
+            dropEmpties(allSorted); 
+
+            for(let i = 0; i < data.length+1; i++){
+                if(allSorted[i] !== undefined && allSorted[i].length > 1){                     
+                    for(let j = 0; j < data.length+1; j++){                                              
+                        lastSorted[j] = [];
+                        for(let k = 0; k < allSorted[i].length; k++){                        
+                            if(allSorted[i][k].timeRank == j){
+                                lastSorted[j].push(allSorted[i][k]);
+                            }
+                        } 
+                        endSorted.push(lastSorted[j]);               
+                    }
+                }
+                else{
+                    endSorted.push(allSorted[i]);
+                }
+            }  
+        }        
+
         dropEmpties(endSorted);
+
         console.log('__endSorted below__');
         console.log(endSorted);  
     }
-        
 
-            /*
-            if(sorted[i] !== undefined && sorted[i].length > 1){
-                for(let j = 0; j < data.length+1; j++){
-                    midSorted[j] = [];
-                    if(priority[1] == 'times'){
-                        for(let k = 0; k < sorted[i].length; k++){
-                            if(sorted[i][k].timeRank == j){
-                                midSorted[j].push(sorted[i][k]);
-                            }
-                        }
-                        if(midSorted[j] !== undefined && midSorted[j].length > 1){
-                            for(let m = 0; m < data.length; m++){
-                                lastSorted[m] = [];
-                                for(let n = 0; n < midSorted[j].length; n++){
-                                    if(midSorted[j][n].standRank == m){
-                                     lastSorted[m].push(midSorted[j][n]);
-                                    }
-                                }
-                                //midSorted[m] = lastSorted[m];
-                                //CAN'T DO THIS: TOO BIG ERROR
-                            }
-                        }
-                    }
-                    else if(priority[1] == 'standings'){
-                        for(let k = 0; k < sorted[i].length; k++){
-                            console.log(sorted[i][k]);
-                            console.log(j);
-                            if(sorted[i][k].standRank == j){
-                                midSorted[j].push(sorted[i][k]);
-                            }
-                        }
-                    }     
-                    //sorted[j] = midSorted[j];
-                    //console.log(midSorted[j]);            
-                }
-
-            
-        }
-        if(sorted[i].length == 0){
-           // sorted.shift();
-            //if no entry, remove from array
-                //but there are nests so have to go 2 levels
-        }
-     //   console.log(sorted[sorted.length-1]);
-    }
-    */
     else if(priority[0] == 'times'){
         for(let i = 0; i < data.length+1; i++){    
             sorted[i] = [];
