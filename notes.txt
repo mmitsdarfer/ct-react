@@ -3,6 +3,7 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+-get rid of everything from old sort and scrape
 -games ended in SO have progress ended but timeRank is treated like they're ongoing
 -when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
    until refreshing
@@ -21,6 +22,10 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Show previous json data on webpage, scrape and update json, repeat (?)
+   - So, in server if [league].json already exists write that with jsonHtml then scrape (?)
+   - Maybe if I really can't get it to load dynamically
+- Update readme
 - See what happens when cookies don't yet exist
    - They can only be created in home page or with a delay in /preference
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
@@ -52,13 +57,14 @@ To do:
       - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 To do but this time it's specific:
-1. Ensure different priority orders work and work together
-- Maybe just make them more flexible so order matter less
+1. implement flexible priorities for all combinations and merge with main
 2. Figure out how to update scores when they load
 
 WIWWO: 
-2/26: Think I got diff-time-stand and diff-stand-time versions working for all 3! need more testing
+2/26: updated toJson so shows on webpage reflect proper sort
+      Think I got diff-time-stand and diff-stand-time versions working for all 3! need more testing
       -> testing with all unstarted games works for all diff-x-y
+      -> avgStanding is right but standRank is wrong
 2/23: MLB causes crash
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require

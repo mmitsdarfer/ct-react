@@ -65,7 +65,7 @@ function timeToObj(data, league){   //rename when merging files
     //data[data.length-2].time = '7:30 - 1st';
     //data[data.length-1].time = '7:00 - 3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
-        data[i].time = timeConversion(league, data[i].time).toString();
+        data[i].convertedTime = timeConversion(league, data[i].time).toString();
     }
 }
 
@@ -89,14 +89,14 @@ function newTimeSort(data){ //RENAME
     let times = [];
     
     for(let i = 0; i < data.length; i++){
-        if(data[i].time.includes('Final')){
+        if(data[i].convertedTime.includes('Final')){
             times[i] = '0';
         }
-        else if(data[i].time.includes('PM') || data[i].time.includes('AM')){
+        else if(data[i].convertedTime.includes('PM') || data[i].time.includes('AM')){
             times[i] = militaryTime(data[i].time);
         }
         else{
-            times[i] = data[i].time;
+            times[i] = data[i].convertedTime;
         }
     }
 
@@ -185,17 +185,17 @@ function newStandingsSort(data){
 
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < ongoingStands.length; j++){
-            if(data[i].avgStanding == onStandsSort[j]){
+            if(data[i].progress == 'ongoing' && data[i].avgStanding == onStandsSort[j]){
                 data[i].standRank = j
             }
         }
         for(let j = 0; j < unstartedStands.length; j++){
-            if(data[i].avgStanding == unstartStandsSort[j]){
+            if(data[i].progress == 'unstarted' && data[i].avgStanding == unstartStandsSort[j]){
                 data[i].standRank = j + ongoingStands.length;
             }
         }
         for(let j = 0; j < endedStands.length; j++){
-            if(data[i].avgStanding == endStandsSort[j]){
+            if(data[i].progress == 'ended' && data[i].avgStanding == endStandsSort[j]){
                 data[i].standRank = j + ongoingStands.length + unstartedStands.length;
             }
         }
@@ -219,7 +219,48 @@ function dropEmpties(data){
     }
 }
 
-function finalSort(data, priority){
+function toJson(data, league, date){
+    let jsonData = {};
+    jsonData.table = [];
+    let obj = {};
+    for(let i = 0; i < data.length; i++){
+        if(data[i] !== undefined){
+            for(let j = 0; j < data[i].length; j++){
+                obj = {
+                    team1: data[i][j].team1,
+                    score1: data[i][j].score1,
+                    team2: data[i][j].team2,
+                    score2: data[i][j].score2,
+                    progress: data[i][j].progress,
+                    time: data[i][j].time,
+                    network: data[i][j].network,
+                    link: data[i][j].link
+                }
+                jsonData.table.push(obj);
+            }
+        }
+        else{
+            obj = {
+                team1: data[i].team1,
+                score1: data[i].score1,
+                team2: data[i].team2,
+                score2: data[i].score2,
+                progress: data[i].progress,
+                time: data[i].time,
+                network: data[i].network,
+                link: data[i].link
+            }
+            jsonData.table.push(obj);
+        }
+        
+    }
+    jsonData.table.push({date: date});
+    fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
+        if(err) throw err;
+    }); 
+}
+
+function finalSort(data, priority, league, date){
     data = newTimeSort(data);  //RENAME
     data = newDiffSort(data);  //RENAME
     data = newStandingsSort(data); //RENAME
@@ -317,8 +358,10 @@ function finalSort(data, priority){
 
         dropEmpties(endSorted);
 
+        console.log(priority);
         console.log('__endSorted below__');
-        console.log(endSorted);  
+        console.log(endSorted); 
+        toJson(endSorted, league, date); 
     }
 
     else if(priority[0] == 'times'){
@@ -331,7 +374,6 @@ function finalSort(data, priority){
                 }
             }
             if(sorted[i] !== undefined && sorted[i].length > 1){
-                console.log(sorted[i][0].diffRank);
                 for(let j = 0; j < data.length+1; j++){
                     for(let k = 0; k < sorted[i].length; k++){
                         if(sorted[i][k].diffRank == j){
@@ -347,7 +389,6 @@ function finalSort(data, priority){
                 sorted[i] = midSorted[i];
             }
         }
-        console.log(sorted);
     }
     else if(priority[0] == 'standings'){
         for(let i = 0; i < data.length; i++){       
@@ -357,12 +398,6 @@ function finalSort(data, priority){
                 }
             }
         }
-    }
-   // console.log('SORTED');
-   
-    for(let i = 0; i < sorted.length; i++){
-      //  console.log(sorted[i].length);
-       // console.log(sorted[i]);
     }
 }
 
@@ -534,9 +569,11 @@ var scrape = async function scrape(league, priority){
     }
     
     //write to json file 
+    /*
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(data), function(err){
         if(err) throw err;
     }); 
+    */
 
     const callStandings = async () => {
         await standingsScrape(gameData.table, league);
@@ -545,7 +582,7 @@ var scrape = async function scrape(league, priority){
 
         timeToObj(gameData.table, league);
         //console.log(gameData.table);
-        finalSort(gameData.table, priority);
+        finalSort(gameData.table, priority, league, date);
 
         // do something else here after standingsScrape completes
         //put everything else in here to ensure standings are collected
@@ -560,12 +597,12 @@ var scrape = async function scrape(league, priority){
 function showUnstarted(numGames, progress, teams, scores, times, nets, channels){
     for(let i = 0; i < numGames; i++){
         if(progress[i] == 'unstarted'){
-            toJson(teams[2*i], teams[2*i+1], scores[2*i], scores[2*i+1], progress[i], times[i], nets[i], channels[i]);
+          //  toJson(teams[2*i], teams[2*i+1], scores[2*i], scores[2*i+1], progress[i], times[i], nets[i], channels[i]);
             if(nets[i] != undefined){
-                console.log(nets[i] + ': ' + channels[i]);
+               // console.log(nets[i] + ': ' + channels[i]);
              } 
-             console.log(times[i] + '\n' + 'Progress ' + progress[i] + '\n' + 
-             teams[i*2] + '  ' + scores[i*2] + '\n' + teams[i*2+1] + '  ' + scores[i*2+1] +'\n');
+          //   console.log(times[i] + '\n' + 'Progress ' + progress[i] + '\n' + 
+           //  teams[i*2] + '  ' + scores[i*2] + '\n' + teams[i*2+1] + '  ' + scores[i*2+1] +'\n');
         }
     }
 }
@@ -605,15 +642,16 @@ function getTimeTies(times, progress, teams, scores, nets, channels){
     }
     for(let i = 0; i < timeTies.length; i++){
         //what to do if time and scores are both same?? (happened first halftime I implemented this) 
-        toJson(teams[2*timeTies[i][1]], teams[2*timeTies[i][1]+1], scores[2*timeTies[i][1]], scores[2*timeTies[i][1]+1],
-            progress[timeTies[i][1]], times[timeTies[i][1]], nets[timeTies[i][1]], channels[timeTies[i][1]]);
+     //   toJson(teams[2*timeTies[i][1]], teams[2*timeTies[i][1]+1], scores[2*timeTies[i][1]], scores[2*timeTies[i][1]+1],
+       //     progress[timeTies[i][1]], times[timeTies[i][1]], nets[timeTies[i][1]], channels[timeTies[i][1]]);
         if(nets[timeTies[i][1]] != undefined){
-            console.log(nets[timeTies[i][1]] + ': ' + channels[timeTies[i][1]]);
+         //   console.log(nets[timeTies[i][1]] + ': ' + channels[timeTies[i][1]]);
         }
-        console.log(times[timeTies[i][1]] + '\nProgress:  ' +
+    /*    console.log(times[timeTies[i][1]] + '\nProgress:  ' +
         progress[timeTies[i][1]] + '\n' + teams[2*timeTies[i][1]]
         + '  ' + scores[2*timeTies[i][1]] + '\n' + teams[2*timeTies[i][1]+1]
         + '  ' + scores[2*timeTies[i][1]+1] +'\n');
+        */
     }
 
     let endedAmt = times.length - ongoingTimes.length;
@@ -671,17 +709,19 @@ function diffsWithTimes(diffTies, diffTimes, progress, teams, scores, times, net
         for(let j = 0; j < diffTies[i].length; j++){    //if multiple games with same diff, add json by time
             /*team at position derived from current diff amount,
             highest time from timeSort, and the ones are for positions being second for timeSort and diffTies    */
-            toJson(teams[2*diffTies[i][sortedTimes[j][1]][1]], teams[2*diffTies[i][sortedTimes[j][1]][1]+1],
+           /* toJson(teams[2*diffTies[i][sortedTimes[j][1]][1]], teams[2*diffTies[i][sortedTimes[j][1]][1]+1],
                 scores[2*diffTies[i][sortedTimes[j][1]][1]], scores[2*diffTies[i][sortedTimes[j][1]][1]+1],
                 progress[diffTies[i][sortedTimes[j][1]][1]], times[diffTies[i][sortedTimes[j][1]][1]],
                 nets[diffTies[i][sortedTimes[j][1]][1]], channels[diffTies[i][sortedTimes[j][1]][1]]);
-            if(nets[diffTies[i][0][1]] != undefined){
-                console.log(nets[diffTies[i][0][1]] + ': ' + channels[diffTies[i][0][1]]);
+            */
+                if(nets[diffTies[i][0][1]] != undefined){
+            //    console.log(nets[diffTies[i][0][1]] + ': ' + channels[diffTies[i][0][1]]);
                 } 
-            console.log(times[diffTies[i][sortedTimes[j][1]][1]] + '\nProgress:  ' +
+          /*  console.log(times[diffTies[i][sortedTimes[j][1]][1]] + '\nProgress:  ' +
             progress[diffTies[i][sortedTimes[j][1]][1]] + '\n' + teams[2*diffTies[i][sortedTimes[j][1]][1]]
             + '  ' + scores[2*diffTies[i][sortedTimes[j][1]][1]] + '\n' + teams[2*diffTies[i][sortedTimes[j][1]][1]+1]
             + '  ' + scores[2*diffTies[i][sortedTimes[j][1]][1]+1] +'\n');
+            */
         }
     }
 }
@@ -692,12 +732,12 @@ function endedDiffSort(endedDiffs, progress, endedSort, diffs, teams, scores, ti
         for(let i = 0; i < numGames; i++){
             if(progress[i] == 'ended'){
                 if(endedSort.indexOf(diffs[i]) == j){
-                    toJson(teams[2*i], teams[2*i+1], scores[2*i], scores[2*i+1], progress[i], times[i], nets[i], channels[i]);
+                 //   toJson(teams[2*i], teams[2*i+1], scores[2*i], scores[2*i+1], progress[i], times[i], nets[i], channels[i]);
                     if(nets[i] != undefined){
-                        console.log(nets[i] + ': ' + channels[i]);
+                   //     console.log(nets[i] + ': ' + channels[i]);
                      } 
-                     console.log(times[i] + '\n' + 'Progress ' + progress[i] + '\n' + 
-                     teams[i*2] + '  ' + scores[i*2] + '\n' + teams[i*2+1] + '  ' + scores[i*2+1] +'\n');
+               //      console.log(times[i] + '\n' + 'Progress ' + progress[i] + '\n' + 
+                 //    teams[i*2] + '  ' + scores[i*2] + '\n' + teams[i*2+1] + '  ' + scores[i*2+1] +'\n');
                 }
             }
         }
@@ -709,12 +749,12 @@ function timesThenDiffs(endedSort, numGames, diffs, teams, scores, progress, tim
         for(let j = 0; j < numGames; j++){
             if(progress[j] == 'ended'){
                 if(endedSort.indexOf(diffs[j]) == i){
-                    toJson(teams[2*j], teams[2*j+1], scores[2*j], scores[2*j+1], progress[j], times[j], nets[j], channels[j]);
+                   // toJson(teams[2*j], teams[2*j+1], scores[2*j], scores[2*j+1], progress[j], times[j], nets[j], channels[j]);
                     if(nets[j] != undefined){
-                        console.log(nets[j] + ': ' + channels[j]);
+                    //    console.log(nets[j] + ': ' + channels[j]);
                      } 
-                     console.log(times[j] + '\n' + 'Progress ' + progress[j] + '\n' + 
-                     teams[2*j] + '  ' + scores[2*j] + '\n' + teams[2*j+1] + '  ' + scores[2*j+1] +'\n');
+                   //  console.log(times[j] + '\n' + 'Progress ' + progress[j] + '\n' + 
+                  //   teams[2*j] + '  ' + scores[2*j] + '\n' + teams[2*j+1] + '  ' + scores[2*j+1] +'\n');
                 }
             }
         }
@@ -743,6 +783,7 @@ function diffSort(ongoingDiffs, times, diffs, progress){
 }
 
 //push values onto data table to be written to json
+/*
 function toJson(t1, t2, s1, s2, prog, time, net, link){
     var obj = {};
     obj = {
@@ -757,6 +798,8 @@ function toJson(t1, t2, s1, s2, prog, time, net, link){
     }
     data.table.push(obj);
 }
+REPLACED THIS
+*/
 
 //merge & mergesort to rank the diffs
 function merge(left, right){
