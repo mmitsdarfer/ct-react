@@ -3,11 +3,11 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
--get rid of everything from old sort and scrape
--games ended in SO have progress ended but timeRank is treated like they're ongoing
--when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
+- get rid of everything from old sort and scrape
+- games ended in SO have progress ended but timeRank is treated like they're ongoing
+- when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
    until refreshing
--still get:
+- still get:
    "if((time[2].includes('OT')))
                   ^
    TypeError: Cannot read properties of undefined (reading 'includes') "
@@ -22,6 +22,8 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Instead of loading standings each time, if standings exist and has been update in past [time period] use that (?)
+- Display standings (?)
 - Show previous json data on webpage, scrape and update json, repeat (?)
    - So, in server if [league].json already exists write that with jsonHtml then scrape (?)
    - Maybe if I really can't get it to load dynamically
@@ -61,10 +63,8 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-2/26: updated toJson so shows on webpage reflect proper sort
-      Think I got diff-time-stand and diff-stand-time versions working for all 3! need more testing
-      -> testing with all unstarted games works for all diff-x-y
-      -> avgStanding is right but standRank is wrong
+2/27: I think all finalSort is working, can always use more testing
+      Got rid of all scrape.js code
 2/23: MLB causes crash
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
