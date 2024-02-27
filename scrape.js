@@ -600,7 +600,7 @@ var scrape = async function scrape(league, priority){
 
         //put networks in nodelist
         //nba doesn't have network
-        if(!league.includes('NBA')){
+        if(!league.includes('NBA') && !league.includes('MLB')){
             for(let i = 0; i < notEnded/2; i++){   //networks shown only for unstarted and ongoing games
                 nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
             }

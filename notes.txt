@@ -22,6 +22,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Look into react (base of platform computing work?)
 - Instead of loading standings each time, if standings exist and has been update in past [time period] use that (?)
 - Display standings (?)
 - Show previous json data on webpage, scrape and update json, repeat (?)
@@ -46,6 +47,7 @@ To do:
    - Use platform computing notes for a guide
    - https://bootstrapshuffle.com/classes
 - Sometimes NBA does have channels, so check for channel instead of a whole league either having them or not
+   - Spring training mlb doesn't have channels but I think regular season will, so def need to implement this
 - Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
