@@ -63,8 +63,10 @@ async function standingsScrape(data, league){
 
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
-    //data[data.length-2].time = '7:30 - 1st';
-    //data[data.length-1].time = '7:00 - 3rd';      //use to compare game starts with game progress during off times of day
+  //  data[data.length-2].progress = 'ongoing';
+    data[data.length-2].time = '7:30 - 1st';
+   // data[data.length-1].progress = 'ongoing';
+   // data[data.length-1].time = '3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
         data[i].convertedTime = timeConversion(league, data[i].time).toString();
     }
@@ -792,7 +794,8 @@ function timeConversion(league, time){
         return time;
     }
     else if(time.length == 3){
-        time = [0, 0, parseInt(time) + 1];
+        time = [0, 0, (parseInt(time) + 1).toString()];    //as period ends the time disappears but the period remains,
+                                                        //so set time to beginning of next period
     }
     else{    
         time = time.split(' - ');

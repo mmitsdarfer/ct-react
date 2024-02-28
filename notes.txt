@@ -65,9 +65,9 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-2/27: I think all finalSort is working, can always use more testing
-      Got rid of all scrape.js code
-2/23: MLB causes crash
+2/27: New finalSort is all messed up
+      -> not always showing all games
+      -> priority0 = diff works then priority1 time doesn't because rank is wrong
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
