@@ -64,7 +64,7 @@ async function standingsScrape(data, league){
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
   //  data[data.length-2].progress = 'ongoing';
-    data[data.length-2].time = '7:30 - 1st';
+    //data[data.length-2].time = '7:30 - 1st';
    // data[data.length-1].progress = 'ongoing';
    // data[data.length-1].time = '3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
