@@ -143,13 +143,12 @@ function diffSort(data){
     }
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ended'){
-            endedDiffs[i-unstartedLen-ongoingDiffs.length] = data[i].diff;
+            endedDiffs[i] = data[i].diff;
         }
     }
 
-    let ongoingSort = mergeSort(ongoingDiffs);
-    
-    let endedSort  = mergeSort(endedDiffs);
+    let ongoingSort = dropEmpties(mergeSort(ongoingDiffs));
+    let endedSort  = dropEmpties(mergeSort(endedDiffs));
     
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < ongoingSort.length; j++){
@@ -228,6 +227,7 @@ function dropEmpties(data){
                 i = i-1;
         }
     }
+    return data;
 }
 
 function toJson(data, league, date){
@@ -273,9 +273,9 @@ function toJson(data, league, date){
 
 //calls each type of sort and uses those rankings with priorities to come up with final sorted order and save that to json
 function finalSort(data, priority, league, date){
-    data = timeSort(data);  //RENAME
-    data = diffSort(data);  //RENAME
-    data = standingsSort(data); //RENAME
+    data = timeSort(data);
+    data = diffSort(data);
+    data = standingsSort(data);
 
     let sorted = [];
     let midSorted = [];
