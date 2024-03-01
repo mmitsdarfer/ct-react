@@ -1,12 +1,30 @@
-var obj = {};
-    obj = {
-      team1: 'phi',
-      score1: 1,
-      team2: 'nyr',
-      score2: 0,
-      progress: 'ended',  //unstarted, ended, ongoing
-      time: '7:00 PM',   //time left or start time
-      network: 'ESPN'
+const array = [2, [[], []], 9];
+
+console.log(array);
+
+for(let i = 0; i < array.length; i++){
+  if(array[i] !== undefined){
+    if(array[i].length > 0){
+      for(let j = 0; j < array[i].length; j++){
+        while(array[i][j] !== undefined){
+            if(array[i][j].length == 0){
+                array[i].splice(j, 1);
+            }
+          }
+      }
     }
-obj.test = 'testing';
-console.log(obj);
+    if(array[i].length == 0){
+      array.splice(i, 1);
+    }
+  }
+}
+
+console.log(array[1].length);
+
+const index = array.indexOf([]);
+if (index > -1) { // only splice array when item is found
+  // 2nd parameter means remove one item only
+}
+
+// array = [2, 9]
+console.log(array); 
