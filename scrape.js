@@ -63,8 +63,8 @@ async function standingsScrape(data, league){
 
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
-  //  data[data.length-2].progress = 'ongoing';
-    //data[data.length-2].time = '7:30 - 1st';
+    //data[data.length-2].progress = 'ongoing';
+    //data[data.length-2].time = '1:30 - OT';
    // data[data.length-1].progress = 'ongoing';
    // data[data.length-1].time = '3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
@@ -106,10 +106,16 @@ function timeSort(data){
     }
 
     sorted = mergeSort(times).reverse();
+    console.log(times);
+    console.log('sort: ' + sorted);
 
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < data.length; j++){
             if(sorted[j] == times[i] && !data[i].time.includes('Final')){
+                console.log(j);
+                console.log(data[i].team1);
+                console.log(sorted[j]);
+                console.log(times[i] + '\n');
                 data[i].timeRank = j;
             }
             else if(data[i].time.includes('Final')){
@@ -747,6 +753,8 @@ function mergeSort(arr){
     let mid = Math.floor(arr.length /2 );
     let left = mergeSort(arr.slice(0, mid));
     let right = mergeSort(arr.slice(mid));
+    console.log('ms: ');
+    console.log(left, right);
     return merge(left, right);
 }
 
