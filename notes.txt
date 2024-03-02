@@ -67,9 +67,7 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-3/1: Added test.js with sample game objects to see if I could replicate diff-time issues, but wasn't able to
-      added return to dropEmpties and changed ongoing- and endedSort to use dropEmpties
-         -> endedSort has a more straightforward index, so I need to drop
+3/1: Revamped standings and think it's in a good spot, just need to add for when the days are different, not just times
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html

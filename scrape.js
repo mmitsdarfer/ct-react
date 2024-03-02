@@ -25,28 +25,115 @@ else{   //current, priority, ranked leagues with time visited
     priority = prefData[1];
 }
 
+function dateAndTime(){
+    let d = new Date();
+    let minutes = d.getMinutes();
+    if(minutes.length == 1){
+      //  minutes = '0' + minutes;
+    }
+    let dateArr = [d.getMonth()+1, d.getDate(), d.getFullYear(), d.getHours(), minutes];
+    return dateArr;
+}
+
 //visits league standings page and assigns an average of each team's standing
-async function standingsScrape(data, league){
-    console.log(league + ' standings');
-    let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
-    
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
+//if standings have been update in less than 3 hours, saves time by using last standings
+async function standingsScrape(league, data){ 
+    let standings = {};
+    let lastTime;
+    standings.table = [];
+    let currentDate = dateAndTime();
+    let timeDiff = 0;
     let teamRanks = [];
-    teamRanks = await page.evaluate(() => {
-        let standings = document.querySelectorAll('span.hide-mobile > a');
-        standArr = Array.from(standings);
-        standArr = standArr.map(game => game.textContent);
-    return standArr;
-    });
+    let leagueIndex;
+    let exists = false;
     
+    if(fs.existsSync('json/standings.json')) {
+        const parsedStands = JSON.parse(fs.readFileSync('json/standings.json', 'utf-8'));
+        standings = parsedStands;
+        for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
+            if(parsedStands.table[i].league == league){
+                leagueIndex = i;
+                exists = true;
+                lastTime = parsedStands.table[i].time;
+                //need to do if day is different!
+                if(lastTime.slice(0, -2).toString() == currentDate.slice(0, -2).toString()){
+                    timeDiff = 60*(lastTime[lastTime.length-2] - currentDate[currentDate.length-2]) 
+                    + (lastTime[lastTime.length-1] - currentDate[currentDate.length-1]);                    
+                }          
+            }
+        }
+        if(exists){
+            if(Math.abs(timeDiff) > 180){
+                console.log(league + ' standings');
+                let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+                const browser = await puppeteer.launch();
+                const page = await browser.newPage();
+                await page.goto(url);         
+                teamRanks = await page.evaluate(() => {
+                    let getStands = document.querySelectorAll('span.hide-mobile > a');
+                    standArr = Array.from(getStands);
+                    standArr = standArr.map(game => game.textContent);
+                    return standArr;
+                });
+                standings.table.splice(leagueIndex, 1);
+                await browser.close();
+            }
+            else{
+                teamRanks = parsedStands.table[leagueIndex].standings;
+                standings.table.splice(leagueIndex, 1);
+            }
+        }
+        else{
+            console.log(league + ' standings');
+            let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
+            await page.goto(url);              
+            teamRanks = await page.evaluate(() => {
+                let getStands = document.querySelectorAll('span.hide-mobile > a');
+                standArr = Array.from(getStands);
+                standArr = standArr.map(game => game.textContent);
+                return standArr;
+            });
+            await browser.close();
+        }
+        let standObj = {
+            league: league,
+            time: currentDate,
+            standings: teamRanks
+        };
+        standings.table.push(standObj);
+    }
+    else{
+        console.log(league + ' standings');
+        let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.goto(url);              
+        teamRanks = await page.evaluate(() => {
+            let getStands = document.querySelectorAll('span.hide-mobile > a');
+            standArr = Array.from(getStands);
+            standArr = standArr.map(game => game.textContent);
+            return standArr;
+        });
+        standings.table.push({
+            league: league,
+            time: currentDate,
+            standings: teamRanks
+        });
+        await browser.close();
+    }
+
+    fs.writeFile('json/standings.json', JSON.stringify(standings), function(err){
+       if(err) throw err;
+    });
     let gameRanks = [];
     for(let i = 0; i < data.length; i++){
         gameRanks[i] = [];
         for(let j = 0; j < teamRanks.length; j++){
             if(teamRanks[j].includes(data[i].team1)){        
-                gameRanks[i].push(data[i].team1, j);      
+                gameRanks[i].push(data[i].team1, j); 
+              //  console.log(j);     
             }
         }
         for(let j = 0; j < teamRanks.length; j++){
@@ -56,17 +143,11 @@ async function standingsScrape(data, league){
         }
         data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
     }
-
-    //close puppeteer browser
-    await browser.close();
+    return teamRanks, data;
 }
 
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
-    //data[data.length-2].progress = 'ongoing';
-    //data[data.length-2].time = '1:30 - OT';
-   // data[data.length-1].progress = 'ongoing';
-   // data[data.length-1].time = '3rd';      //use to compare game starts with game progress during off times of day
     for(let i = 0; i < data.length; i++){
         data[i].convertedTime = timeConversion(league, data[i].time).toString();
     }
@@ -105,17 +186,11 @@ function timeSort(data){
         }
     }
 
-    sorted = mergeSort(times).reverse();
-    console.log(times);
-    console.log('sort: ' + sorted);
+    sorted = mergeSort(times).reverse();;
 
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < data.length; j++){
             if(sorted[j] == times[i] && !data[i].time.includes('Final')){
-                console.log(j);
-                console.log(data[i].team1);
-                console.log(sorted[j]);
-                console.log(times[i] + '\n');
                 data[i].timeRank = j;
             }
             else if(data[i].time.includes('Final')){
@@ -230,7 +305,7 @@ function dropEmpties(data){
     return data;
 }
 
-function toJson(data, league, date){
+function toJson(data, league, date, standings){
     let jsonData = {};
     jsonData.table = [];
     let obj = {};
@@ -272,7 +347,7 @@ function toJson(data, league, date){
 }
 
 //calls each type of sort and uses those rankings with priorities to come up with final sorted order and save that to json
-function finalSort(data, priority, league, date){
+function finalSort(data, priority, league, date, standings){
     data = timeSort(data);
     data = diffSort(data);
     data = standingsSort(data);
@@ -538,9 +613,9 @@ function finalSort(data, priority, league, date){
     
     dropEmpties(endSorted);
 
-    console.log(priority);
+    console.log('Priority: ' + priority);
     console.log(endSorted); 
-    toJson(endSorted, league, date); 
+    toJson(endSorted, league, date, standings); 
 }
 
 //scrapes all of the game data for a league
@@ -680,10 +755,11 @@ var scrape = async function scrape(league, priority){
     } 
 
     const callStandings = async () => {
-        await standingsScrape(gameData.table, league);
+       // await standingsScrape(gameData.table, league);
+       var standings = await standingsScrape(league, gameData.table);
 
         timeToObj(gameData.table, league);
-        finalSort(gameData.table, priority, league, date);
+        finalSort(gameData.table, priority, league, date, standings);
       }
       
     callStandings();
@@ -753,8 +829,6 @@ function mergeSort(arr){
     let mid = Math.floor(arr.length /2 );
     let left = mergeSort(arr.slice(0, mid));
     let right = mergeSort(arr.slice(mid));
-    console.log('ms: ');
-    console.log(left, right);
     return merge(left, right);
 }
 
