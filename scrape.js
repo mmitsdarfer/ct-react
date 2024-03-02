@@ -132,8 +132,7 @@ async function standingsScrape(league, data){
         gameRanks[i] = [];
         for(let j = 0; j < teamRanks.length; j++){
             if(teamRanks[j].includes(data[i].team1)){        
-                gameRanks[i].push(data[i].team1, j); 
-              //  console.log(j);     
+                gameRanks[i].push(data[i].team1, j);     
             }
         }
         for(let j = 0; j < teamRanks.length; j++){
@@ -176,17 +175,16 @@ function timeSort(data){
     
     for(let i = 0; i < data.length; i++){
         if(data[i].convertedTime.includes('Final')){
-            times[i] = '0';
+            times[i] = 0;
         }
         else if(data[i].convertedTime.includes('PM') || data[i].time.includes('AM')){
-            times[i] = militaryTime(data[i].time);
+            times[i] = parseInt(militaryTime(data[i].time));
         }
         else{
-            times[i] = data[i].convertedTime;
+            times[i] = parseInt(data[i].convertedTime);
         }
     }
-
-    sorted = mergeSort(times).reverse();;
+    sorted = mergeSort(times).reverse();
 
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < data.length; j++){
@@ -205,20 +203,18 @@ function timeSort(data){
 function diffSort(data){
     let ongoingDiffs = [];
     let endedDiffs = [];
-    let unstartedLen = 0;
 
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ongoing'){
             ongoingDiffs[i] = data[i].diff;
         }
-        else if(data[i].progress == 'unstarted'){
-            data[i].diffRank = data.length;
-            unstartedLen++;
-        }
     }
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ended'){
             endedDiffs[i] = data[i].diff;
+        }
+        else if(data[i].progress == 'unstarted'){
+            data[i].diffRank = ongoingDiffs.length;
         }
     }
 
@@ -233,7 +229,7 @@ function diffSort(data){
         }
         for(let j = 0; j < endedSort.length; j++){
             if(data[i].diff == endedSort[j] && data[i].progress == 'ended'){
-                data[i].diffRank = j + ongoingSort.length;
+                data[i].diffRank = j + ongoingSort.length + 1; //put ended games after ongoing and unstarted
             }
         }
     }
@@ -826,7 +822,7 @@ function merge(left, right){
 }
 function mergeSort(arr){
     if(arr.length <= 1) return arr;
-    let mid = Math.floor(arr.length /2 );
+    let mid = Math.floor(arr.length / 2);
     let left = mergeSort(arr.slice(0, mid));
     let right = mergeSort(arr.slice(mid));
     return merge(left, right);
