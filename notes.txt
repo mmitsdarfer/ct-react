@@ -25,7 +25,6 @@ known errors:
 
 To do:
 - Look into react (base on platform computing work?)
-- Instead of loading standings each time, if standings exist and has been update in past [time period] use that (?)
 - Display standings (?)
 - Show previous json data on webpage, scrape and update json, repeat (?)
    - So, in server if [league].json already exists write that with jsonHtml then scrape (?)
@@ -35,15 +34,16 @@ To do:
    - They can only be created in home page or with a delay in /preference
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
    - When Flyers are on national broadcasts replace NBCSP link
+      - Think I did this
 - Scrape each league from the home page so at least some data is ready for when that page opens?
-   - Use the preferences json to just scrape top league? Or in order from most visited to least?
+   - Use preferences.json to just scrape top league? Or in order from most visited to least?
    - Have to make sure it's sequential because overlap messes up the data
 - Add timer to auto refresh 
    - Run scrape in the background on its own and have refresh just implement those scraped values
       - Do I want to refresh the page (and in turn data) without clicking refresh?
  - Add team logos
  - (Evergreen) Document code and get rid of unneeded parts
-- Check out bootstrap for cleaner UI
+- Check out bootstrap for cleaner UI (?)
    - At least change fonts
       - Make dropdown same as everything else?
    - Use platform computing notes for a guide
@@ -63,14 +63,12 @@ To do:
       - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 To do but this time it's specific:
-1. implement flexible priorities for all combinations and merge with main
-2. Figure out how to update scores when they load
+1. Figure out how to update scores when they load
 
 WIWWO: 
 3/2: Think I have time to check standings fully functional. will need to test when more time passes I guess
    -> I merged "dates" into "standings revamp" anyway, and won't change until after testing, then I'll merge into "main"
-   MLB still fully broken...do next after below entry
-3/1: Revamped standings and think it's in a good spot, just need to add for when the days are different, not just times
+   MLB still fully broken...do next 
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
