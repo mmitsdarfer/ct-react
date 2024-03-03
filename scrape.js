@@ -28,11 +28,27 @@ else{   //current, priority, ranked leagues with time visited
 function dateAndTime(){
     let d = new Date();
     let minutes = d.getMinutes();
-    if(minutes.length == 1){
-      //  minutes = '0' + minutes;
-    }
     let dateArr = [d.getMonth()+1, d.getDate(), d.getFullYear(), d.getHours(), minutes];
     return dateArr;
+}
+
+function dateConversion(last, current){
+    //[3,2,2024,16,49]
+    let lastMatch = 0;
+    for(let  i = 0; i < last.length; i++){
+        if(last[i] != current[i]){
+            lastMatch = i-1;
+            break;
+        }
+    }
+    if(lastMatch > 2){
+        return false;
+    }
+ //   if(lastMatch == 2 && )
+    console.log(last[lastMatch] + '\n' + lastMatch);
+    console.log('last: ' + last);
+    console.log('current: ' + current);
+    return true;
 }
 
 //visits league standings page and assigns an average of each team's standing
@@ -46,6 +62,8 @@ async function standingsScrape(league, data){
     let teamRanks = [];
     let leagueIndex;
     let exists = false;
+    let needCheck;
+    let dateOut;
     
     if(fs.existsSync('json/standings.json')) {
         const parsedStands = JSON.parse(fs.readFileSync('json/standings.json', 'utf-8'));
@@ -55,16 +73,23 @@ async function standingsScrape(league, data){
                 leagueIndex = i;
                 exists = true;
                 lastTime = parsedStands.table[i].time;
+                needCheck = dateConversion(lastTime, currentDate);
+                console.log(needCheck);
                 //need to do if day is different!
-                if(lastTime.slice(0, -2).toString() == currentDate.slice(0, -2).toString()){
+                if(lastTime.slice(0, -2).toString() == currentDate.slice(0, -2).toString()){ //if days are same
                     timeDiff = 60*(lastTime[lastTime.length-2] - currentDate[currentDate.length-2]) 
                     + (lastTime[lastTime.length-1] - currentDate[currentDate.length-1]);                    
-                }          
+                }     
+                else if(currentDate[1] - lastTime[1] == 1){
+
+                }     
+                console.log(lastTime.slice(1, 3).toString() + '\n' + currentDate.slice(1, 3).toString())
             }
         }
         if(exists){
             if(Math.abs(timeDiff) > 180){
                 console.log(league + ' standings');
+                dateOut = currentDate;
                 let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
@@ -79,12 +104,14 @@ async function standingsScrape(league, data){
                 await browser.close();
             }
             else{
+                dateOut = parsedStands.table[leagueIndex].time;
                 teamRanks = parsedStands.table[leagueIndex].standings;
                 standings.table.splice(leagueIndex, 1);
             }
         }
         else{
             console.log(league + ' standings');
+            dateOut = currentDate;
             let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
@@ -97,15 +124,17 @@ async function standingsScrape(league, data){
             });
             await browser.close();
         }
+
         let standObj = {
             league: league,
-            time: currentDate,
+            time: dateOut,
             standings: teamRanks
         };
         standings.table.push(standObj);
     }
     else{
         console.log(league + ' standings');
+        dateOut = currentDate;
         let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
@@ -118,7 +147,7 @@ async function standingsScrape(league, data){
         });
         standings.table.push({
             league: league,
-            time: currentDate,
+            time: dateOut,
             standings: teamRanks
         });
         await browser.close();

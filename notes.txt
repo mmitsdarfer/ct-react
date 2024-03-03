@@ -68,6 +68,8 @@ To do but this time it's specific:
 
 WIWWO: 
 3/2: When a time is less than 1000 seconds it was being put as higher than other times. think I fixed with parseInt for each time
+      -> test more
+   MLB still fully broken...do next after below entry
 3/1: Revamped standings and think it's in a good spot, just need to add for when the days are different, not just times
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
