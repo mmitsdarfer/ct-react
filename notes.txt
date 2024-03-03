@@ -59,6 +59,7 @@ To do:
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd, and so on
+   - Split into separate files (?)
    - Some people preach against for loops so maybe try forEach, map, and/or filter
       - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 

@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { all } from 'axios';
 
 var league;
 var priority;
@@ -25,24 +24,22 @@ else{   //current, priority, ranked leagues with time visited
     priority = prefData[1];
 }
 
-function dateAndTime(last, current){
-    
+//compares current timestamp with last standings check
+function dateAndTime(last, current){  
     let timeDiff = current - last; // current.getTime() - last.getTime();
     let diffHrs = Math.round(timeDiff / (1000 * 3600));
     var cDate = new Date(current); 
     console.log('current timestamp: ' + cDate.toString());
     var lDate = new Date(last); 
     console.log('last timestamp: ' + lDate.toString());
-
     if(diffHrs > 3){
         return true;
     }
     return false;
 }
 
-
 //visits league standings page and assigns an average of each team's standing
-//if standings have been update in less than 3 hours, saves time by using last standings
+//if standings have been updated in last 3 hours, saves time by using previous standings
 async function standingsScrape(league, data){ 
     let standings = {};
     let last;
@@ -103,7 +100,6 @@ async function standingsScrape(league, data){
             });
             await browser.close();
         }
-
         let standObj = {
             league: league,
             time: dateOut,
@@ -167,20 +163,15 @@ function militaryTime(time){
     if(time[1].includes('PM')){
         time[0] += 12;
     }
-    if(time[1].includes('Final')){
-
-    }
     time[0] *= -60;
     time = time[0] - parseInt(time[1]);
-
     return time;
 }
 
-//sorts and ranks times for each game obj
+//groups games by progress and sorts them by time remaining
 function timeSort(data){
     let sorted = [];
-    let times = [];
-    
+    let times = [];   
     for(let i = 0; i < data.length; i++){
         if(data[i].convertedTime.includes('Final')){
             times[i] = 0;
@@ -208,10 +199,10 @@ function timeSort(data){
     return data;
 }
 
+//groups games by progress and sorts them by point differential 
 function diffSort(data){
     let ongoingDiffs = [];
     let endedDiffs = [];
-
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ongoing'){
             ongoingDiffs[i] = data[i].diff;
@@ -241,13 +232,10 @@ function diffSort(data){
             }
         }
     }
-    for(let i = 0; i < data.length; i++){
-        
-    }
-
     return data;
 }
 
+//groups games by progress and sorts them by average standings of teams
 function standingsSort(data){
     let ongoingStands = [];
     let unstartedStands = [];
@@ -289,10 +277,10 @@ function standingsSort(data){
             }
         }
     }
-
     return data;
 }
 
+//remove empty arrays from an array of arrays
 function dropEmpties(data){
     for(let i = 0; i < data.length; i++){
         if(data[i] !== undefined){
@@ -309,7 +297,8 @@ function dropEmpties(data){
     return data;
 }
 
-function toJson(data, league, date, standings){
+//write to league page based on previous sorts
+function toJson(data, league, date){
     let jsonData = {};
     jsonData.table = [];
     let obj = {};
@@ -341,8 +330,7 @@ function toJson(data, league, date, standings){
                 link: data[i].link
             }
             jsonData.table.push(obj);
-        }
-        
+        }      
     }
     jsonData.table.push({date: date});
     fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
@@ -350,7 +338,7 @@ function toJson(data, league, date, standings){
     }); 
 }
 
-//calls each type of sort and uses those rankings with priorities to come up with final sorted order and save that to json
+//calls each type of sort and uses those rankings with priorities to come up with final sorted order and send that to json
 function finalSort(data, priority, league, date, standings){
     data = timeSort(data);
     data = diffSort(data);
@@ -387,10 +375,8 @@ function finalSort(data, priority, league, date, standings){
                 else{
                     allSorted.push(sorted[i]);
                 }
-            }
-            
+            }           
             dropEmpties(allSorted);
-
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){  
                     for(let j = 0; j < data.length+1; j++){                       
@@ -424,10 +410,8 @@ function finalSort(data, priority, league, date, standings){
                 else{
                     allSorted.push(sorted[i]);
                 }
-            }   
-            
+            }            
             dropEmpties(allSorted); 
-
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){                     
                     for(let j = 0; j < data.length+1; j++){                                              
@@ -472,9 +456,7 @@ function finalSort(data, priority, league, date, standings){
                     allSorted.push(sorted[i]);
                 }
             }
-
             dropEmpties(allSorted);
-
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){  
                     for(let j = 0; j < data.length+1; j++){                       
@@ -508,10 +490,8 @@ function finalSort(data, priority, league, date, standings){
                 else{
                     allSorted.push(sorted[i]);
                 }
-            }   
-            
+            }             
             dropEmpties(allSorted); 
-
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){                     
                     for(let j = 0; j < data.length+1; j++){                                              
@@ -556,9 +536,7 @@ function finalSort(data, priority, league, date, standings){
                     allSorted.push(sorted[i]);
                 }
             }
-
             dropEmpties(allSorted);
-
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){  
                     for(let j = 0; j < data.length+1; j++){                       
@@ -592,10 +570,8 @@ function finalSort(data, priority, league, date, standings){
                 else{
                     allSorted.push(sorted[i]);
                 }
-            }
-            
+            }         
             dropEmpties(allSorted);
-
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){  
                     for(let j = 0; j < data.length+1; j++){                       
@@ -619,7 +595,7 @@ function finalSort(data, priority, league, date, standings){
 
     console.log('Priority: ' + priority);
     console.log(endSorted); 
-    toJson(endSorted, league, date, standings); 
+    toJson(endSorted, league, date); 
 }
 
 //scrapes all of the game data for a league
@@ -773,7 +749,7 @@ var scrape = async function scrape(league, priority){
 }
 
 //takes in listed channel and provides streaming link
-//eventually use scrape to get specific game link, not just streamer
+//TODO: eventually use scrape to get specific game link, not just streamer
 function netToLink(nets, teams, progress, numGames){
     //make sure to log in first
     const tnt = 'https://www.tntdrama.com/watchtnt/east';
@@ -899,8 +875,7 @@ function timeConversion(league, time){
             time[0] = '0';
         }
         
-        time = time.slice(0,3);
-        
+        time = time.slice(0,3);    
         time[0] = parseInt(time[0]);
         time[1] = parseInt(time[1]);
     }
@@ -922,7 +897,6 @@ function timeConversion(league, time){
     time[0] = time[0] + time[1];
     time[1] = time[2] - 1;
     time = time.slice(0,2);
-
     time = time[1] * unitLen + (unitLen - time[0]);
     return time;
 }

@@ -42,6 +42,7 @@ function mergeSort(arr){
     return merge(left, right);
 }
 
+//use data from league jsons to transform league.html & leagueIndex.html
 function jsonHtml(league, priority){
     var jsonParsed;
     async function writeJson(){
@@ -49,9 +50,7 @@ function jsonHtml(league, priority){
             callScrape(league, priority);
             jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
             return jsonParsed;
-        }, );
-        
-       
+        }, );     
     }
     if(existsSync('json/' + league.toLowerCase() + '.json', 'utf-8')) {
         jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
@@ -169,9 +168,8 @@ function jsonHtml(league, priority){
 
 app.use(cookieParser());
 
-//eventually have every page get cookies so it updates when leaving preferences
+//convert cookies to be written into preferences.json and reset if asked to
 function getCookies(req, res){
-    
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
     priority[1] = (req.cookies.Priority1); 
@@ -222,11 +220,9 @@ function getCookies(req, res){
     });
 }
 
-
-
 //home page
 app.get('/', (req, res) => { 
-    /*TO DO: I want to call for each league in order based on preferences.json ranking
+    /*TODO: I want to call for each league in order based on preferences.json ranking
     which might require using promises? I considered timers too
     */
     getCookies(req, res);
@@ -247,7 +243,6 @@ async function prefReset(priority = ['diffs', 'times', 'standings']){
 
 //increases preference value when league selected and updates preferences.json
 function preferences(league){
-
     var prefData;
     if (existsSync('json/preferences.json')) {
         prefData = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
@@ -259,7 +254,7 @@ function preferences(league){
     let prefsList = (Object.values(prefData));
     let prefHits = [];
 
-    //increase number
+    //increase hit number
     for(let i = 2; i < prefsList.length; i++){
         if(prefsList[i][0] == league){
             prefsList[i][1]++;
@@ -280,7 +275,6 @@ function preferences(league){
         }
     }
     //preferences.json format: [current league selected, priority, [least visited team, team visits], [2nd least visit team, team visits], ... [most visited team, team visits]]
-    //rewrite to preferences.json
     writeFile('json/preferences.json', JSON.stringify(outList), function(err){
         if(err) throw err;
     }); 
@@ -300,8 +294,7 @@ app.get('/nhl', (req, res) => {
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
     priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2); 
-    
+    priority[2] = (req.cookies.Priority2);   
     let reset = (req.cookies.Reset);
     function callReset(){    
         res.cookie('Reset', 'false');
@@ -513,10 +506,8 @@ app.get('/preferences', (req, res) => {
         setTimeout(function () {
             let prefRes = prefsJsonHtml(priority);
         res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(prefRes);
-            
-        }, 100);
-        
+        res.end(prefRes);          
+        }, 100);       
     }
     writePrefs();
 })
