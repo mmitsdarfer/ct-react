@@ -25,40 +25,29 @@ else{   //current, priority, ranked leagues with time visited
     priority = prefData[1];
 }
 
-function dateAndTime(){
-    let d = new Date();
-    let minutes = d.getMinutes();
-    let dateArr = [d.getMonth()+1, d.getDate(), d.getFullYear(), d.getHours(), minutes];
-    return dateArr;
+function dateAndTime(last, current){
+    
+    let timeDiff = current - last; // current.getTime() - last.getTime();
+    let diffHrs = Math.round(timeDiff / (1000 * 3600));
+    var cDate = new Date(current); 
+    console.log('current timestamp: ' + cDate.toString());
+    var lDate = new Date(last); 
+    console.log('last timestamp: ' + lDate.toString());
+
+    if(diffHrs > 3){
+        return true;
+    }
+    return false;
 }
 
-function dateConversion(last, current){
-    //[3,2,2024,16,49]
-    let lastMatch = 0;
-    for(let  i = 0; i < last.length; i++){
-        if(last[i] != current[i]){
-            lastMatch = i-1;
-            break;
-        }
-    }
-    if(lastMatch > 2){
-        return false;
-    }
- //   if(lastMatch == 2 && )
-    console.log(last[lastMatch] + '\n' + lastMatch);
-    console.log('last: ' + last);
-    console.log('current: ' + current);
-    return true;
-}
 
 //visits league standings page and assigns an average of each team's standing
 //if standings have been update in less than 3 hours, saves time by using last standings
 async function standingsScrape(league, data){ 
     let standings = {};
-    let lastTime;
+    let last;
     standings.table = [];
-    let currentDate = dateAndTime();
-    let timeDiff = 0;
+    let currentDate = new Date().getTime();
     let teamRanks = [];
     let leagueIndex;
     let exists = false;
@@ -72,22 +61,12 @@ async function standingsScrape(league, data){
             if(parsedStands.table[i].league == league){
                 leagueIndex = i;
                 exists = true;
-                lastTime = parsedStands.table[i].time;
-                needCheck = dateConversion(lastTime, currentDate);
-                console.log(needCheck);
-                //need to do if day is different!
-                if(lastTime.slice(0, -2).toString() == currentDate.slice(0, -2).toString()){ //if days are same
-                    timeDiff = 60*(lastTime[lastTime.length-2] - currentDate[currentDate.length-2]) 
-                    + (lastTime[lastTime.length-1] - currentDate[currentDate.length-1]);                    
-                }     
-                else if(currentDate[1] - lastTime[1] == 1){
-
-                }     
-                console.log(lastTime.slice(1, 3).toString() + '\n' + currentDate.slice(1, 3).toString())
+                last = parsedStands.table[i].time;
+                needCheck = dateAndTime(last, currentDate);
             }
         }
         if(exists){
-            if(Math.abs(timeDiff) > 180){
+            if(needCheck){
                 console.log(league + ' standings');
                 dateOut = currentDate;
                 let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
