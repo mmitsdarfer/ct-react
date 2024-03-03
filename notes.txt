@@ -67,9 +67,7 @@ To do but this time it's specific:
 1. Figure out how to update scores when they load
 
 WIWWO: 
-3/2: Think I have time to check standings fully functional. will need to test when more time passes I guess
-   -> I merged "dates" into "standings revamp" anyway, and won't change until after testing, then I'll merge into "main"
-   MLB still fully broken...do next 
+3/2: MLB still fully broken...do next 
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
