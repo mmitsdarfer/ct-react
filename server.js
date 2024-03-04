@@ -391,6 +391,8 @@ app.get('/nba', (req, res) => {
     writeNba();
 });
 
+import mlbScrape from './public/scrape/mlbScrape.js';
+
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
     var data = {};
@@ -418,8 +420,9 @@ app.get('/mlb', (req, res) => {
     }
     async function writeMlb(){
         setTimeout(function () {
+            mlbScrape(priority);
             preferences(current);
-            callScrape(current, priority);
+            //callScrape(current, priority);
             var mlbRes = jsonHtml(current, priority);
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.end(mlbRes);          

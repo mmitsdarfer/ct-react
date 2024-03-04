@@ -146,7 +146,6 @@ async function standingsScrape(league, data){
         }
         data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
     }
-    return teamRanks, data;
 }
 
 //converts time and saves it to data obj separately
@@ -154,6 +153,7 @@ function timeToObj(data, league){
     for(let i = 0; i < data.length; i++){
         data[i].convertedTime = timeConversion(league, data[i].time).toString();
     }
+    console.log(data);
 }
 
 //puts game start tme into value that can be compared to game progress time
@@ -339,7 +339,7 @@ function toJson(data, league, date){
 }
 
 //calls each type of sort and uses those rankings with priorities to come up with final sorted order and send that to json
-function finalSort(data, priority, league, date, standings){
+function finalSort(data, priority, league, date){
     data = timeSort(data);
     data = diffSort(data);
     data = standingsSort(data);
@@ -619,7 +619,7 @@ var scrape = async function scrape(league, priority){
         nets = [];
         teamLen = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName').length;
         numGames = teamLen/2;
-
+        
         times = document.querySelectorAll('.ScoreboardScoreCell__Overview .ScoreCell__Time');
         timeArr = Array.from(times);
         timeArr = timeArr.map(game => game.textContent);
@@ -639,12 +639,14 @@ var scrape = async function scrape(league, priority){
             }
         }
         endedLen *= 2;  //each 1 game ended has 2 teams and scores
-        scoreLen = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score').length;
+        if(league != 'MLB') scoreLen = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score').length;
+        else scoreLen = document.querySelectorAll(' div.ScoreCell__Score.h5.clr-gray-01.fw-heavy.tar').length;
         notEnded = teamLen - endedLen;
 
         //put scores in array
         for(let j = 0; j < scoreLen; j++){
-            scores[j] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[j];    
+            if(league != 'MLB') scores[j] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[j];
+            else scores[j] = document.querySelectorAll(' div.ScoreCell__Score.h5.clr-gray-01.fw-heavy.tar')[j];    
             if(scores[j] == null){
                 scores[j] = '-';
             } 
@@ -658,7 +660,8 @@ var scrape = async function scrape(league, priority){
         //scores only exist for ongoing and ended, so scores have to split around unstarted games
         //because ongoing games are always first and ended are always last on espn
         for(let m = teamLen - endedLen; m < teamLen; m++){
-            scoreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
+            if(league != 'MLB') scoreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
+            else scoreArr[m] = document.querySelectorAll(' div.ScoreCell__Score.h5.clr-gray-01.fw-heavy.tar')[scoreLen - endedLen + m - notEnded].textContent;
         }
 
         //put networks in nodelist
@@ -735,11 +738,10 @@ var scrape = async function scrape(league, priority){
     } 
 
     const callStandings = async () => {
-       // await standingsScrape(gameData.table, league);
-       var standings = await standingsScrape(league, gameData.table);
+       await standingsScrape(league, gameData.table);
 
         timeToObj(gameData.table, league);
-        finalSort(gameData.table, priority, league, date, standings);
+        finalSort(gameData.table, priority, league, date);
       }
       
     callStandings();
@@ -755,8 +757,8 @@ function netToLink(nets, teams, progress, numGames){
     const tnt = 'https://www.tntdrama.com/watchtnt/east';
     const espn = 'https://www.espn.com/watch/';
     const nbcsp = 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia';
-    const fox = 'https://www.foxsports.com/live'
-    const abc = 'https://abc.com/watch-live/abc'
+    const fox = 'https://www.foxsports.com/live';
+    const abc = 'https://abc.com/watch-live/abc';
     const channels = [];
 
     for(let i = 0; i < numGames; i++){  
@@ -840,7 +842,7 @@ function timeConversion(league, time){
     }
     
     //format: mins, seconds, period or quarter
-    if(time.includes('End')){
+    if(time.includes('End') && league != 'MLB'){
         time = [0, 0, (parseInt(time.slice(-3))).toString()];
     }
     else if(time == 'OT'){
@@ -852,12 +854,39 @@ function timeConversion(league, time){
     else if(time.includes('Delayed')){
         time = [unitLen/60, 0, (1).toString()];
     }
-    else if(time.includes('AM') || time.includes('PM') || time.includes('Final')){
+    else if(time.includes('AM') || time.includes('PM') || time.includes('Final') || time.includes('Postponed')){
         return time;
     }
     else if(time.length == 3){
         time = [0, 0, (parseInt(time) + 1).toString()];    //as period ends the time disappears but the period remains,
                                                         //so set time to beginning of next period
+    }
+    else if(league == 'MLB'){
+        time = time.split(' ');
+        let frame;
+        time[1] = parseInt(time[1]);
+        if(time[0] == 'Top'){
+            frame = 0;
+        }
+        else if(time[0] == 'Bot'){
+            frame = 1;
+        }
+        else if(time[0] == 'End'){
+            frame = 0;
+            time[1] ++;
+        }
+        else if(time[0] == 'Rain'){
+            time[1] = parseInt(time[3]);
+            if(time[2] == 'Top'){
+                frame = 0;
+            }
+            else if(time[2] == 'Bot'){
+                frame = 1;
+            }
+        }
+        
+        time = 2 * time[1] + frame;
+        return time;
     }
     else{    
         time = time.split(' - ');
@@ -874,11 +903,11 @@ function timeConversion(league, time){
             time[1] = time[0];
             time[0] = '0';
         }
-        
         time = time.slice(0,3);    
         time[0] = parseInt(time[0]);
         time[1] = parseInt(time[1]);
     }
+    
     
     if((time[2].includes('OT'))){
         if(!isNaN(parseInt(time[2]))){
