@@ -391,7 +391,7 @@ app.get('/nba', (req, res) => {
     writeNba();
 });
 
-import mlbScrape from './public/scrape/mlbScrape.js';
+import mlbScrape from './public/scrape-sort/mlbScrape.js';
 
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();

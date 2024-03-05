@@ -1,13 +1,21 @@
 //MLB has many edge cases, so it has its own scrape file
 
 import puppeteer from 'puppeteer';
-import standingsScrape from './standings.js';
+import { timeConversion, standingsScrape } from './standings-time.js';
+import finalSort from './finalSort.js';
 var url;
 var data = {};
 
+//converts time and saves it to data obj separately
+function timeToObj(data, league){   
+    for(let i = 0; i < data.length; i++){
+        data[i].convertedTime = timeConversion(league, data[i].time).toString();
+    }
+}
+
 export async function mlbScrape(priority){
     console.log('!!!!!!!!');
-    console.log('Current league: ' + 'MLB');
+    console.log('Current league: MLB');
     console.log('Priority: ' + priority);
     url = 'https://www.espn.com/mlb/scoreboard';
     data.table = []; 
@@ -113,14 +121,14 @@ export async function mlbScrape(priority){
         data.table.push(obj);
     }
 
-   // console.log(data);
     const callStandings = async () => {
-        data = await standingsScrape('MLB', data); 
-       // console.log(data);
+        data = await standingsScrape('MLB', data.table); 
+        timeToObj(data, 'MLB');
+        finalSort(data, priority, 'MLB', date);
     }
     callStandings();
       
-
+    await browser.close();
 }
 
 export default mlbScrape;
