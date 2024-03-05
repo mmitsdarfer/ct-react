@@ -72,10 +72,9 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-3/3: implementing standings.js w/ mlbScrape, but not seeing avgStanding yet   
-      -> when it's working try to add to regular scrape
-3/2: MLB still fully broken...do next 
-      -> uses runs instead of normal score, so different variable
+3/4: done adding MLB, but need to do tests when progress varies
+   also done splitting into files in scrape-sort folder
+   I think standings is being called too often (< 3 hrs)
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
