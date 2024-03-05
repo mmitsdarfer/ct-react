@@ -5,7 +5,6 @@ import puppeteer from 'puppeteer';
 
 //take in time left in a game and convert it in order to compare
 export function timeConversion(league, time){
-    console.log('!!!' + league + '!!!');
     time = String(time);
     let units = null;
     let unitLen = 0;    //in seconds if applicable

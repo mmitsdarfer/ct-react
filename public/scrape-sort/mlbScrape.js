@@ -14,7 +14,6 @@ function timeToObj(data, league){
 }
 
 export async function mlbScrape(priority){
-    console.log('!!!!!!!!');
     console.log('Current league: MLB');
     console.log('Priority: ' + priority);
     url = 'https://www.espn.com/mlb/scoreboard';

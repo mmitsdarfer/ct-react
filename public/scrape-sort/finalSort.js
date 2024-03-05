@@ -35,7 +35,6 @@ function militaryTime(time){
 
 //groups games by progress and sorts them by time remaining
 function timeSort(data){
-    console.log(data);
     let sorted = [];
     let times = [];   
     for(let i = 0; i < data.length; i++){
@@ -206,7 +205,6 @@ function toJson(data, league, date){
 
 //calls each type of sort and uses those rankings with priorities to come up with final sorted order and send that to json
 export function finalSort(data, priority, league, date){
-    console.log(data);
     data = timeSort(data);
     data = diffSort(data);
     data = standingsSort(data);
