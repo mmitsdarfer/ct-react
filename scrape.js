@@ -26,20 +26,6 @@ else{   //current, priority, ranked leagues with time visited
     priority = prefData[1];
 }
 
-//compares current timestamp with last standings check
-function dateAndTime(last, current){  
-    let timeDiff = current - last; // current.getTime() - last.getTime();
-    let diffHrs = Math.round(timeDiff / (1000 * 3600));
-    var cDate = new Date(current); 
-    console.log('current timestamp: ' + cDate.toString());
-    var lDate = new Date(last); 
-    console.log('last timestamp: ' + lDate.toString());
-    if(diffHrs > 3){
-        return true;
-    }
-    return false;
-}
-
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
     for(let i = 0; i < data.length; i++){
