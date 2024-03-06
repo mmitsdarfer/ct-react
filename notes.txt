@@ -20,7 +20,6 @@ known errors:
 
 To do:
 - Review/revisit MLB when regular season starts? Decide if spring training standings are the problem or not`
-- Get rid of MLB in timeConversion of scrape.js
 - Figure out nets for MLB and NBA
 - Look into react (base on platform computing work?)
 - Display standings (?)
