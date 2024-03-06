@@ -64,6 +64,7 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
+3/6: MLB not working with different progresses...have to continue copying scrape components to mlbScrape.js
 3/5: Fixed MLB --> test with unstarted
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require

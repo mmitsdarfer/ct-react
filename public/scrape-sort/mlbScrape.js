@@ -10,6 +10,7 @@ var data = {};
 function timeToObj(data, league){   
     for(let i = 0; i < data.length; i++){
         data[i].convertedTime = timeConversion(league, data[i].time).toString();
+        console.log(data[i].convertedTime);
     }
 }
 
@@ -23,11 +24,11 @@ export async function mlbScrape(priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, unstarted;
+    var fullDate, teams, times, scores, nets, numGames, unstarted, endedLen, scoreLen, teamLen;
 
     await page.waitForSelector('div.ScoreCell__Score'); //scores are loaded a bit later, so need to wait for them (I think...)
     
-    /*[fullDate, teams, times, scores, numGames, unstarted]*/ [fullDate, teams, times, scores, numGames] = await page.evaluate(() => {
+    [fullDate, teams, times, scores, numGames, endedLen, scoreLen, teamLen] = await page.evaluate(() => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
@@ -51,21 +52,37 @@ export async function mlbScrape(priority){
             }
         }
         
+        endedLen *= 2;
         scoreLen = document.querySelectorAll('div.ScoreCell__Score').length;
-        
+        notEnded = teamLen - endedLen;
+
         //put scores in array
-        for(let j = 0; j < scoreLen; j++){
-           scores[j] = document.querySelectorAll('div.ScoreCell__Score')[j].textContent;    
-           if(scores[j] == null){
-               scores[j] = '-';
+        for(let i = 0; i < scoreLen; i++){
+           scores[i] = document.querySelectorAll('div.ScoreCell__Score')[i].textContent;    
+           if(scores[i] == null || scores[i].includes('-')){
+               scores[i] = '-';
             } 
+        }
+
+        scoreArr = Array.from(scores);
+      //  scoreArr = scoreArr.map(game => game.textContent); 
+        for(let i = scoreLen - endedLen; i < scoreLen; i++){
+        scoreArr[i] = '-';  //placeholder before score exists
+        }
+
+        //scores only exist for ongoing and ended, so scores have to split around unstarted games
+        //because ongoing games are always first and ended are always last on espn
+        for(let i = teamLen - endedLen; i < teamLen; i++){
+       //     scoreArr[i] = document.querySelectorAll('div.ScoreCell__Score')[scoreLen - endedLen + i - notEnded].textContent;
         }
         
         //TODO: add networks
 
-        return [fullDate, teams, times, scores, numGames];
+        return [fullDate, teams, times, scoreArr, numGames, endedLen, scoreLen, teamLen];
     })
-    
+
+    console.log(endedLen, scoreLen, teamLen);
+
     //date with day of the week stripped off
     let i = 0;
     for(i; i < fullDate.length; i++){
@@ -87,7 +104,7 @@ export async function mlbScrape(priority){
     var progress = [];
     var diffs = [];
     for(let i = 0; i < numGames; i++){   
-        if(times[i].endsWith('PM') || times[i].endsWith('AM')){
+        if(times[i].endsWith('PM') || times[i].endsWith('AM') || times[i] == 'Postponed'){
             progress[i] = 'unstarted';
             diffs[i] = 100;
         }
@@ -118,6 +135,9 @@ export async function mlbScrape(priority){
         }
         data.table.push(obj);
     }
+
+    console.log('!!!!!');
+    console.log(data);
 
     const callStandings = async () => {
         data = await standingsScrape('MLB', data.table); 

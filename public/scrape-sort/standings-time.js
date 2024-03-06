@@ -57,6 +57,9 @@ export function timeConversion(league, time){
         if(time[0] == 'Top'){
             frame = 0;
         }
+        else if(time[0] == 'Mid'){
+            frame = 0.5;
+        }
         else if(time[0] == 'Bot'){
             frame = 1;
         }
