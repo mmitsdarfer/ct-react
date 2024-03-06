@@ -44,9 +44,9 @@ var scrape = async function scrape(league, priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, unstarted;
+    var fullDate, teams, times, scores, nets, numGames;
     
-    [fullDate, teams, times, scores, nets, numGames, unstarted] = await page.evaluate((league) => {
+    [fullDate, teams, times, scores, nets, numGames] = await page.evaluate((league) => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
@@ -62,15 +62,11 @@ var scrape = async function scrape(league, priority){
         endedLen = 0;
         scoreLen = 0;
         notEnded = 0;
-        unstarted = 0;
 
         for(let i = 0; i < teamLen; i++){
             teams[i] = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName')[i];
             if(!(i%2) && timeArr[i/2].includes('Final')){
                 endedLen++;
-            }
-            else if(!(i%2) && (timeArr[i/2].includes('PM') || timeArr[i/2].includes('AM'))){
-                unstarted++;
             }
         }
         endedLen *= 2;  //each 1 game ended has 2 teams and scores
@@ -93,7 +89,7 @@ var scrape = async function scrape(league, priority){
         //scores only exist for ongoing and ended, so scores have to split around unstarted games
         //because ongoing games are always first and ended are always last on espn
         for(let m = teamLen - endedLen; m < teamLen; m++){
-            coreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
+            scoreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
         }
         //put networks in nodelist
         //nba doesn't have network
@@ -109,7 +105,7 @@ var scrape = async function scrape(league, priority){
         netArr = Array.from(nets);
         netArr = netArr.map(game => game.textContent);
 
-        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, unstarted];
+        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames];
     }, league);
 
     //date with day of the week stripped off
@@ -222,27 +218,6 @@ function netToLink(nets, teams, progress, numGames){
         }
     }
     return channels;
-}
-
-//merge & mergesort to rank the diffs
-function merge(left, right){
-    let sortedArr = [];
-    while(left.length && right.length){
-        if(left[0] < right[0]){
-            sortedArr.push(left.shift());
-        }
-        else{
-            sortedArr.push(right.shift());
-        }
-    }
-    return [...sortedArr, ...left, ...right];
-}
-function mergeSort(arr){
-    if(arr.length <= 1) return arr;
-    let mid = Math.floor(arr.length / 2);
-    let left = mergeSort(arr.slice(0, mid));
-    let right = mergeSort(arr.slice(mid));
-    return merge(left, right);
 }
 
 export function callScrape(league, priority){

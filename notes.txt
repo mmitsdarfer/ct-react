@@ -19,7 +19,6 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
-- Review/revisit MLB when regular season starts? Decide if spring training standings are the problem or not`
 - Figure out nets for MLB and NBA
 - Look into react (base on platform computing work?)
 - Display standings (?)
@@ -61,10 +60,11 @@ To do:
       - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 To do but this time it's specific:
-1. Figure out how to update scores when they load
+1. Fix MLB
+2. Figure out how to update scores when they load
 
 WIWWO: 
-3/5: MLB not showing everything because spring training standings are weird??
+3/5: Fixed MLB
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html

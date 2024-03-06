@@ -33,23 +33,23 @@ export async function mlbScrape(priority){
         scores = [];
         times = [];
         nets = [];
-       // endedLen = 0;
+        endedLen = 0;
         scoreLen = 0;
-      //  notEnded = 0;
-       // unstarted = 0;
+        notEnded = 0;
+
         teamLen = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName').length;
 
         numGames = teamLen/2;
         for(let i = 0; i < numGames; i++){
             times[i] = document.querySelectorAll('.ScoreCell__Time')[i].textContent;
-           // if(times[i] == 'Final') endedLen++;
-           // else if(times[i].includes('AM') || times[i].includes('PM')) unstarted++;
-            teams[2*i] = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName')[2*i].textContent;
-            teams[2*i+1] = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName')[2*i+1].textContent;
         }
 
-       // endedLen *= 2; //# of ended scores, not ended games
-      //  notEnded = teamLen - endedLen;
+        for(let i = 0; i < teamLen; i++){
+            teams[i] = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName')[i].textContent;
+            if(!(i%2) && times[i/2].includes('Final')){
+                endedLen++;
+            }
+        }
         
         scoreLen = document.querySelectorAll('div.ScoreCell__Score').length;
         
@@ -60,8 +60,7 @@ export async function mlbScrape(priority){
                scores[j] = '-';
             } 
         }
-
-        //TODO: Might need to do adjusting based on progress, all games were ended while I was working on this
+        
         //TODO: add networks
 
         return [fullDate, teams, times, scores, numGames];
