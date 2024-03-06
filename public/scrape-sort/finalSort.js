@@ -208,6 +208,7 @@ export function finalSort(data, priority, league, date){
     data = timeSort(data);
     data = diffSort(data);
     data = standingsSort(data);
+    
 
     let sorted = [];
     let midSorted = [];
@@ -216,6 +217,7 @@ export function finalSort(data, priority, league, date){
     let endSorted = [];
 
     if(priority[0] == 'diffs'){
+        console.log(data);
         for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
             sorted[i] = [];
             for(let j = 0; j < data.length; j++){

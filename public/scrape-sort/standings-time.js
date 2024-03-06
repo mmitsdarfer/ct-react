@@ -138,25 +138,24 @@ export async function standingsScrape(league, data){
     standings.table = [];
     let teamRanks = [];
     let currentDate = new Date().getTime();
-    let exists = false;
+    let leagueExists = false;
+    let needCheck = true;
     let last;
-    let leagueIndex;
-    let needCheck;
+    let leagueIndex;  
     let dateOut;
 
     if(fs.existsSync('json/standings.json')){
-        
         const parsedStands = JSON.parse(fs.readFileSync('json/standings.json', 'utf-8'));
         standings = parsedStands;
         for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
             if(parsedStands.table[i].league == league){
                 leagueIndex = i;
-                exists = true;
+                leagueExists = true;
                 last = parsedStands.table[i].time;
                 needCheck = dateAndTime(last, currentDate);
             }
         }
-        if(!exists || needCheck){
+        if(!leagueExists || needCheck){
             console.log(league + ' standings');
             dateOut = currentDate;
             let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
@@ -169,10 +168,10 @@ export async function standingsScrape(league, data){
                 standArr = standArr.map(game => game.textContent);
                 return standArr;
             });
-            standings.table.splice(leagueIndex, 1);
+            if(needCheck && leagueExists) standings.table.splice(leagueIndex, 1);
             await browser.close();
         }
-        else if(exists && !needCheck){
+        else if(leagueExists && !needCheck){     
             dateOut = parsedStands.table[leagueIndex].time;
             teamRanks = parsedStands.table[leagueIndex].standings;
             standings.table.splice(leagueIndex, 1);

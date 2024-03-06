@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import standingsScrape from './public/scrape-sort/standings-time.js';
+import { timeConversion, standingsScrape } from './public/scrape-sort/standings-time.js';
 import finalSort from './public/scrape-sort/finalSort.js';
 
 var league;
@@ -24,6 +24,20 @@ else{   //current, priority, ranked leagues with time visited
     }); 
     league = prefData[0];
     priority = prefData[1];
+}
+
+//compares current timestamp with last standings check
+function dateAndTime(last, current){  
+    let timeDiff = current - last; // current.getTime() - last.getTime();
+    let diffHrs = Math.round(timeDiff / (1000 * 3600));
+    var cDate = new Date(current); 
+    console.log('current timestamp: ' + cDate.toString());
+    var lDate = new Date(last); 
+    console.log('last timestamp: ' + lDate.toString());
+    if(diffHrs > 3){
+        return true;
+    }
+    return false;
 }
 
 //converts time and saves it to data obj separately
@@ -74,14 +88,12 @@ var scrape = async function scrape(league, priority){
             }
         }
         endedLen *= 2;  //each 1 game ended has 2 teams and scores
-        if(league != 'MLB') scoreLen = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score').length;
-        else scoreLen = document.querySelectorAll(' div.ScoreCell__Score.h5.clr-gray-01.fw-heavy.tar').length;
+        scoreLen = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score').length;
         notEnded = teamLen - endedLen;
 
         //put scores in array
         for(let j = 0; j < scoreLen; j++){
-            if(league != 'MLB') scores[j] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[j];
-            else scores[j] = document.querySelectorAll(' div.ScoreCell__Score.h5.clr-gray-01.fw-heavy.tar')[j];    
+            scores[j] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[j];
             if(scores[j] == null){
                 scores[j] = '-';
             } 
@@ -95,13 +107,11 @@ var scrape = async function scrape(league, priority){
         //scores only exist for ongoing and ended, so scores have to split around unstarted games
         //because ongoing games are always first and ended are always last on espn
         for(let m = teamLen - endedLen; m < teamLen; m++){
-            if(league != 'MLB') scoreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
-            else scoreArr[m] = document.querySelectorAll(' div.ScoreCell__Score.h5.clr-gray-01.fw-heavy.tar')[scoreLen - endedLen + m - notEnded].textContent;
+            coreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
         }
-
         //put networks in nodelist
         //nba doesn't have network
-        if(!league.includes('NBA') && !league.includes('MLB')){
+        if(!league.includes('NBA')){
             for(let i = 0; i < notEnded/2; i++){   //networks shown only for unstarted and ongoing games
                 nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
             }
@@ -250,6 +260,7 @@ function mergeSort(arr){
 }
 
 //take in time left in a game and convert it in order to compare
+/*
 function timeConversion(league, time){
     time = String(time);
     let units = null;
@@ -364,6 +375,7 @@ function timeConversion(league, time){
     time = time[1] * unitLen + (unitLen - time[0]);
     return time;
 }
+*/
 
 //scrape(league, priority);
 
