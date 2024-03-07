@@ -1,24 +1,16 @@
-function dateAndTime(last){
-    let current = new Date();
-    let timeDiff = current.getTime() - last.getTime();
-    let diffHrs = Math.round(timeDiff / (1000 * 3600));
-    console.log('diffHrs btwn ' + current + ' and ' + last);
-    console.log(diffHrs);
-    if(diffHrs > 3){
-        return true;
-    }
-    return false;
-}
+let postponed = 2;
 
-let last = new Date(2024, 2, 2, 12, 0);
-
-console.log(dateAndTime(last));
-//let current = new Date(...dateAndTime());
+let scores = [
+    '0', '2', '-',  '-', '1',
+    '7', '4', '3',  '9', '3',
+    '5', '6', '12', '9', '2',
+    '0', '8', '7',  '6', '2',
+    '3', '3', '12', '5'
+  ]
+  
+//let postGame = scores.shift();
+//scores += postGame;
 
 
-/*
-Testing:
-1) Generate random value for each place for last and current
-2) Run
-3) Print random and true/false value
-*/
+scores.push(...scores.splice(postponed, 2));
+console.log(scores);

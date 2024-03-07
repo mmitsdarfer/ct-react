@@ -31,6 +31,9 @@ export function timeConversion(league, time){
     }
     
     //format: mins, seconds, period or quarter
+    if(time.includes('Postponed')){
+        time = '11:59 PM';
+    }
     if(time.includes('End') && league != 'MLB'){
         time = [0, 0, (parseInt(time.slice(-3))).toString()];
     }
@@ -43,7 +46,7 @@ export function timeConversion(league, time){
     else if(time.includes('Delayed')){
         time = [unitLen/60, 0, (1).toString()];
     }
-    else if(time.includes('AM') || time.includes('PM') || time.includes('Final') || time.includes('Postponed')){
+    else if(time.includes('AM') || time.includes('PM') || time.includes('Final')){
         return time;
     }
     else if(time.length == 3){

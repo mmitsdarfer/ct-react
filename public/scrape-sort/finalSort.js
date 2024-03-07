@@ -23,6 +23,7 @@ function mergeSort(arr){
 
 //puts game start tme into value that can be compared to game progress time
 function militaryTime(time){
+    if(time == 'Postponed') time = '11:59 PM';
     time = time.split(':');
     time[0] = parseInt(time[0]);
     if(time[1].includes('PM')){
@@ -41,7 +42,7 @@ function timeSort(data){
         if(data[i].convertedTime.includes('Final')){
             times[i] = 0;
         }
-        else if(data[i].convertedTime.includes('PM') || data[i].time.includes('AM')){
+        else if(data[i].convertedTime.includes('PM') || data[i].time.includes('AM') || data[i].time == 'Postponed'){
             times[i] = parseInt(militaryTime(data[i].time));
         }
         else{
@@ -129,14 +130,15 @@ function standingsSort(data){
     }
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'unstarted'){
-            unstartedStands[i-ongoingStands.length] = data[i].avgStanding;
+            unstartedStands[i] = data[i].avgStanding;
         }
     }
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ended'){
-            endedStands[i-ongoingStands.length-unstartedStands.length] = data[i].avgStanding;
+            endedStands[i] = data[i].avgStanding;
         }
     }
+    
     
     let onStandsSort = mergeSort(ongoingStands);
     let unstartStandsSort = mergeSort(unstartedStands);
@@ -159,6 +161,7 @@ function standingsSort(data){
             }
         }
     }
+
     return data;
 }
 
@@ -239,19 +242,21 @@ export function finalSort(data, priority, league, date){
                 }
                 else{
                     allSorted.push(sorted[i]);
-                }
+                }               
             }           
             dropEmpties(allSorted);
+
             for(let i = 0; i < data.length+1; i++){
                 if(allSorted[i] !== undefined && allSorted[i].length > 1){  
                     for(let j = 0; j < data.length+1; j++){                       
                         lastSorted[j] = [];
                         for(let k = 0; k < allSorted[i].length; k++){                        
                             if(allSorted[i][k].standRank == j){
+                                
                                 lastSorted[j].push(allSorted[i][k]);
                             }
                         } 
-                        endSorted.push(lastSorted[j]);                     
+                        endSorted.push(lastSorted[j]);                   
                     }
                 }
                 else{
@@ -455,12 +460,19 @@ export function finalSort(data, priority, league, date){
             }  
         }
     }
-    
     dropEmpties(endSorted);
 
-    console.log('Priority: ' + priority);
-    console.log(endSorted); 
-    toJson(endSorted, league, date); 
+    //not yet sure why MLB's endSorted gets messed up. allSorted does what it's supposed to so this fix might be enough
+  //  if(league == 'MLB'){
+        console.log('Priority: ' + priority);
+        console.log(allSorted); 
+        toJson(allSorted, league, date); 
+  //  }
+ //   else{
+ //       console.log('Priority: ' + priority);
+ //       console.log(endSorted); 
+ //       toJson(endSorted, league, date); 
+ //   }
 }
 
 export default finalSort;

@@ -19,6 +19,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Test for when MLB has > 1 postponed game
 - Figure out nets for MLB and NBA
 - Look into react (base on platform computing work?)
 - Display standings (?)
@@ -64,8 +65,9 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-3/6: MLB not working with different progresses...have to continue copying scrape components to mlbScrape.js
-3/5: Fixed MLB --> test with unstarted
+3/6: To fix MLB I used allSorted instead of endSorted (in finalSort.js) 
+   --> figure out if this always works. right now all leagues are using it as a way to check
+      need more MLB testing with different progresses
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
