@@ -463,16 +463,16 @@ export function finalSort(data, priority, league, date){
     dropEmpties(endSorted);
 
     //not yet sure why MLB's endSorted gets messed up. allSorted does what it's supposed to so this fix might be enough
-  //  if(league == 'MLB'){
+    if(league == 'MLB'){
         console.log('Priority: ' + priority);
         console.log(allSorted); 
         toJson(allSorted, league, date); 
-  //  }
- //   else{
- //       console.log('Priority: ' + priority);
- //       console.log(endSorted); 
- //       toJson(endSorted, league, date); 
- //   }
+    }
+    else{
+        console.log('Priority: ' + priority);
+        console.log(endSorted); 
+        toJson(endSorted, league, date); 
+    }
 }
 
 export default finalSort;
