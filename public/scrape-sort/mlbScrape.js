@@ -24,19 +24,16 @@ export async function mlbScrape(priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, postponed;
+    var fullDate, teams, times, scores, nets, numGames;
 
     await page.waitForSelector('div.ScoreCell__Score'); //scores are loaded a bit later, so need to wait for them (I think...)
     
-    [fullDate, teams, times, scores, numGames, postponed] = await page.evaluate(() => {
+    [fullDate, teams, times, scores, numGames] = await page.evaluate(() => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
         times = [];
         nets = [];
-        let endedLen = 0;
-        let postponed = 0;
-        let postCan = 0;
         let firstFin = 0;
         let firstUnstart = 0;
 
@@ -54,94 +51,41 @@ export async function mlbScrape(priority){
             if(!(i%2)){
                 if(times[i/2].includes('Final')){
                     if(firstFin == 0) firstFin = i;
-                    //if(i < scoreLen){
-                        scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
-                        scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
-                    //}
-                    endedLen++;
+                    scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
+                    scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
                 }
                 else if(times[i/2] == 'Postponed' || times[i/2] == 'Canceled'){
                     scores[i] = '-';
-                    scores[i+1] = '-';
-                    //postponed.push(i, i+1);
-                    postponed += 2;
-              //  }
-                
+                    scores[i+1] = '-';                
                 }
                 else if(times[i/2].includes('AM') || times[i/2].includes('PM')){
                     if(firstUnstart == 0) firstUnstart = i;
-                    //scores[i] = '-';
-                    //scores[i+1] = '-';
                     scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
-                        scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
+                    scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
                 }
                 else{
-                    //if(i < scoreLen){
-                        scores[i] = document.querySelectorAll('.ScoreCell__Score')[i-postponed].textContent;
-                        scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1-postponed].textContent;
-                  //  }
+                    scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
+                    scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
                 }
-               // else if(times[i/2] == 'Canceled'){
-                    //postCan++;
-               // }
             }
         }
 
-        for(let i = firstUnstart; i < firstFin; i++){
-            scores.splice(firstUnstart, 0, '-');
+        if(firstUnstart != 0){
+            for(let i = firstUnstart; i < firstFin; i++){
+                scores.splice(firstUnstart, 0, '-');
+            }
         }
         for(let i = 0; i < teamLen; i++){
-            if(scores[i].includes('-') && /^\d/.test(scores[i])){
+            if(scores[i].includes('-') && /^\d/.test(scores[i])){   //if has dash and starts with a number for when espn puts records in place of scores for unstarted games 
                 scores.splice(i, 1);
                 i--;
             }
         }
-        
-
-        
-        endedLen *= 2;
-        
-        notEnded = teamLen - endedLen;
-
-        let len = scores.length;
-        for(let i = 0; i < scores.length; i++){
-            if(scores[i].includes('-') && !isNaN(parseInt(scores[i]))){
-             //   scores.splice(i, 2);
-            //    i--;
-               // len -= 1;
-            }
-            if(times[i/2] == 'Final' || (times[i/2] != 'Postponed' && times[i/2] != 'Canceled')){
-                //scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
-            }
-            else{
-              //  scores[i] = '-';
-                postCan++;
-            }
-        }
-      //  let scoreArr = Array.from(scores);
-     //   scoreArr = scoreArr.map(game => game.textContent);  
-
-        for(let i = scoreLen - endedLen; i < teamLen - endedLen; i++){
-         //   scoreArr[i] = '-';
-        }
-        for(let i = postponed; i < teamLen; i++){
-       //     scores[i] = '-';
-        }
-
-        for(let i = teamLen - endedLen; i < teamLen; i++){
-                //scoreArr[i] = document.querySelectorAll('.ScoreCell__Score')[scoreLen - endedLen + i - notEnded].textContent;
-                if (scores[i] === null){
-          //          scores[i] = '---';
-                } 
-        }
-        //scores.splice(postponed, 10);
-//        scores.push(...scores.splice(postponed, 2));
 
         //TODO: add networks
 
-        return [fullDate, teams, times, scores, numGames, firstFin];
+        return [fullDate, teams, times, scores, numGames];
     })
-    console.log(postponed);
     console.log(teams);
     console.log(times);
     console.log(scores);

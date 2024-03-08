@@ -20,6 +20,7 @@ known errors:
 
 To do:
 - Test for when MLB has > 1 postponed game
+   - Did 1 postponed and 1 canceled, should be same
 - Figure out nets for MLB and NBA
 - Look into react (base on platform computing work?)
 - Display standings (?)
@@ -65,10 +66,8 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-3/7: MLB w/ allSorted is incomplete but endSorted is incomplete with scores shifted
-3/6: To fix MLB I used allSorted instead of endSorted (in finalSort.js) 
-   --> does NOT work for other leagues w/ 2 tied priorities
-   need more MLB testing with different progresses
+3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
+   as of ~9pm allSorted works for time-diff-stand and diff-time-stand but not stand-x-x or x-stand-x
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
@@ -83,3 +82,233 @@ Using git:
 2. Commit
 3. Branch -> merge
 4. Compare and confirm merge/pull
+
+
+[
+  [
+    {
+      team1: 'Tigers',
+      score1: '8',
+      team2: 'Yankees',
+      score2: '5',
+      progress: 'ongoing',
+      time: 'Bot 8th',
+      network: '',
+      link: '',
+      diff: 3,
+      avgStanding: 21.5,
+      convertedTime: '17',
+      timeRank: 0,
+      diffRank: 2,
+      standRank: 2
+    }
+  ],
+  [
+    {
+      team1: 'Cubs',
+      score1: '2',
+      team2: 'Reds',
+      score2: '2',
+      progress: 'ongoing',
+      time: 'Bot 4th',
+      network: '',
+      link: '',
+      diff: 0,
+      avgStanding: 6.5,
+      convertedTime: '9',
+      timeRank: 1,
+      diffRank: 1,
+      standRank: 1
+    }
+  ],
+  [
+    {
+      team1: 'Dodgers',
+      score1: '0',
+      team2: 'Giants',
+      score2: '0',
+      progress: 'ongoing',
+      time: 'Bot 1st',
+      network: '',
+      link: '',
+      diff: 0,
+      avgStanding: 5.5,
+      convertedTime: '3',
+      timeRank: 2,
+      diffRank: 1,
+      standRank: 0
+    }
+  ],
+  [
+    {
+      team1: 'Guardians',
+      score1: '-',
+      team2: 'Athletics',
+      score2: '-',
+      progress: 'unstarted',
+      time: 'Postponed',
+      network: '',
+      link: '',
+      diff: 100,
+      avgStanding: 9,
+      convertedTime: '11:59 PM',
+      timeRank: 12,
+      diffRank: 3,
+      standRank: 4
+    },
+    {
+      team1: 'Royals',
+      score1: '-',
+      team2: 'Rockies',
+      score2: '-',
+      progress: 'unstarted',
+      time: 'Canceled',
+      network: '',
+      link: '',
+      diff: 100,
+      avgStanding: 2,
+      convertedTime: '11:59 PM',
+      timeRank: 12,
+      diffRank: 3,
+      standRank: 3
+    }
+  ],
+  [
+    {
+      team1: 'Braves',
+      score1: '3',
+      team2: 'Red Sox',
+      score2: '2',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 1,
+      avgStanding: 18,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 6,
+      standRank: 19
+    },
+    {
+      team1: 'Phillies',
+      score1: '2',
+      team2: 'Rays',
+      score2: '3',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 1,
+      avgStanding: 26.5,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 6,
+      standRank: 23
+    },
+    {
+      team1: 'Blue Jays',
+      score1: '5',
+      team2: 'Tigers',
+      score2: '4',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 1,
+      avgStanding: 24.5,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 6,
+      standRank: 22
+    }
+  ],
+  [
+    {
+      team1: 'Diamondbacks',
+      score1: '5',
+      team2: 'Rangers',
+      score2: '7',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 2,
+      avgStanding: 5.5,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 8,
+      standRank: 16
+    },
+    {
+      team1: 'Nationals',
+      score1: '1',
+      team2: 'Mets',
+      score2: '3',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 2,
+      avgStanding: 18.5,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 8,
+      standRank: 20
+    }
+  ],
+  [
+    {
+      team1: 'Astros',
+      score1: '6',
+      team2: 'Cardinals',
+      score2: '3',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 3,
+      avgStanding: 22,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 9,
+      standRank: 21
+    }
+  ],
+  [
+    {
+      team1: 'Angels',
+      score1: '0',
+      team2: 'Mariners',
+      score2: '5',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 5,
+      avgStanding: 9,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 10,
+      standRank: 17
+    }
+  ],
+  [
+    {
+      team1: 'Brewers',
+      score1: '8',
+      team2: 'White Sox',
+      score2: '2',
+      progress: 'ended',
+      time: 'Final',
+      network: '',
+      link: '',
+      diff: 6,
+      avgStanding: 11,
+      convertedTime: 'Final',
+      timeRank: 13,
+      diffRank: 11,
+      standRank: 18
+    }
+  ]
+]
