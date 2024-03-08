@@ -31,7 +31,7 @@ export function timeConversion(league, time){
     }
     
     //format: mins, seconds, period or quarter
-    if(time.includes('Postponed')){
+    if(time == 'Postponed' || time == 'Canceled'){
         time = '11:59 PM';
     }
     if(time.includes('End') && league != 'MLB'){

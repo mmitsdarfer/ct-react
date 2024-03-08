@@ -65,6 +65,7 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
+3/7: MLB w/ allSorted is incomplete but endSorted is incomplete with scores shifted
 3/6: To fix MLB I used allSorted instead of endSorted (in finalSort.js) 
    --> does NOT work for other leagues w/ 2 tied priorities
    need more MLB testing with different progresses

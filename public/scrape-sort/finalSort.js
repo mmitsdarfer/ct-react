@@ -23,7 +23,7 @@ function mergeSort(arr){
 
 //puts game start tme into value that can be compared to game progress time
 function militaryTime(time){
-    if(time == 'Postponed') time = '11:59 PM';
+    if(time == 'Postponed' || time == 'Canceled') time = '11:59 PM';
     time = time.split(':');
     time[0] = parseInt(time[0]);
     if(time[1].includes('PM')){
@@ -465,8 +465,10 @@ export function finalSort(data, priority, league, date){
     //not yet sure why MLB's endSorted gets messed up. allSorted does what it's supposed to so this fix might be enough
     if(league == 'MLB'){
         console.log('Priority: ' + priority);
-        console.log(allSorted); 
-        toJson(allSorted, league, date); 
+        console.log('DATA:');
+        console.log(data);  
+       // console.log(endSorted); 
+        //toJson(endSorted, league, date); 
     }
     else{
         console.log('Priority: ' + priority);

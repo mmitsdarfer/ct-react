@@ -12,5 +12,8 @@ let scores = [
 //scores += postGame;
 
 
-scores.push(...scores.splice(postponed, 2));
-console.log(scores);
+let num = '10-3';
+let noNum = '-3';
+
+console.log(/^\d/.test(num));
+console.log(num.includes('-'));
