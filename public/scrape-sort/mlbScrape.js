@@ -49,7 +49,7 @@ export async function mlbScrape(priority){
         for(let i = 0; i < teamLen; i++){
             teams[i] = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName')[i].textContent;
             if(!(i%2)){
-                if(times[i/2].includes('Final')){
+                if(times[i/2] == ('Final')){
                     if(firstFin == 0) firstFin = i;
                     scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
                     scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
@@ -60,8 +60,10 @@ export async function mlbScrape(priority){
                 }
                 else if(times[i/2].includes('AM') || times[i/2].includes('PM')){
                     if(firstUnstart == 0) firstUnstart = i;
-                    scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
-                    scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
+                    scores[i] = '-';
+                    scores[i+1] = '-';
+                    //scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
+                    //scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
                 }
                 else{
                     scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;

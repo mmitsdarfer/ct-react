@@ -68,6 +68,8 @@ To do but this time it's specific:
 WIWWO: 
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
    as of ~9pm allSorted works for time-diff-stand and diff-time-stand but not stand-x-x or x-stand-x
+   -> 3/8: All combos working currently w/ allSorted but I've changed nothing
+      -> probably just no ties while sorting
 2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
 since I can't use require
    -> This method might not be possible because idk how I'd trigger the update from the html
