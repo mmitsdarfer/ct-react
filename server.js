@@ -79,14 +79,14 @@ function jsonHtml(league, priority){
                 if(jsonParsed.table[i].network == 'NHL NET') {
                     leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
-                else if(jsonParsed.table[i].network == undefined){
-                    leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}','');
+                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
+                    leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
                 }
                 else leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
                 leagueOut0[i] = leagueOut0[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
             }
             else{
-                leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}','');
+                leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
             }
         }
         if(i % 4 == 1){
@@ -97,14 +97,14 @@ function jsonHtml(league, priority){
                 if(jsonParsed.table[i].network == 'NHL NET') {
                     leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
-                else if(jsonParsed.table[i].network == undefined){
-                    leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','');
+                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
+                    leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
                 }
-                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
+                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="blank-btn"</a>');
                 leagueOut1[i] = leagueOut1[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
             }
             else{
-                leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','');
+                leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
             }
         }
         if(i % 4 == 2){
@@ -115,14 +115,14 @@ function jsonHtml(league, priority){
                 if(jsonParsed.table[i].network == 'NHL NET') {
                     leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
-                else if(jsonParsed.table[i].network == undefined){
-                    leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}','');
+                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
+                    leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
                 }
                 else leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
                 leagueOut2[i] = leagueOut2[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
             }
             else{
-                leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}','');
+                leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
             }
         }
         if(i % 4 == 3){
@@ -133,14 +133,14 @@ function jsonHtml(league, priority){
                 if(jsonParsed.table[i].network == 'NHL NET') {
                     leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
-                else if(jsonParsed.table[i].network == undefined){
-                    leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}','');
+                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
+                    leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
                 }
                 else leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
                 leagueOut3[i] = leagueOut3[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
             }
             else{
-                leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}','');
+                leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
             }
         }
     }
