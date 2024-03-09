@@ -64,9 +64,9 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
+3/9: Lined up channels
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
-   Making games w/o channels line up
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
    as of ~9pm allSorted works for time-diff-stand and diff-time-stand but not stand-x-x or x-stand-x
    -> 3/8: All combos working currently w/ allSorted but I've changed nothing

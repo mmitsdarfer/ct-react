@@ -76,7 +76,7 @@ function jsonHtml(league, priority){
             leagueOut0[i] = leagueOut0[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
             leagueOut0[i] = leagueOut0[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
             if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET') {
+                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
                     leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
                 else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
@@ -98,13 +98,13 @@ function jsonHtml(league, priority){
                     leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
                 else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
-                    leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
+                    leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn">NO LINK<br></a>');
                 }
-                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="blank-btn"></a>');
+                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
                 leagueOut1[i] = leagueOut1[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
             }
             else{
-                leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
+                leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn">NO LINK<br></a>');
             }
         }
         if(i % 4 == 2){

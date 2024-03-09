@@ -5,7 +5,7 @@
     padding-bottom: 10px;
 }
 .blank-btn{
-  
+  opacity: 0;
 }
 .btn {
     font: bold 14px Arial;
@@ -39,6 +39,7 @@
 .net{
     text-align:center; 
     padding-top: 10px;
+    font: bold 14px Arial;
 }  
 
 /*for leagueIndex.html */

@@ -93,10 +93,9 @@ var scrape = async function scrape(league, priority){
         }
         //put networks in nodelist
         //nba doesn't have network
-        if(!league.includes('NBA')){
-            for(let i = 0; i < notEnded/2; i++){   //networks shown only for unstarted and ongoing games
-                nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
-            }
+        let netLen = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem').length;
+        for(let i = 0; i < netLen; i++){
+            nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
         }
         
         //convert nodelists into arrays
