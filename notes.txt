@@ -19,6 +19,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Revisit MLB after spring training
 - Move the html conversion(s) in server.js to a new js file
 - Look into react (base on platform computing work?)
 - Display standings (?)
@@ -35,13 +36,12 @@ To do:
    - Run scrape in the background on its own and have refresh just implement those scraped values
       - Do I want to refresh the page (and in turn data) without clicking refresh?
  - Add team logos
- - !!(Evergreen) Document code and get rid of unneeded parts
+ - (Evergreen) Document code and get rid of unneeded parts
 - Check out bootstrap for cleaner UI (?)
    - At least change fonts
       - Make dropdown same as everything else?
    - Use platform computing notes for a guide
    - https://bootstrapshuffle.com/classes
-- !!!Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
    - Try to scrape ESPN for channel links so it actually goes to the game, not just to streamer landing page
