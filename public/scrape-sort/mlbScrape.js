@@ -88,9 +88,6 @@ export async function mlbScrape(priority){
 
         return [fullDate, teams, times, scores, numGames];
     })
-    console.log(teams);
-    console.log(times);
-    console.log(scores);
 
     //date with day of the week stripped off
     let i = 0;
