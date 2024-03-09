@@ -10,7 +10,6 @@ var prefData;
 var data = {};  //object json data will be stored in
 var gameData = {};
 
-
 //league and priority come from preferencs.json on original call
 if (fs.existsSync('json/preferences.json')) {
     const parsedPrefs = JSON.parse(fs.readFileSync('json/preferences.json', 'utf-8'));
@@ -74,25 +73,25 @@ var scrape = async function scrape(league, priority){
         notEnded = teamLen - endedLen;
 
         //put scores in array
-        for(let j = 0; j < scoreLen; j++){
-            scores[j] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[j];
-            if(scores[j] == null){
-                scores[j] = '-';
+        for(let i = 0; i < scoreLen; i++){
+            scores[i] = document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[i];
+            if(scores[i] == null){
+                scores[i] = '-';
             } 
         }
         scoreArr = Array.from(scores);
         scoreArr = scoreArr.map(game => game.textContent);  
-        for(let k = scoreLen - endedLen; k < teamLen - endedLen; k++){
-            scoreArr[k] = '-';  //placeholder before score exists
+        for(let i = scoreLen - endedLen; i < teamLen - endedLen; i++){
+            scoreArr[i] = '-';  //placeholder before score exists
         }
 
         //scores only exist for ongoing and ended, so scores have to split around unstarted games
         //because ongoing games are always first and ended are always last on espn
-        for(let m = teamLen - endedLen; m < teamLen; m++){
-            scoreArr[m] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + m - notEnded].textContent;
+        for(let i = teamLen - endedLen; i < teamLen; i++){
+            scoreArr[i] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + i - notEnded].textContent;
         }
+        
         //put networks in nodelist
-        //nba doesn't have network
         let netLen = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem').length;
         for(let i = 0; i < netLen; i++){
             nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
@@ -195,7 +194,7 @@ function netToLink(nets, teams, progress, numGames){
                     nets[i] = nets[i-1];
                 }
             }
-            if((teams[i*2] == 'Flyers' || teams[i*2+1] == 'Flyers') && (nets[i] != 'ABC' || nets[i] != 'TNT')){
+            if((teams[i*2] == 'Flyers' || teams[i*2+1] == 'Flyers') && (nets[i] != 'ABC' && nets[i] != 'TNT')){
                 channels[i] = nbcsp;    //TO DO: when on regular espn or tnt Flyers aren't on nbcsp
                 nets[i] = 'NBCSP';
             }  

@@ -1,6 +1,4 @@
-/*
-Handles cookies and adjusts preferences.html code to reflect user choices
-*/
+//Handles cookies and adjusts preferences.html code to reflect user choices
 
 function setD(numVal){
     console.log('Priority' + numVal + ' set as diffs');
@@ -131,7 +129,7 @@ function startup(){
     }
 }
 
-//first dropdown
+//1st dropdown
 function topPriority(){
     const getCookieValue = (name) => (
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''

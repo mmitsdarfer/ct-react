@@ -19,6 +19,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Move the html conversion(s) in server.js to a new js file
 - Look into react (base on platform computing work?)
 - Display standings (?)
 - Show previous json data on webpage, scrape and update json, repeat (?)
@@ -30,22 +31,17 @@ To do:
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
    - When Flyers are on national broadcasts replace NBCSP link
       - Think I did this
-- Scrape each league from the home page so at least some data is ready for when that page opens?
-   - Use preferences.json to just scrape top league? Or in order from most visited to least?
-   - Have to make sure it's sequential because overlap messes up the data
 - Add timer to auto refresh 
    - Run scrape in the background on its own and have refresh just implement those scraped values
       - Do I want to refresh the page (and in turn data) without clicking refresh?
  - Add team logos
- - (Evergreen) Document code and get rid of unneeded parts
+ - !!(Evergreen) Document code and get rid of unneeded parts
 - Check out bootstrap for cleaner UI (?)
    - At least change fonts
       - Make dropdown same as everything else?
    - Use platform computing notes for a guide
    - https://bootstrapshuffle.com/classes
-- Sometimes NBA does have channels, so check for channel instead of a whole league either having them or not
-   - Spring training mlb doesn't have channels but I think regular season will, so def need to implement this
-- Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
+- !!!Make nested for loops consistent; most go i then j, so make them all do that (for readability and consistency)
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
    - Try to scrape ESPN for channel links so it actually goes to the game, not just to streamer landing page
@@ -64,6 +60,8 @@ To do but this time it's specific:
 
 WIWWO: 
 3/9: Lined up channels
+   Added scrape on launch from highest pref to lowest
+      -> uses await so shouldn't overwrite each other and it looks like it doesn't
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort

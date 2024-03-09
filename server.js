@@ -1,6 +1,5 @@
 import express from 'express';
 const app = express();
-const router = express.Router();
 const port = 8000;
 import fs from 'fs';
 import { join } from 'path';
@@ -11,7 +10,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 import { existsSync, readFileSync, writeFile } from "fs";
 import cookieParser from 'cookie-parser';
 import callScrape from './scrape.js';
-
 
 var current;
  
@@ -222,9 +220,6 @@ function getCookies(req, res){
 
 //home page
 app.get('/', (req, res) => { 
-    /*TODO: I want to call for each league in order based on preferences.json ranking
-    which might require using promises? I considered timers too
-    */
     getCookies(req, res);
     res.sendFile(__dirname + '\\index.html');
 });
@@ -392,7 +387,6 @@ app.get('/nba', (req, res) => {
 });
 
 import mlbScrape from './public/scrape-sort/mlbScrape.js';
-
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
     var data = {};
@@ -502,7 +496,7 @@ app.get('/preferences', (req, res) => {
         return parsedPrefs;
     }
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        let parsedPrefs = callReset();
+        callReset();
     }
 
     async function writePrefs(){
@@ -525,4 +519,12 @@ if (!existsSync('json/preferences.json')) {
 
 app.listen(port, () => {
     console.log('Running on ' + port);
+    let parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+    async function loadScrape(){
+        for(let i = parsedPrefs.length-1; i >= 2; i--){
+            if(parsedPrefs[i][0] == 'MLB') await mlbScrape(parsedPrefs[1]);
+            else await callScrape(parsedPrefs[i][0], parsedPrefs[1]);
+        }
+    }
+    loadScrape();
 })

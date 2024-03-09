@@ -1,4 +1,4 @@
-//MLB has many edge cases, so it has its own scrape file
+//MLB has many edge cases (e.g. innings, bottom/top), so it has its own scrape file
 
 import puppeteer from 'puppeteer';
 import { timeConversion, standingsScrape } from './standings-time.js';
@@ -62,8 +62,6 @@ export async function mlbScrape(priority){
                     if(firstUnstart == 0) firstUnstart = i;
                     scores[i] = '-';
                     scores[i+1] = '-';
-                    //scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
-                    //scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
                 }
                 else{
                     scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
@@ -83,8 +81,6 @@ export async function mlbScrape(priority){
                 i--;
             }
         }
-
-        //TODO: add networks
 
         return [fullDate, teams, times, scores, numGames];
     })

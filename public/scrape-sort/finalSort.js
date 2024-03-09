@@ -463,6 +463,7 @@ export function finalSort(data, priority, league, date){
     dropEmpties(endSorted);
 
     //not yet sure why MLB's endSorted gets messed up. allSorted does what it's supposed to but need endSorted to break ties
+    //going to revisit after spring training because spring standings (split into grapefruit & cactus) seem to cause issues
     if(league == 'MLB'){
         console.log('Priority: ' + priority);
         console.log(allSorted); 

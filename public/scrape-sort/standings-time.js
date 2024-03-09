@@ -6,27 +6,22 @@ import puppeteer from 'puppeteer';
 //take in time left in a game and convert it in order to compare
 export function timeConversion(league, time){
     time = String(time);
-    let units = null;
     let unitLen = 0;    //in seconds if applicable
     let unitMax;
     if(league == 'NHL'){
-        units = 'periods';
         unitLen = 1200;
         unitMax = 3;
         if(time.includes('SO') && !time.includes('Final')) return 5 * unitLen;
     }
     else if(league == 'NFL'){
-        units = 'quarters';
         unitLen = 900;
         unitMax = 4;
     }
     else if(league == 'NBA'){
-        units = 'quarters';
         unitLen = 720;
         unitMax = 4;
     }
     else if(league == 'MLB'){
-        units = 'innings'
         unitMax = 9;
     }
     
@@ -50,7 +45,7 @@ export function timeConversion(league, time){
         return time;
     }
     else if(time.length == 3){
-        time = [0, 0, (parseInt(time) + 1).toString()];    //as period ends the time disappears but the period remains,
+        time = [0, 0, (parseInt(time) + 1).toString()]; //as period ends the time disappears but the period remains,
                                                         //so set time to beginning of next period
     }
     else if(league == 'MLB'){
@@ -87,8 +82,7 @@ export function timeConversion(league, time){
         time = time.split(' - ');
         if(time[0].includes(':')){
             let hold = time[0].split(':');
-            time = time.concat(hold);
-            
+            time = time.concat(hold);         
             time[0] = time[2];
             time[2] = time[1];
             time[1] = time[3];
@@ -101,8 +95,7 @@ export function timeConversion(league, time){
         time = time.slice(0,3);    
         time[0] = parseInt(time[0]);
         time[1] = parseInt(time[1]);
-    }
-    
+    }   
     
     if((time[2].includes('OT'))){
         if(!isNaN(parseInt(time[2]))){
