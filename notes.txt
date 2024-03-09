@@ -19,7 +19,6 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
-- Figure out nets for MLB and NBA
 - Look into react (base on platform computing work?)
 - Display standings (?)
 - Show previous json data on webpage, scrape and update json, repeat (?)
