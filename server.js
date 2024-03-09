@@ -100,7 +100,7 @@ function jsonHtml(league, priority){
                 else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
                     leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
                 }
-                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="blank-btn"</a>');
+                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="blank-btn"></a>');
                 leagueOut1[i] = leagueOut1[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
             }
             else{
