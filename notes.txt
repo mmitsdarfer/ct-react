@@ -59,9 +59,6 @@ To do but this time it's specific:
 2. Figure out how to update scores when they load
 
 WIWWO: 
-3/9: Lined up channels
-   Added scrape on launch from highest pref to lowest
-      -> uses await so shouldn't overwrite each other and it looks like it doesn't
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
