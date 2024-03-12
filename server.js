@@ -12,6 +12,7 @@ import cookieParser from 'cookie-parser';
 import callScrape from './public/scrape-sort/scrape.js';
 
 var current;
+var takeMe;
  
 //logo format = league, width, height, link
 const logos = [['NHL', 120, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/05_NHL_Shield.svg/1200px-05_NHL_Shield.svg.png'],
@@ -41,7 +42,7 @@ function mergeSort(arr){
 }
 
 //use data from league jsons to transform league.html & leagueIndex.html
-function jsonHtml(league, priority){
+function jsonHtml(league, priority, takeMe = 'off'){
     var jsonParsed;
     async function writeJson(){
         setTimeout(() => {   
@@ -155,11 +156,20 @@ function jsonHtml(league, priority){
     leagueOut2 = leagueOut2.join(' \n');
     leagueOut3 = leagueOut3.join(' \n');
 
-    var leagueRes = leagueIndex.replace('{{%CONTENT0%}}', leagueOut0).replace('{{%CONTENT1%}}', leagueOut1).replace('{{%CONTENT2%}}', leagueOut2).replace('{{%CONTENT3%}}', leagueOut3);
+
+    var leagueRes = leagueIndex.replace('{{%CONTENT0%}}', leagueOut0)
+    .replace('{{%CONTENT1%}}', leagueOut1).replace('{{%CONTENT2%}}', leagueOut2).replace('{{%CONTENT3%}}', leagueOut3);
     leagueRes = leagueRes.replace('{{%LEAGUE%}}', league).replace('{{%LEAGUE%}}', league.toLowerCase()).replace('{{%WIDTH%}}', currentLogo[0])
     .replace('{{%HEIGHT%}}', currentLogo[1]).replace('{{%LOGO%}}', currentLogo[2]).replace('{{%DATE%}}', jsonParsed.table[len-1].date)
     .replace('{{%PRIORITY0%}}', priority[0].charAt(0).toUpperCase() + priority[0].slice(1)).replace('{{%PRIORITY1%}}', priority[1].charAt(0).toUpperCase() + priority[1].slice(1))
     .replace('{{%PRIORITY2%}}', priority[2].charAt(0).toUpperCase() + priority[2].slice(1));
+
+    if(takeMe == 'on'){
+        leagueRes = leagueRes.replace('{{%TOP%}}', jsonParsed.table[0].link);
+    }
+    else{
+        leagueRes = leagueRes.replace("window.open('{{%TOP%}}');", '');
+    }
 
     return leagueRes;
 }
@@ -172,6 +182,10 @@ function getCookies(req, res){
     priority[0] = (req.cookies.Priority0); 
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
+    takeMe = req.cookies.Take;
+    if(takeMe == 'on'){
+
+    }
     if(priority[0] === undefined){
         priority[0] = 'diffs';
         res.cookie('Priority0', 'diffs');
@@ -291,6 +305,10 @@ app.get('/nhl', (req, res) => {
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2);   
     let reset = (req.cookies.Reset);
+
+    takeMe = req.cookies.Take;
+    console.log(takeMe);
+
     function callReset(){    
         res.cookie('Reset', 'false');
         setTimeout(() => {   
@@ -304,7 +322,7 @@ app.get('/nhl', (req, res) => {
         setTimeout(function () {
             preferences(current);   
             callScrape(current, priority);
-            var nhlRes = jsonHtml(current, priority);
+            var nhlRes = jsonHtml(current, priority, takeMe);
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.end(nhlRes);          
         }, 100);       
@@ -426,7 +444,7 @@ app.get('/mlb', (req, res) => {
 });
 
 //fills in preferences.html with preferences.json data
-function prefsJsonHtml(priority){
+function prefsJsonHtml(priority, takeMe){
     var leagueHtml = readFileSync('public/preferences.html', 'utf-8');
     var prefsOut; 
     var prefsParsed;
@@ -476,6 +494,10 @@ function prefsJsonHtml(priority){
     }
     prefsOut = prefsOut.replace('{{%DROP0%}}', dropdownHtml[0]).replace('{{%DROP1%}}', dropdownHtml[1])
             .replace('{{%DROP2%}}', dropdownHtml[2]);
+
+    if(takeMe == 'off'){
+        prefsOut = prefsOut.replace('checked', '');
+    }
     
     return prefsOut;
 }
@@ -487,6 +509,7 @@ app.get('/preferences', (req, res) => {
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
     let reset = (req.cookies.Reset);
+    let takeMe = req.cookies.Take;
     function callReset(){    
         res.cookie('Reset', 'false');
         setTimeout(() => {   
@@ -501,7 +524,7 @@ app.get('/preferences', (req, res) => {
 
     async function writePrefs(){
         setTimeout(function () {
-            let prefRes = prefsJsonHtml(priority);
+            let prefRes = prefsJsonHtml(priority, takeMe);
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end(prefRes);          
         }, 100);       

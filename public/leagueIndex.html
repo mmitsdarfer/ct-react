@@ -2,9 +2,15 @@
     <html>
         <head>
             <title>Crunch Time</title>
-            <link type="text/css" rel="stylesheet" href="public/css/league.css">       
+            <link type="text/css" rel="stylesheet" href="public/css/league.css">   
+            <script>
+                function startup(){
+                    console.log('TEST!!');
+                    window.open('{{%TOP%}}');
+                }
+            </script>    
         </head>
-        <body>
+        <body  onload="startup()">
             <div class="page-content">
                 <button class="home" type="submit" onclick="window.location.href='//localhost:8000';"> 
                     <br><img type="image" width="70" height="70" src="../public/images/goHome.png"/>

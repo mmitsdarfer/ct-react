@@ -127,6 +127,8 @@ function startup(){
             }
         }
     }
+    let takeCheck = getCookieValue('Take');
+    let takeMe = document.getElementById("check");
 }
 
 //1st dropdown
@@ -271,8 +273,10 @@ function takeMe(){
     var takeMe = document.getElementById("check");
     if(takeMe.checked){
         console.log('take me: on');
+        document.cookie = "Take=on";
     }  //add take me on or take me off
     else{
         console.log('take me: off');
+        document.cookie = "Take=off";
     }
 }

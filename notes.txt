@@ -19,6 +19,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- getCookies is kind of repeated in calls to league pages because each cookie is collected again
 - Revisit MLB after spring training
 - Move the html conversion(s) in server.js to a new js file
 - Look into react (base on platform computing work?)
@@ -62,12 +63,7 @@ Names for new feature:
 "Take me out to the ball (or puck or some other object) game"
 
 WIWWO: 
-3/11: Seem to have espn+ links working, need more testing
-      -> need to test for when game w/ links aren't the top 2
-   Follow link steps:
-      [DONE]Add espn+ links
-      [NOW]Add ability to go right to whatever link
-         Added toggle switch and check for it, need to implement how it changes (cookie or something)
+3/12: Think I'm fully done takeMe, just need more testing
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
