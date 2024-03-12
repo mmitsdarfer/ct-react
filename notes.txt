@@ -19,11 +19,11 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- See if specific errors above still exist
 - getCookies is kind of repeated in calls to league pages because each cookie is collected again
 - Revisit MLB after spring training
 - Move the html conversion(s) in server.js to a new js file
 - Look into react (base on platform computing work?)
-- Display standings (?)
 - Show previous json data on webpage, scrape and update json, repeat (?)
    - So, in server if [league].json already exists write that with jsonHtml then scrape (?)
    - Maybe if I really can't get it to load dynamically
@@ -45,22 +45,16 @@ To do:
    - https://bootstrapshuffle.com/classes
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
-   - Try to scrape ESPN for channel links so it actually goes to the game, not just to streamer landing page
-      - Add option to automatically follow link to closest game (in new tab)
-      - Add to switch to preferences
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
-      - Or could show the 1st of each sport, then the 2nd, and so on
+      - Or could show the 1st of each sport, then the 2nd of each, and so on
    - Split into separate files (?)
    - Some people preach against for loops so maybe try forEach, map, and/or filter
       - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 To do but this time it's specific:
-1. Fix MLB
+1. Follow link
 2. Figure out how to update scores when they load
-
-Names for new feature:
-"Take me out to the ball (or puck or some other object) game"
 
 WIWWO: 
 3/12: Think I'm fully done takeMe, just need more testing
