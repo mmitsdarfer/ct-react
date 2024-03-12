@@ -266,3 +266,13 @@ function reset(){
     }
     document.cookie = "Reset=true";
 }
+
+function takeMe(){
+    var takeMe = document.getElementById("check");
+    if(takeMe.checked){
+        console.log('take me: on');
+    }  //add take me on or take me off
+    else{
+        console.log('take me: off');
+    }
+}

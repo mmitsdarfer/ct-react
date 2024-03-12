@@ -3,7 +3,7 @@
         <head>
             <title>Crunch Time</title>
             <link type="text/css" rel="stylesheet" href="css/main.css">
-            <script type="text/javascript" src="localStorage.js"></script>   
+            <script type="text/javascript" src="prefFunctions.js"></script>   
         </head>   
         <body onload="startup()">
             <button class="home" type="submit" onclick="window.location.href='//localhost:8000';"> 
@@ -27,16 +27,26 @@
                     <select class="selectPriority" onchange="lastPriority()">
                         {{%DROP2%}}
                     </select>
-                    <br><br>
+                    
                 </div>
                 <div id="explainer">
                     Sort by games with closest scores (diffs),<br> closest to ending (times), <br> or highest average of 2 teams' league rankings (standings)
-                </div>                  
-                <br>              
+                </div>    
+                <div class="priority">
+                    <br><br>Take me out to the ball (or puck) game:
+                    <label class="switch">
+                        <input class="switch-input" id="check" type="checkbox" onclick="takeMe()"/>
+                        <span class="switch-label" data-on="On" data-off="Off"></span> 
+                        <span class="switch-handle"></span> 
+                    </label>
+                    Turn on to be sent to a stream of #1 game by priority 
+                </div>        
+                <br>             
                 <button class="reset"type="button" onclick="reset()"> 
-                    Reset preference data 
-                </button> <br><br>
+                    Reset visit data 
+                </button>      
             </p1>
+            
             <div id="times-visited">
                 <br><br><br>Times<br>Visited
                 </div>

@@ -36,7 +36,7 @@ img{
     padding: 8px;
     display: block;
     margin: auto;
-    margin-bottom: 40px;
+    margin-bottom: 100px;
 }
 .logos{
     margin: 0;                        
@@ -126,6 +126,8 @@ not currently using a switch though
     height: 30px;
     padding: 3px;
     margin: auto;
+    margin-top: 2px;
+    margin-bottom: 2px;
     background: linear-gradient(to bottom, #eeeeee, #FFFFFF 25px);
     background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF 25px);
     border-radius: 18px;
