@@ -58,7 +58,15 @@ To do but this time it's specific:
 1. Fix MLB
 2. Figure out how to update scores when they load
 
+Names for new feature:
+"Take me out to the ball (or puck or some other object) game"
+
 WIWWO: 
+3/11: Seem to have espn+ links working, need more testing
+      -> need to test for when game w/ links aren't the top 2
+   Follow link steps:
+      [DONE]Add espn+ links
+      [NOW]Add ability to go right to whatever link
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort

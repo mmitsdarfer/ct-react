@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 import { existsSync, readFileSync, writeFile } from "fs";
 import cookieParser from 'cookie-parser';
-import callScrape from './scrape.js';
+import callScrape from './public/scrape-sort/scrape.js';
 
 var current;
  
@@ -522,8 +522,9 @@ app.listen(port, () => {
     let parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
     async function loadScrape(){
         for(let i = parsedPrefs.length-1; i >= 2; i--){
-            if(parsedPrefs[i][0] == 'MLB') await mlbScrape(parsedPrefs[1]);
-            else await callScrape(parsedPrefs[i][0], parsedPrefs[1]);
+            //COMMENT OUT BELOW FOR QUICKER TESTING
+      //      if(parsedPrefs[i][0] == 'MLB') await mlbScrape(parsedPrefs[1]);
+        //    else await callScrape(parsedPrefs[i][0], parsedPrefs[1]);
         }
     }
     loadScrape();

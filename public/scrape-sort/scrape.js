@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { timeConversion, standingsScrape } from './public/scrape-sort/standings-time.js';
-import finalSort from './public/scrape-sort/finalSort.js';
+import { timeConversion, standingsScrape } from './standings-time.js';
+import finalSort from './finalSort.js';
 
 var league;
 var priority;
@@ -43,14 +43,15 @@ var scrape = async function scrape(league, priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames;
+    var fullDate, teams, times, scores, nets, numGames, links;
     
-    [fullDate, teams, times, scores, nets, numGames] = await page.evaluate((league) => {
+    [fullDate, teams, times, scores, nets, numGames, links] = await page.evaluate((league) => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
         times = [];
         nets = [];
+        links = [];
         teamLen = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName').length;
         numGames = teamLen/2;
         
@@ -96,15 +97,25 @@ var scrape = async function scrape(league, priority){
         for(let i = 0; i < netLen; i++){
             nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
         }
+        for(let i = 0; i < numGames; i++){
+            if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
+                links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
+            }
+        }
         
         //convert nodelists into arrays
         teamArr = Array.from(teams);
-        teamArr = teamArr.map(game => game.textContent);  
+        teamArr = teamArr.map(team => team.textContent);  
         netArr = Array.from(nets);
-        netArr = netArr.map(game => game.textContent);
+        netArr = netArr.map(net => net.textContent);
+        linkArr = Array.from(links);
+        linkArr = linkArr.map(link => link.href);
 
-        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames];
+        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, linkArr];
     }, league);
+
+    console.log(links);
+    console.log('!!!!!');
 
     //date with day of the week stripped off
     let i = 0;
@@ -143,7 +154,7 @@ var scrape = async function scrape(league, priority){
         } 
     }
 
-    var channels = netToLink(nets, teams, progress, numGames);
+    var channels = netToLink(nets, teams, progress, numGames, links);
 
     gameData.table = [];
     var gameObj = {};
@@ -177,7 +188,7 @@ var scrape = async function scrape(league, priority){
 
 //takes in listed channel and provides streaming link
 //TODO: eventually use scrape to get specific game link, not just streamer
-function netToLink(nets, teams, progress, numGames){
+function netToLink(nets, teams, progress, numGames, links){
     //make sure to log in first
     const tnt = 'https://www.tntdrama.com/watchtnt/east';
     const espn = 'https://www.espn.com/watch/';
@@ -202,7 +213,8 @@ function netToLink(nets, teams, progress, numGames){
                 channels[i] = tnt;
             }
             else if(nets[i] == 'ESPN' || nets[i] == 'ESPN+' || nets[i] == 'NHLPP|ESPN+' || nets[i] == 'ESPN+/Hulu' || nets[i] == 'Hulu'){
-                channels[i] = espn;        
+                if(links[i] !== undefined) channels[i] = links[i];
+                else channels[i] = espn;        
             }  
             else if(nets[i] == 'FOX'){
                 channels[i] = fox;
