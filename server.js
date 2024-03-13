@@ -183,8 +183,9 @@ function getCookies(req, res){
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
     takeMe = req.cookies.Take;
-    if(takeMe == 'on'){
-
+    if(takeMe === undefined){
+        takeMe = 'off';
+        res.cookie('Take', 'off');
     }
     if(priority[0] === undefined){
         priority[0] = 'diffs';
@@ -301,13 +302,11 @@ app.get('/nhl', (req, res) => {
     }
     getCookies(req, res);
     let priority = [];
-    priority[0] = (req.cookies.Priority0); 
-    priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2);   
-    let reset = (req.cookies.Reset);
-
+    priority[0] = req.cookies.Priority0; 
+    priority[1] = req.cookies.Priority1; 
+    priority[2] = req.cookies.Priority2;   
+    let reset = req.cookies.Reset;
     takeMe = req.cookies.Take;
-    console.log(takeMe);
 
     function callReset(){    
         res.cookie('Reset', 'false');
@@ -542,7 +541,7 @@ if (!existsSync('json/preferences.json')) {
 
 app.listen(port, () => {
     console.log('Running on ' + port);
-    let parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+    //let parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
     async function loadScrape(){
         for(let i = parsedPrefs.length-1; i >= 2; i--){
             //COMMENT OUT BELOW FOR QUICKER TESTING
@@ -550,5 +549,5 @@ app.listen(port, () => {
         //    else await callScrape(parsedPrefs[i][0], parsedPrefs[1]);
         }
     }
-    loadScrape();
+   // loadScrape();
 })

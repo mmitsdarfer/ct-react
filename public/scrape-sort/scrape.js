@@ -114,9 +114,6 @@ var scrape = async function scrape(league, priority){
         return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, linkArr];
     }, league);
 
-    console.log(links);
-    console.log('!!!!!');
-
     //date with day of the week stripped off
     let i = 0;
     for(i; i < fullDate.length; i++){
