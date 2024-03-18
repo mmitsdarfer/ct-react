@@ -28,6 +28,8 @@ To do:
 - Revisit MLB after spring training
 - Move the html conversion(s) in server.js to a new js file
 - Look into react (base on platform computing work?)
+   - Would want all the scores to update at once because element by element would show repeats
+   - Could use to remake preferences to update hits with less code
 - Show previous json data on webpage, scrape and update json, repeat (?)
    - So, in server if [league].json already exists write that with jsonHtml then scrape (?)
    - Maybe if I really can't get it to load dynamically
@@ -62,7 +64,7 @@ To do but this time it's specific:
 3. Fix known errors
 
 WIWWO: 
-3/12: takeMe is working but links aren't properly matched up with games
+3/17: Got takeMe working and links matching up and merged
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort

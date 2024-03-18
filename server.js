@@ -93,7 +93,7 @@ function jsonHtml(league, priority, takeMe = 'off'){
             leagueOut1[i] = leagueOut1[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
             leagueOut1[i] = leagueOut1[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
             if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET') {
+                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
                     leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
                 else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
@@ -111,7 +111,7 @@ function jsonHtml(league, priority, takeMe = 'off'){
             leagueOut2[i] = leagueOut2[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
             leagueOut2[i] = leagueOut2[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
             if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET') {
+                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
                     leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
                 else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
@@ -129,7 +129,7 @@ function jsonHtml(league, priority, takeMe = 'off'){
             leagueOut3[i] = leagueOut3[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
             leagueOut3[i] = leagueOut3[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
             if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET') {
+                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
                     leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
                 }
                 else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){

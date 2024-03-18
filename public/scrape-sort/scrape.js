@@ -101,6 +101,7 @@ var scrape = async function scrape(league, priority){
             if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
                 links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
             }
+            else links[i] = "teststs";
         }
         
         //convert nodelists into arrays
@@ -184,7 +185,6 @@ var scrape = async function scrape(league, priority){
 }
 
 //takes in listed channel and provides streaming link
-//TODO: eventually use scrape to get specific game link, not just streamer
 function netToLink(nets, teams, progress, numGames, links){
     //make sure to log in first
     const tnt = 'https://www.tntdrama.com/watchtnt/east';
@@ -193,6 +193,7 @@ function netToLink(nets, teams, progress, numGames, links){
     const fox = 'https://www.foxsports.com/live';
     const abc = 'https://abc.com/watch-live/abc';
     const channels = [];
+    let notPlus = 0;
 
     for(let i = 0; i < numGames; i++){  
         if(progress[i] != 'ended'){
@@ -205,22 +206,27 @@ function netToLink(nets, teams, progress, numGames, links){
             if((teams[i*2] == 'Flyers' || teams[i*2+1] == 'Flyers') && (nets[i] != 'ABC' && nets[i] != 'TNT')){
                 channels[i] = nbcsp;    //TO DO: when on regular espn or tnt Flyers aren't on nbcsp
                 nets[i] = 'NBCSP';
+                notPlus++;
             }  
             else if(nets[i] == 'TNT'){
                 channels[i] = tnt;
+                notPlus++;
             }
             else if(nets[i] == 'ESPN' || nets[i] == 'ESPN+' || nets[i] == 'NHLPP|ESPN+' || nets[i] == 'ESPN+/Hulu' || nets[i] == 'Hulu'){
-                if(links[i] !== undefined) channels[i] = links[i];
+                if(links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
                 else channels[i] = espn;        
             }  
             else if(nets[i] == 'FOX'){
                 channels[i] = fox;
+                notPlus++;
             }
             else if(nets[i] == 'ABC'){
                 channels[i] = abc;
+                notPlus++;
             }
             else { 
                 channels[i] = '';
+                notPlus++;
             }   
         }
     }
