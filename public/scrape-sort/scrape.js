@@ -213,8 +213,8 @@ function netToLink(nets, teams, progress, numGames, links){
                 notPlus++;
             }
             else if(nets[i] == 'ESPN' || nets[i] == 'ESPN+' || nets[i] == 'NHLPP|ESPN+' || nets[i] == 'ESPN+/Hulu' || nets[i] == 'Hulu'){
-                if(links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
-                else channels[i] = espn;        
+                if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
+                else channels[i] = espn;      
             }  
             else if(nets[i] == 'FOX'){
                 channels[i] = fox;

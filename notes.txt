@@ -51,6 +51,7 @@ To do:
    - https://bootstrapshuffle.com/classes
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
+   - Add upcoming days
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
@@ -64,6 +65,7 @@ To do but this time it's specific:
 3. Fix known errors
 
 WIWWO: 
+3/19: Didn't change anything, but seeing lots of null links
 3/17: Got takeMe working and links matching up and merged
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
