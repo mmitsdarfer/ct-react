@@ -60,13 +60,11 @@ To do:
       - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
 To do but this time it's specific:
-1. Follow link
-2. Figure out how to update scores when they load
-3. Fix known errors
+1. Figure out how to update scores when they load
+2. Fix known errors
 
 WIWWO: 
-3/19: Didn't change anything, but seeing lots of null links
-3/17: Got takeMe working and links matching up and merged
+3/20: Think I fixed null links
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
