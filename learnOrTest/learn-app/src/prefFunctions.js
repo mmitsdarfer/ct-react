@@ -1,6 +1,50 @@
 //Handles cookies and adjusts preferences.html code to reflect user choices
 
-function setD(numVal){
+function SetD({numVal}){
+    console.log('Priority {numVal} set as diffs');
+    if({numVal} == 0){
+        document.cookie = "Priority0=diffs";
+        return(
+            <div>
+                <p>{numVal}</p>
+                <option value="times">Times</option>
+                <option value="standings">Standings</option>
+            </div>
+            
+        )
+    }
+    else if(numVal == 1){
+        document.cookie = "Priority1=diffs";
+        return(
+            ''
+        )
+        //remove lower dropdown
+    }
+}
+
+function SetT({numVal}){
+    console.log('Priority' + numVal + ' set as diffs');
+    if({numVal} == 0){
+        document.cookie = "Priority0=times";
+        return(           
+            <div>
+                <p>{numVal}</p>
+                <option value="diffs">Diffs</option>
+                <option value="standings">Standings</option>
+            </div>
+            
+        )
+    }
+    else if(numVal == 1){
+        document.cookie = "Priority1=diffs";
+        return(
+            ''
+        )
+        //remove lower dropdown
+    }
+}
+
+/*function SetD(numVal){
     console.log('Priority' + numVal + ' set as diffs');
     var priorities = document.getElementsByClassName("selectPriority");
     if(numVal == 0){
@@ -18,7 +62,8 @@ function setD(numVal){
         document.cookie = "Priority2=diffs";
     }    
 }
-function setT(numVal){
+
+function SetT(numVal){
     console.log('Priority' + numVal + ' set as times');
     var priorities = document.getElementsByClassName("selectPriority");
     if(numVal == 0){
@@ -37,7 +82,8 @@ function setT(numVal){
         document.cookie = "Priority2=times";
     }  
 }
-function setS(numVal){
+*/
+function SetS(numVal){
     console.log('Priority' + numVal + ' set as standings');
     var priorities = document.getElementsByClassName("selectPriority");
     if(numVal == 0){
@@ -56,21 +102,7 @@ function setS(numVal){
     }  
 }
 
-//alter html based on current rank
-function resetPriorities(rank){  
-    var priorities = document.getElementsByClassName("selectPriority");
-    console.log(priorities.innerHTML);
-    //successive priorities are the same except for rank and option values which are changed in set functions
-    if(rank == 'top'){
-        priorities[1].innerHTML = priorities[0].innerHTML.replace('top', '2nd');
-        priorities[2].innerHTML = priorities[1].innerHTML.replace('2nd', 'last');
-    }  
-    else if(rank == 'mid'){
-        priorities[2].innerHTML = priorities[1].innerHTML.replace('2nd', 'last');
-    }
-}
-
-//called onload. gets cookies and sets starting dropdowns accordingly
+//called onload. gets cookies and SetS starting dropdowns accordingly
 function startup(){
     const getCookieValue = (name) => (
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
@@ -87,52 +119,77 @@ function startup(){
         //set functions remove repeated option from dropdowns but they could be displayed as selected w/o used bools
         if(priority[i] == 'diffs'){
             if(!diffsUsed){
-                setD(i);
                 diffsUsed = true;
+                return(
+                    <SetD numVal={i}></SetD>
+                )
+                
             }
             else if(!timesUsed){
-                setT(i);
+                <SetT numVal={i}></SetT>
                 timesUsed = true;
             }
             else if(!standUsed){
-                setS(i);
+                <SetS numVal={i}></SetS>
                 standUsed = true;
             }
         }
         else if(priority[i] == 'times'){
             if(!timesUsed){
-                setT(i);
+                <SetT numVal={i}></SetT>
                 timesUsed = true;
             }
             else if(!diffsUsed){
-                setD(i);
+                <SetD numVal={i}></SetD>
                 diffsUsed = true;
             }
             else if(!standUsed){
-                setS(i);
+                <SetS numVal={i}></SetS>
                 standUsed = true;
             }
         }
         else if(priority[i] == 'standings'){
             if(!standUsed){
-                setS(i);
+                <SetS numVal={i}></SetS>
                 standUsed = true;
             }
             else if(!diffsUsed){
-                setD(i);
+                <SetD numVal={i}></SetD>
                 diffsUsed = true;
             }
             else if(!timesUsed){
-                setT(i);
+                <SetT numVal={i}></SetT>
                 timesUsed = true;
             }
         }
     }
-    let takeCheck = getCookieValue('Take');
-    let takeMe = document.getElementById("check");
+}
+
+function TopPriority({chosenTop, chosenMid}){
+    if(chosenTop== 'diffs'){
+        <SetD numVal={0}></SetD>
+        if(chosenMid == 'times' || chosenMid == 'diffs'){
+            return(
+                <div>
+                    <SetT numVal={1}></SetT>
+                    <SetS numVal={2}></SetS>
+                </div>   
+            )        
+            return(
+                <div>
+                    <option value="times">Times</option>
+                    <option value="standings">Standings</option>
+                </div>
+                
+            )
+        }
+
+    }
+    
 }
 
 //1st dropdown
+/*
 function topPriority(){
     const getCookieValue = (name) => (
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
@@ -146,46 +203,47 @@ function topPriority(){
     set top choice, change other choices to reflect (past priority if possible, next on list if same as top choice)
     update dropdown lists so choices are in same order as they were chosen and not duplicated
     */
+   /*
     if(chosenPri == 'diffs'){
-        setD(0);  
+        SetD(0);  
         if(priority1 == 'times' || priority1 == 'diffs'){
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="times">Times</option>', '');
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="standings">Standings</option>','<option value="times">Times</option>')
              + '<option value="standings">Standings</option>';
-            setT(1);
-            setS(2);
+            SetT(1);
+            SetS(2);
         }
         else if(priority1 == 'standings'){
-            setS(1);
+            SetS(1);
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="standings">Standings</option>', '');
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="times">Times</option>','<option value="standings">Standings</option>')
              + '<option value="times">Times</option>';
              
-            setT(2);
+            SetT(2);
         }
     }
     else if(chosenPri == 'times'){
-        setT(0);
+        SetT(0);
         if(priority1 == 'diffs' || priority1 == 'times'){
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="diffs">Diffs</option>', '');
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="standings">Standings</option>','<option value="diffs">Diffs</option>')
              + '<option value="standings">Standings</option>';
             console.log('time');
             console.log(priorities[1]);
-            setD(1);
+            SetD(1);
            
-            setS(2);
+            SetS(2);
         }
         else if(priority1 == 'standings'){
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="standings">Standings</option>', '');
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="diffs">Diffs</option>','<option value="standings">Standings</option>')
              + '<option value="diffs">Diffs</option>';
-            setS(1);
-            setD(2);
+            SetS(1);
+            SetD(2);
         }
     }
     else if(chosenPri == 'standings'){
-        setS(0);
+        SetS(0);
         console.log('stand:');
         console.log(priorities[1]);
         if(priority1 == 'times' || priority1 == 'standings'){
@@ -194,69 +252,61 @@ function topPriority(){
              + '<option value="diffs">Diffs</option>';
             
             
-            setT(1);
-            setD(2);
+            SetT(1);
+            SetD(2);
         }
         else if(priority1 == 'diffs'){
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="diffs">Diffs</option>', '');
             priorities[1].innerHTML = priorities[1].innerHTML.replace('<option value="times">Times</option>','<option value="diffs">Diffs</option>')
              + '<option value="times">Times</option>';
-            setD(1);
-            setT(2);
+            SetD(1);
+            SetT(2);
         }
     }
 }
+*/
 
 //changes 2nd and 3rd dropdowns
-function midPriority(){
-    resetPriorities('mid');
-    const getCookieValue = (name) => (
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-      )
-    let priority0 = getCookieValue('Priority0');
-    var priorities = document.getElementsByClassName("selectPriority");
-    var chosenPri = priorities[1].value
-    if(chosenPri == 'diffs'){
-        setD(1);
-        if(priority0 == 'times'){
-            setS(2);
+function MidPriority({chosenTop, chosenMid}){
+    if(chosenMid == 'diffs'){
+        SetD(1);
+        if(chosenTop == 'times'){
+            SetS(2);
         }
-        else if(priority0 == 'standings'){
-            setT(2);
+        else if(chosenTop == 'standings'){
+            SetT(2);
         }
     }
-    else if(chosenPri == 'times'){
-        setT(1);
-        if(priority0 == 'diffs'){
-            setS(2);
+    else if(chosenMid == 'times'){
+        SetT(1);
+        if(chosenTop == 'diffs'){
+            SetS(2);
         }
-        else if(priority0 == 'standings'){
-            setD(2);
+        else if(chosenTop == 'standings'){
+            SetD(2);
         }
     }
-    else if(chosenPri == 'standings'){
-        setS(1);
-        if(priority0 == 'times'){
-            setD(2);
+    else if(chosenMid == 'standings'){
+        SetS(1);
+        if(chosenTop == 'times'){
+            SetD(2);
         }
-        else if(priority0 == 'diffs'){
-            setT(2);
+        else if(chosenTop == 'diffs'){
+            SetT(2);
         }
     }
 }
 
 //last dropdown shows only remaining option, but this ensures no duplicates between mid and last dropdowns
-function lastPriority(){
-    var priorities = document.getElementsByClassName("selectPriority");
-    var chosenPri = priorities[2].value
-    if(chosenPri == 'diffs'){
-        setD(2);
+function LastPriority({chosenLast}){
+    if(chosenLast == 'diffs'){
+        SetD(2);
     }
-    else if(chosenPri == 'times'){
-        setT(2);
+    else if(chosenLast == 'times'){
+        SetT(2);
     }
-    else if(chosenPri == 'standings'){
-        setS(2);
+    else if(chosenLast == 'standings'){
+        SetS(2);
     }
 }
 
@@ -281,3 +331,5 @@ function takeMe(){
         document.cookie = "Take=off";
     }
 }
+
+export {startup, TopPriority, MidPriority, LastPriority};
