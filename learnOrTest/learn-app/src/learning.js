@@ -1,4 +1,5 @@
-import {startup, TopPriority, MidPriority, LastPriority} from "./prefFunctions";
+import {TopPriority, MidPriority, LastPriority} from "./prefFunctions";
+import { useState } from "react";
 
 export default function Learning(){
     function setD({numVal}){
@@ -31,6 +32,13 @@ export default function Learning(){
     priority[0] = getCookieValue('Priority0');
     priority[1] = getCookieValue('Priority1');
     priority[2] = getCookieValue('Priority2');
+
+    const [likes,setLikes] = useState(0);
+
+    function handleTopClick(){
+        setLikes(likes);
+        console.log('!!!!!!!!!!');
+    }
     
     function Priority(){
         return(
@@ -38,7 +46,7 @@ export default function Learning(){
                 <br id="priority-break"></br>
                 <div className="priority">
                     Top:&nbsp;
-                    <TopPriority chosenTop={priority[0]} chosenMid={priority[1]}></TopPriority>
+                    <TopPriority chosenTop={priority[0]} chosenMid={priority[1]} handleClick={handleTopClick}></TopPriority>
                     <MidPriority chosenTop={priority[0]} chosenMid={priority[1]}></MidPriority>
                     <LastPriority chosenLast={priority[2]}></LastPriority>
                 </div>
@@ -71,8 +79,7 @@ export default function Learning(){
         )
     }
     function StartUp({topChoice, midChoice, lastChoice}){
-        return(
-            
+        return(          
             <div className="priority">
                 <TopDrop topChoice={priority[0]} midChoice={priority[1]} lastChoice={priority[2]}></TopDrop>
                 <br></br><br></br>

@@ -332,4 +332,4 @@ function takeMe(){
     }
 }
 
-export {startup, TopPriority, MidPriority, LastPriority};
+export {TopPriority, MidPriority, LastPriority};

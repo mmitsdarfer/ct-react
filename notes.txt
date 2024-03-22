@@ -19,6 +19,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Add loading bar after implementing React (?)
 - Change tab icon
 - Iron out when to split by progress if not sorting by time
    - Sorting by standings isn't split into progresses. Should it be and/or should diffs of ongoing and ended be mixed together when sorting by diffs
@@ -65,8 +66,7 @@ To do but this time it's specific:
 2. Fix known errors
 
 WIWWO: 
-3/20: Working w/ React. Trying to figure out how to change dropdowns from load to use 
-      -> Shouldn't use onLoad
+3/21: Working w/ React. Trying to figure out how to change 1 dropdown after changing another
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort

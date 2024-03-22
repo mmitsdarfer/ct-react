@@ -111,6 +111,7 @@ img{
 .selectPriority {
     position: relative;
     width: 8%;
+    margin: 5px;
 }
 .options{
 width: 100%;

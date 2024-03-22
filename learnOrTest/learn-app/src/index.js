@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Learning from './learning';
+//import Learning from './learning';
+import Drop from './drop';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Learning />
+    <Drop />
   </React.StrictMode>
 );
 
