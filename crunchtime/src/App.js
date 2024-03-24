@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './main.css';
-import Dropdowns from './dropdowns';
+import Preferences from './Preferences';
 
 function Home(){
   return (
@@ -15,12 +15,10 @@ function Home(){
 function App() {
   return (
     <div>
-      <Home></Home>
-      <h1>Preferences</h1>
-     
-      <Dropdowns></Dropdowns>
+    <Home></Home>
+    <Preferences></Preferences>  
     </div>
-    
+      
   );
 }
 
