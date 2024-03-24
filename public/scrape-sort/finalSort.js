@@ -27,6 +27,9 @@ function militaryTime(time){
     time = time.split(':');
     time[0] = parseInt(time[0]);
     if(time[1].includes('PM')){
+        if(time[0] == 12){
+            time[0] = 0;
+        }
         time[0] += 12;
     }
     time[0] *= -60;

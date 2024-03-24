@@ -1,4 +1,7 @@
 import { useState } from "react";
+import fs from 'fs';
+import { existsSync, readFileSync, writeFile } from "fs";
+import data from './json/preferences.json'
 
 function Dropdowns(){
     let priority = [];
@@ -151,6 +154,42 @@ function ResetButton(){
 }
 
 function VisitData(){
+    //logo format = league, width, height, link
+    const logos = [['NHL', 120, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/05_NHL_Shield.svg/1200px-05_NHL_Shield.svg.png'],
+        ['NFL', 100, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/1200px-National_Football_League_logo.svg.png'],
+        ['MLB', 160, 86, 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1200px-Major_League_Baseball_logo.svg.png'],
+        ['NBA', 73, 120, 'https://brandlogos.net/wp-content/uploads/2014/09/NBA-logo-big.png']];
+    let nhl = ['NHL', 120, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/05_NHL_Shield.svg/1200px-05_NHL_Shield.svg.png'];
+
+    let parsedPrefs;
+    parsedPrefs = [data[data.length-1][0]];
+
+    function league(){
+
+        for(let i = 0; i < logos.length; i++){
+
+        }
+        return(
+            '//localhost:8000/'
+        )
+    }
+    return(
+        <div>
+            {parsedPrefs}
+            <div id="times-visited">
+                Times <br></br>Visited
+            </div>
+            <div className="row">
+                <div className="column">
+                    <div className="logos">
+                    <button className="logo-img" type="submit" href={league}>
+                        <img width={nhl[1]} height={nhl[2]} src={nhl[3]}/>
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
     /*
     return(
         <div>
