@@ -164,29 +164,45 @@ function VisitData(){
     let parsedPrefs;
     parsedPrefs = [data[data.length-1][0]];
 
-    function league(){
-
-        for(let i = 0; i < logos.length; i++){
-
+    function League({rank}){
+        let position = data.length - rank - 1; //closest to data.length == most visited league
+        for(let j = 0; j < logos.length; j++){
+            if(data[position][0] == logos[j][0]){
+                return(
+                    <a href={'//localhost:8000/'+data[position][0]}>
+                        <button className="logo-img" type="submit">
+                            <img width={logos[j][1]} height={logos[j][2]} src={logos[j][3]}/>
+                        </button>  
+                    </a>
+                                            
+                )
+            }
         }
-        return(
-            '//localhost:8000/'
-        )
+    }
+
+    function LeagueList(){
+        let leagueList = [];
+        for(let i = data.length-3; i >= 0; i--){    //-3 for 1 less than length minus # of pref.json elements not needed here
+            leagueList[i] = (
+                <div className="column">
+                    <div className="logos">
+                        <League rank={i}></League> 
+                        <div>
+                            <br></br>HITS    
+                        </div>         
+                    </div>
+                </div>
+            )
+        }
+        return leagueList;
     }
     return(
         <div>
-            {parsedPrefs}
             <div id="times-visited">
                 Times <br></br>Visited
             </div>
             <div className="row">
-                <div className="column">
-                    <div className="logos">
-                    <button className="logo-img" type="submit" href={league}>
-                        <img width={nhl[1]} height={nhl[2]} src={nhl[3]}/>
-                    </button>
-                    </div>
-                </div>
+                <LeagueList></LeagueList>
             </div>
         </div>
     )
