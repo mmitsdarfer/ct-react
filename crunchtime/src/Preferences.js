@@ -169,40 +169,60 @@ function VisitData(){
         for(let j = 0; j < logos.length; j++){
             if(data[position][0] == logos[j][0]){
                 return(
-                    <a href={'//localhost:8000/'+data[position][0]}>
-                        <button className="logo-img" type="submit">
-                            <img width={logos[j][1]} height={logos[j][2]} src={logos[j][3]}/>
-                        </button>  
-                    </a>
-                                            
+                    <div>
+                        <a href={'//localhost:8000/'+data[position][0]}>
+                            <button className="logo-img" type="submit">
+                                <img width={logos[j][1]} height={logos[j][2]} src={logos[j][3]}/>
+                            </button>  
+                        </a>
+                        
+                    </div>                               
                 )
             }
         }
     }
+    function Visits({rank}){
+        let position = data.length - rank - 1; //closest to data.length == most visited league
+        return(   
+            <div>
+                <br></br>{data[position][1]}    
+            </div> 
+        ) 
+    }
 
     function LeagueList(){
         let leagueList = [];
+        let preamble = (
+          <div>
+                Times Visited:
+                    </div>
+            
+        )
         for(let i = data.length-3; i >= 0; i--){    //-3 for 1 less than length minus # of pref.json elements not needed here
             leagueList[i] = (
                 <div className="column">
                     <div className="logos">
-                        <League rank={i}></League> 
-                        <div>
-                            <br></br>HITS    
-                        </div>         
-                    </div>
+                        <League rank={i}></League>
+                        <Visits rank={i}></Visits>        
+                    </div> 
                 </div>
             )
         }
+       leagueList.unshift(preamble);
+       leagueList[leagueList.length] = (
+        <div className="column">
+                    <div className="logos">
+        
+                    </div> 
+                </div>
+       )
+       
         return leagueList;
     }
     return(
-        <div>
-            <div id="times-visited">
-                Times <br></br>Visited
-            </div>
-            <div className="row">
-                <LeagueList></LeagueList>
+        <div >
+            <div className="row"> 
+                <LeagueList></LeagueList>  
             </div>
         </div>
     )
