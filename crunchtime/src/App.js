@@ -1,10 +1,13 @@
 import logo from './logo.svg';
 import './main.css';
 import Preferences from './Preferences';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-var current;
-
-function Home(){
+function HomeButton(){
   return (
       <a className="home" href="//localhost:8000">
       <button className="home" type="submit"> 
@@ -14,18 +17,37 @@ function Home(){
   )
 }
 
-function App() {
-  current = parse(req.url).pathname.replace('/', '').toUpperCase();
-  if(current == 'preferences'){
-    return (
-      <div>
-      <Home></Home>
-      <Preferences></Preferences>  
-      </div>
-        
-    );
-  }
-  
+function HomePage(){
+  return(
+    <h1>Welcome Home</h1>
+  )
+}
+
+function PrefButton(){
+  return(
+    <p>PrefButton here</p>
+  )
+}
+
+function App(){
+  return (
+    <Router>
+      <Routes>
+        <Route exact path='/' element={
+          <div>
+            <PrefButton></PrefButton>
+            <HomePage></HomePage>
+          </div>
+        } />
+        <Route exact path='/preferences' element={
+          <div>
+          <HomeButton></HomeButton>
+          <Preferences></Preferences>  
+          </div>
+        } />
+      </Routes>
+    </Router>      
+  );
 }
 
 
