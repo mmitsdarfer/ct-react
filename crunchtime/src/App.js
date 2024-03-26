@@ -2,6 +2,8 @@ import logo from './logo.svg';
 import './main.css';
 import Preferences from './Preferences';
 
+var current;
+
 function Home(){
   return (
       <a className="home" href="//localhost:8000">
@@ -13,13 +15,17 @@ function Home(){
 }
 
 function App() {
-  return (
-    <div>
-    <Home></Home>
-    <Preferences></Preferences>  
-    </div>
-      
-  );
+  current = parse(req.url).pathname.replace('/', '').toUpperCase();
+  if(current == 'preferences'){
+    return (
+      <div>
+      <Home></Home>
+      <Preferences></Preferences>  
+      </div>
+        
+    );
+  }
+  
 }
 
 

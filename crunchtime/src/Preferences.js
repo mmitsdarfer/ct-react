@@ -185,7 +185,7 @@ function VisitData(){
         let position = data.length - rank - 1; //closest to data.length == most visited league
         return(   
             <div>
-                <br></br>{data[position][1]}    
+                <br></br>{data[position][1]} 
             </div> 
         ) 
     }
@@ -193,9 +193,9 @@ function VisitData(){
     function LeagueList(){
         let leagueList = [];
         let preamble = (
-          <div>
+            <div>
                 Times Visited:
-                    </div>
+            </div>
             
         )
         for(let i = data.length-3; i >= 0; i--){    //-3 for 1 less than length minus # of pref.json elements not needed here
@@ -208,6 +208,7 @@ function VisitData(){
                 </div>
             )
         }
+        /*
        leagueList.unshift(preamble);
        leagueList[leagueList.length] = (
         <div className="column">
@@ -216,67 +217,21 @@ function VisitData(){
                     </div> 
                 </div>
        )
+       */
        
         return leagueList;
     }
     return(
-        <div >
-            <div className="row"> 
+        <div>
+            <div id="times-visited">
+                  <br></br><br></br><br></br>
+                    Times Visited:
+            </div>
+            <div className="row">         
                 <LeagueList></LeagueList>  
             </div>
         </div>
     )
-    /*
-    return(
-        <div>
-            <div id="times-visited">
-            TimesVisited
-            </div>
-            <div className="row">                   
-                <div className="column">
-                    <div className="logos">
-                        <button className="logo-img" type="submit" onClick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
-                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
-                        </button> 
-                        <div className="hits"> //named so localStorage.js can getElementByclassName, doesn't have its own style-->
-                           %HITS%
-                        </div>
-                    </div>                    
-                </div> 
-                <div className="column">
-                    <div className="logos">
-                        <button className="logo-img" type="submit" onClick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
-                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
-                        </button> 
-                        <div className="hits">
-                           %HITS%
-                        </div>
-                    </div> 
-                </div> 
-                <div className="column">
-                    <div className="logos">
-                        <button className="logo-img" type="submit" onClick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
-                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
-                        </button> 
-                        <div className="hits">
-                           %HITS%
-                        </div>
-                    </div> 
-                </div> 
-                <div className="column">
-                    <div className="logos">
-                        <button className="logo-img" type="submit" onClick="window.location.href='//localhost:8000/{{%LEAGUE%}}';">
-                            <img width="{{%WIDTH%}}" height="{{%HEIGHT%}}" src="{{%LOGO%}}" />
-                        </button> 
-                        <div className="hits">
-                            %HITS%
-                        </div> 
-                    </div> 
-                </div> 
-            </div>
-        </div>
-    )
-    */
 }
 
 export default function Preferences(){
@@ -293,7 +248,7 @@ export default function Preferences(){
 
         <br></br><br></br>
         <ResetButton></ResetButton>
-        <VisitData></VisitData>
+        <div className="test"><VisitData></VisitData></div>
     </div>
     )
 }
