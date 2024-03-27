@@ -1,5 +1,6 @@
 import { useState } from "react";
 import data from './json/preferences.json';
+import { logos } from "./logos";
 
 function Dropdowns(){
     let priority = [];
@@ -152,50 +153,9 @@ function ResetButton(){
 }
 
 function VisitData(){
-    const logos = {
-        'NHL':{
-            width: 120,
-            height: 120,
-            link: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/05_NHL_Shield.svg/1200px-05_NHL_Shield.svg.png'
-        },
-        'NFL':{
-            width: 100,
-            height: 120,
-            link: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/1200px-National_Football_League_logo.svg.png'
-        },
-        'MLB':{
-            width: 160,
-            height: 86,
-            link: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1200px-Major_League_Baseball_logo.svg.png'
-        },
-        'NBA':{
-            width: 73,
-            height: 120,
-            link: 'https://brandlogos.net/wp-content/uploads/2014/09/NBA-logo-big.png'
-        }
-    }
-
-    function League({current}){
-        /*
-        let position = data.length - rank - 1; //closest to data.length == most visited league
-        for(let j = 0; j < logos.length; j++){
-            if(data[position][0] === logos[j][0]){
-                return(
-                    <div>
-                        <a href={'//localhost:3000/'+data[position][0]}>
-                            <button className="logo-img" type="submit">
-                                <img width={logos[j][1]} height={logos[j][2]} src={logos[j][3]} alt={logos[j][0] + " logo"}/>
-                            </button>  
-                        </a>
-                        
-                    </div>                               
-                )
-            }
-        }
-        */
-    
+    function League({current}){    
         for (let [key, value] of Object.entries(logos)) {
-            if (key == current) {
+            if (key === current) {
                 return(
                     <div>
                         <a href={'//localhost:3000/'+key}>
@@ -209,36 +169,32 @@ function VisitData(){
             }
         }
     }
-    function Visits({rank}){
-        let position = data.length - rank - 1; //closest to data.length == most visited league
+    function Visits({current}){
         return(   
             <div>
-                <br></br>{data[position][1]} 
+                <br></br>{current} 
             </div> 
         ) 
     }
 
     function LeagueList(){
-        let leagueList = [];
-
-        
-        for(let i = data.length-1; i >= 2; i--){
+        let leagueList = []; 
+        for(let i = 2; i < data.length; i++){
         Object.values(logos).forEach((value, index) => 
         {  
                 if(data[i][0] === Object.keys(logos)[index]){
                     console.log(data[i][0]);
                     leagueList[i] = (
                         <div key={"leagueId"+index} className="column">
-                            <League current={Object.keys(logos)[index]}></League>
-                            <Visits rank={index}></Visits>
+                            <League current={data[i][0]}></League>
+                            <Visits current={data[i][1]}></Visits>
                         </div>
                     )
                 } 
-            
             index++;
         })
     }
-        return leagueList;
+        return leagueList.reverse();
     }
     return(
         <div>

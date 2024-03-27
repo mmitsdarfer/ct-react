@@ -170,7 +170,7 @@ function jsonHtml(league, priority, takeMe = 'off'){
     else{
         leagueRes = leagueRes.replace("window.open('{{%TOP%}}');", '');
     }
-
+    console.log(leagueRes);
     return leagueRes;
 }
 

@@ -1,4 +1,4 @@
-const logos = {
+export const logos = {
     'NHL':{
         width: 120,
         height: 120,
@@ -20,30 +20,3 @@ const logos = {
         link: 'https://brandlogos.net/wp-content/uploads/2014/09/NBA-logo-big.png'
     }
 }
-
-let test = 'NFL';
-let data = ["NHL",["diffs","times","standings"],["NFL",1],["MLB",2],["NBA",3],["NHL",18]];
-
-/*
-for (let [key, value] of Object.entries(logos)) {
-    if (key == test) {
-      console.log(value)
-    }
-   }
-*/
-   let index = 0;
-   let leagueList = [];
-   //for(let i = data.length-1; i >= 2; i--){
-    for(let i = 2; i < data.length; i++){
-    Object.values(logos).forEach((value, index) => 
-    {  
-            if(data[i][0] === Object.keys(logos)[index]){
-                console.log(data[i][0]);
-                console.log(i);
-                leagueList[i] = Object.keys(logos)[index];
-            } 
-        
-        index++;
-    }
-)}
-console.log(leagueList.reverse());

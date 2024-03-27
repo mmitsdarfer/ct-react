@@ -1,39 +1,40 @@
 import data from './json/preferences.json';
+import { logos } from './logos';
 
-const logos = [['NHL', 120, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/05_NHL_Shield.svg/1200px-05_NHL_Shield.svg.png'],
-        ['NFL', 100, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/1200px-National_Football_League_logo.svg.png'],
-        ['MLB', 160, 86, 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1200px-Major_League_Baseball_logo.svg.png'],
-        ['NBA', 73, 120, 'https://brandlogos.net/wp-content/uploads/2014/09/NBA-logo-big.png']];
-function League({rank}){
-    let position = data.length - rank - 1; //closest to data.length == most visited league
-    for(let j = 0; j < logos.length; j++){
-        if(data[position][0] === logos[j][0]){
+function League({current}){    
+    for (let [key, value] of Object.entries(logos)) {
+        if (key === current) {
             return(
                 <div>
-                    <a href={'//localhost:3000/'+data[position][0]}>
+                    <a href={'//localhost:3000/'+key}>
                         <button className="logo-img" type="submit">
-                            <img width={logos[j][1]} height={logos[j][2]} src={logos[j][3]} alt={logos[j][0] + " logo"}/>
-                        </button>  
+                            <img width={value.width} height={value.height} src={value.link} alt={key + " logo"}/>
+                        </button>
                     </a>
-                    
-                </div>                               
+                </div>
             )
+        
         }
     }
 }
 
 function LeagueList(){
-    let leagueList = [];
-    for(let i = data.length-3; i >= 0; i--){    //-3 for 1 less than length minus # of pref.json elements not needed here
-        leagueList[i] = (
-            <div key={"leagueId"+i}  className="column">
-                <div className="logos">
-                    <League rank={i}></League>     
-                </div> 
-            </div>
-        )
-    }  
-    return leagueList;
+    let leagueList = []; 
+    for(let i = 2; i < data.length; i++){
+    Object.values(logos).forEach((value, index) => 
+    {  
+            if(data[i][0] === Object.keys(logos)[index]){
+                console.log(data[i][0]);
+                leagueList[i] = (
+                    <div key={"leagueId"+index} className="column">
+                        <League current={data[i][0]}></League>
+                    </div>
+                )
+            } 
+        index++;
+    })
+}
+    return leagueList.reverse();
 }
 
 export default function Home(){
