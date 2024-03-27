@@ -26,6 +26,9 @@ body{
     top: 0px;
     border: 0px;
 }
+.top{
+    position: relative;
+}
 p{font-size:25px;
     text-align: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;

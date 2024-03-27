@@ -3,6 +3,7 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+- detailed links for espn+ don't seem to be working
 - games ended in SO have progress ended but timeRank is treated like they're ongoing
 - when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
    until refreshing
@@ -66,7 +67,7 @@ To do but this time it's specific:
 2. Fix known errors
 
 WIWWO: 
-3/26: Finished converting preferences to React. Need to work on serving multiple pages with React app
+3/26: 
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
