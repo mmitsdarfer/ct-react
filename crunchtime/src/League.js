@@ -3,22 +3,33 @@ import nflData from './json/nfl.json';
 import mlbData from './json/mlb.json';
 import nbaData from './json/nba.json';
 import React from 'react';
-//import prefs from './json/preferences.json';
 
-export default function League({league, logoData}){
+let took = false;
+
+export default function League({league, logoData}){ 
+    let leagueData;
+    if(league === 'NHL') leagueData = nhlData;
+    else if(league === 'NFL') leagueData = nflData;
+    else if(league === 'MLB') leagueData = mlbData;
+    else if(league === 'NBA') leagueData = nbaData;
+    
+    const getCookieValue = (name) => (
+        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+    )
+    let take = getCookieValue('Take');
+    if(take === 'true' && !took){
+        took=true;
+        if(leagueData.table[0].link !== undefined) window.open(leagueData.table[0].link);
+    }
+
     const [data, setData] = React.useState(null);
-  
     React.useEffect(() => {
     fetch('/'+league)
       .then((res) => res.json())
       .then((data) => setData(data.message));
     }, []);
 
-    let leagueData;
-    if(league === 'NHL') leagueData = nhlData;
-    else if(league === 'NFL') leagueData = nflData;
-    else if(league === 'MLB') leagueData = mlbData;
-    else if(league === 'NBA') leagueData = nbaData;
+
     let len = leagueData.table.length-1
     let rows = Math.ceil(len/4); 
     function Net({i}){
@@ -68,9 +79,8 @@ export default function League({league, logoData}){
         }
         return colArr;
     }
-    
     return(
-        <div>
+        <div>         
             <h1>{league} Games</h1>
             <a href={'//localhost:3000/'+league}>
                 <button className="logo-img" type="submit">

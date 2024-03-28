@@ -21,6 +21,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Switch from px to em font (>)
 - Run front and backend from one command 
 - Work on jsons before they exist
 - Add loading bar after implementing React (?)
@@ -72,9 +73,8 @@ To do but this time it's specific:
 WIWWO: 
 3/27: Just about everything working w/ React, just need to implement preferences in its json
          Priorities works
-         TakeMe needs testing
-         Reset only works after changing page
-            Import and call pref reset??
+         TakeMe works
+         Reset works
       Need to realign Times Visited
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams

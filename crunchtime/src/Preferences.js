@@ -166,8 +166,7 @@ export default function Preferences(){
                                 </button>
                             </a>
                         </div>
-                    )
-                
+                    )     
                 }
             }
         }
@@ -211,7 +210,7 @@ export default function Preferences(){
                         Times Visited:
                 </div>
                 <div className="row">         
-                    <LeagueList></LeagueList>  
+                    <LeagueList></LeagueList>
                 </div>
             </div>
         )

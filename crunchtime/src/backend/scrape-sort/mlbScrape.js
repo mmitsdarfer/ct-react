@@ -82,6 +82,18 @@ export async function mlbScrape(priority){
             }
         }
 
+        //put networks in nodelist
+        let netLen = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem').length;
+        for(let i = 0; i < netLen; i++){
+            nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
+        }
+        for(let i = 0; i < numGames; i++){
+            if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
+                links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
+            }
+            else links[i] = "teststs";
+        }
+
         return [fullDate, teams, times, scores, numGames];
     })
 
@@ -131,8 +143,8 @@ export async function mlbScrape(priority){
             score2: scores[2*i+1],
             progress: progress[i],  //unstarted, ended, ongoing
             time: times[i],   //time left or start time
-            network: '',
-            link: '',
+            network: nets[i],
+            link: channels[i],
             diff: diffs[i]
         }
         data.table.push(obj);
