@@ -144,71 +144,78 @@ function Switch(){
     )
 }
 
-function ResetButton(){
-    return(
-        <button className="reset"type="button" onClick={e => document.cookie = "Reset=true"}> 
-            Reset visit data 
-        </button> 
-    )
-}
-
-function VisitData(){
-    function League({current}){    
-        for (let [key, value] of Object.entries(logos)) {
-            if (key === current) {
-                return(
-                    <div>
-                        <a href={'//localhost:3000/'+key}>
-                            <button className="logo-img" type="submit">
-                                <img width={value.width} height={value.height} src={value.link} alt={key + " logo"}/>
-                            </button>
-                        </a>
-                    </div>
-                )
-            
-            }
-        }
+export default function Preferences(){
+    const [reset, setReset] = useState('false'); 
+    function ResetButton(){
+        return(
+            <button className="reset"type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
+                Reset visit data 
+            </button> 
+        )
     }
-    function Visits({current}){
-        return(   
-            <div>
-                <br></br>{current} 
-            </div> 
-        ) 
-    }
-
-    function LeagueList(){
-        let leagueList = []; 
-        for(let i = 2; i < data.length; i++){
-        Object.values(logos).forEach((value, index) => 
-        {  
-                if(data[i][0] === Object.keys(logos)[index]){
-                    leagueList[i] = (
-                        <div key={"leagueId"+index} className="column">
-                            <League current={data[i][0]}></League>
-                            <Visits current={data[i][1]}></Visits>
+    
+    function VisitData(){
+        function League({current}){    
+            for (let [key, value] of Object.entries(logos)) {
+                if (key === current) {
+                    return(
+                        <div>
+                            <a href={'//localhost:3000/'+key}>
+                                <button className="logo-img" type="submit">
+                                    <img width={value.width} height={value.height} src={value.link} alt={key + " logo"}/>
+                                </button>
+                            </a>
                         </div>
                     )
-                } 
-            index++;
-        })
-    }
-        return leagueList.reverse();
-    }
-    return(
-        <div>
-            <div id="times-visited">
-                  <br></br><br></br><br></br>
-                    Times Visited:
+                
+                }
+            }
+        }
+        function Visits({current}){
+            if(reset === 'true'){
+                return(
+                    <div>
+                    <br></br>0 
+                </div> 
+                )
+            }
+            return(   
+                <div>
+                    <br></br>{current} 
+                </div> 
+            ) 
+        }
+    
+        function LeagueList(){
+            let leagueList = []; 
+            for(let i = 2; i < data.length; i++){
+            Object.values(logos).forEach((value, index) => 
+            {  
+                    if(data[i][0] === Object.keys(logos)[index]){
+                        leagueList[i] = (
+                            <div key={"leagueId"+index} className="column">
+                                <League current={data[i][0]}></League>
+                                <Visits current={data[i][1]}></Visits>
+                            </div>
+                        )
+                    } 
+                index++;
+            })
+        }
+            return leagueList.reverse();
+        }
+        return(
+            <div>
+                <div id="times-visited">
+                      <br></br><br></br><br></br>
+                        Times Visited:
+                </div>
+                <div className="row">         
+                    <LeagueList></LeagueList>  
+                </div>
             </div>
-            <div className="row">         
-                <LeagueList></LeagueList>  
-            </div>
-        </div>
-    )
-}
-
-export default function Preferences(){
+        )
+    }
     return(
     <div>
         <h1>Preferences</h1>
