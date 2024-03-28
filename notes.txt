@@ -3,6 +3,7 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+- need to visit backend league page (8000/{league}) to create new json
 - detailed links for espn+ don't seem to be working
 - games ended in SO have progress ended but timeRank is treated like they're ongoing
 - when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
@@ -20,6 +21,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Work on jsons before they exist
 - Add loading bar after implementing React (?)
 - Change tab icon
 - Iron out when to split by progress if not sorting by time
@@ -67,7 +69,12 @@ To do but this time it's specific:
 2. Fix known errors
 
 WIWWO: 
-3/27: Got league pages showing from jsons w/ React. need to work on getting json to update w/ React
+3/27: Just about everything working w/ React, just need to implement preferences in its json
+         Priorities works
+         TakeMe needs testing
+         Reset only works after changing page
+            Import and call pref reset??
+      Need to realign Times Visited
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort

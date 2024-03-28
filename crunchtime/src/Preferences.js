@@ -2,6 +2,10 @@ import { useState } from "react";
 import data from './json/preferences.json';
 import { logos } from "./logos";
 
+function makeCapital(lower){
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
 function Dropdowns(){
     let priority = [];
     function readCookies(){
@@ -17,10 +21,6 @@ function Dropdowns(){
     const [topPriority, setTop] = useState(priority[0]); 
     const [midPriority, setMid] = useState(priority[1]);
     const [lastPriority, setLast] = useState(priority[2]);
-
-    function makeCapital(lower){
-        return lower.charAt(0).toUpperCase() + lower.slice(1);
-    }
 
     function setCookies(choice, rank){
         if(rank === 0){
@@ -183,7 +183,6 @@ function VisitData(){
         Object.values(logos).forEach((value, index) => 
         {  
                 if(data[i][0] === Object.keys(logos)[index]){
-                    console.log(data[i][0]);
                     leagueList[i] = (
                         <div key={"leagueId"+index} className="column">
                             <League current={data[i][0]}></League>

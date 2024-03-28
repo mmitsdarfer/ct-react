@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 import { existsSync, readFileSync, writeFile } from "fs";
 import cookieParser from 'cookie-parser';
-import callScrape from './public/scrape-sort/scrape.js';
+import { callScrape } from './scrape-sort/scrape.js';
 
 var current;
 var takeMe;
@@ -170,7 +170,6 @@ function jsonHtml(league, priority, takeMe = 'off'){
     else{
         leagueRes = leagueRes.replace("window.open('{{%TOP%}}');", '');
     }
-    console.log(leagueRes);
     return leagueRes;
 }
 
@@ -206,7 +205,7 @@ function getCookies(req, res){
         res.cookie('Reset', 'false');
     }
 
-    if (!existsSync('json/preferences.json')) {
+    if (!existsSync('../json/preferences.json')) {
         prefReset(priority);
     }
     
@@ -216,19 +215,19 @@ function getCookies(req, res){
         setTimeout(() => {   
             prefReset(priority);     
         }, );
-        parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+        parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
         return parsedPrefs;
     }
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
         parsedPrefs = callReset();
     }
     else{
-        parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+        parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
     }
     
     let prefsOut = parsedPrefs;
     prefsOut[1] = priority;
-    writeFile('json/preferences.json', (JSON.stringify(prefsOut)), function(err){
+    writeFile('../json/preferences.json', (JSON.stringify(prefsOut)), function(err){
         if(err) throw err;
     });
 }
@@ -245,7 +244,7 @@ app.use(express.static(join(__dirname, 'public')));
 //resets values of preferences.json or creates it with reset values
 async function prefReset(priority = ['diffs', 'times', 'standings']){
     let prefData = JSON.stringify(['NHL', priority, ['NBA', 0], ['MLB', 0], ['NFL', 0], ['NHL', 0]]);
-    writeFile('json/preferences.json', prefData, function(err){
+    writeFile('../json/preferences.json', prefData, function(err){
         if(err) throw err;
     });  
     return true;    
@@ -254,12 +253,12 @@ async function prefReset(priority = ['diffs', 'times', 'standings']){
 //increases preference value when league selected and updates preferences.json
 function preferences(league){
     var prefData;
-    if (existsSync('json/preferences.json')) {
-        prefData = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+    if (existsSync('../json/preferences.json')) {
+        prefData = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
     }
     else{
         prefReset();    //need preferences.json to exist
-        prefData = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+        prefData = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
     }
     let prefsList = (Object.values(prefData));
     let prefHits = [];
@@ -285,7 +284,7 @@ function preferences(league){
         }
     }
     //preferences.json format: [current league selected, priority, [least visited team, team visits], [2nd least visit team, team visits], ... [most visited team, team visits]]
-    writeFile('json/preferences.json', JSON.stringify(outList), function(err){
+    writeFile('../json/preferences.json', JSON.stringify(outList), function(err){
         if(err) throw err;
     }); 
 }
@@ -295,8 +294,8 @@ app.get('/nhl', (req, res) => {
     var data = {};
     data.table = [];
     data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
             if(err) throw err;
         }); 
     }
@@ -321,12 +320,15 @@ app.get('/nhl', (req, res) => {
         setTimeout(function () {
             preferences(current);   
             callScrape(current, priority);
-            var nhlRes = jsonHtml(current, priority, takeMe);
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(nhlRes);          
+           // var nhlRes = jsonHtml(current, priority, takeMe);
+           // res.writeHead(200, {'Content-Type': 'text/html'});
+          //  res.end(nhlRes);      
+          res.json({message: "Scraping: " + current});    
         }, 100);       
     }
     writeNhl();
+
+    
 });
 
 app.get('/nfl', (req, res) => {
@@ -334,8 +336,8 @@ app.get('/nfl', (req, res) => {
     var data = {};
     data.table = [];
     data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
             if(err) throw err;
         }); 
     }
@@ -358,9 +360,10 @@ app.get('/nfl', (req, res) => {
         setTimeout(function () {
             preferences(current);
             callScrape(current, priority);
-            var nflRes = jsonHtml(current, priority);
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(nflRes);    
+            //var nflRes = jsonHtml(current, priority);
+           // res.writeHead(200, {'Content-Type': 'text/html'});
+            //res.end(nflRes);    
+            res.json({message: "Scraping: " + current});    
         }, 100);
     }
     writeNfl();
@@ -371,8 +374,8 @@ app.get('/nba', (req, res) => {
     var data = {};
     data.table = [];
     data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
             if(err) throw err;
         }); 
     }
@@ -395,22 +398,23 @@ app.get('/nba', (req, res) => {
         setTimeout(function () {     
             preferences(current);
             callScrape(current, priority);
-            var nbaRes = jsonHtml(current, priority);
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(nbaRes);         
+            //var nbaRes = jsonHtml(current, priority);
+            //res.writeHead(200, {'Content-Type': 'text/html'});
+            //res.end(nbaRes);  
+            res.json({message: "Scraping: " + current});           
         }, 100);     
     }
     writeNba();
 });
 
-import mlbScrape from './public/scrape-sort/mlbScrape.js';
+import mlbScrape from './scrape-sort/mlbScrape.js';
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
     var data = {};
     data.table = [];
     data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
+    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
+        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
             if(err) throw err;
         }); 
     }
@@ -433,14 +437,19 @@ app.get('/mlb', (req, res) => {
         setTimeout(function () {
             mlbScrape(priority);
             preferences(current);
-            //callScrape(current, priority);
-            var mlbRes = jsonHtml(current, priority);
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(mlbRes);          
+            //var mlbRes = jsonHtml(current, priority);
+           // res.writeHead(200, {'Content-Type': 'text/html'});
+            //res.end(mlbRes);       
+            res.json({message: "Scraping: " + current});       
         }, 100);     
     }
     writeMlb();
 });
+
+app.get("/api", (req, res) => {
+     //res.send("Scraping " + current);
+    res.json({ message: "Hello from server!" });
+  });
 
 //fills in preferences.html with preferences.json data
 function prefsJsonHtml(priority, takeMe){
@@ -448,13 +457,13 @@ function prefsJsonHtml(priority, takeMe){
     var prefsOut; 
     var prefsParsed;
     if(priority[0] == undefined){
-        if (existsSync('json/preferences.json', 'utf-8')) {
-            prefsParsed = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+        if (existsSync('../json/preferences.json', 'utf-8')) {
+            prefsParsed = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
         }
     }
    
     var prefLogos = [];
-    prefsParsed = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+    prefsParsed = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
     for(let i = prefsParsed.length - 1; i > 1; i--){  
         for(let j = 0; j < logos.length; j++){
             if(prefsParsed[i][0] == logos[j][0]){
@@ -514,7 +523,7 @@ app.get('/preferences', (req, res) => {
         setTimeout(() => {   
             prefReset(priority);     
         }, );
-        let parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
+        let parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
         return parsedPrefs;
     }
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
@@ -535,7 +544,7 @@ app.use((req, res) => {
     res.status(404).send('Page not found');
 })
 
-if (!existsSync('json/preferences.json')) {
+if (!existsSync('../json/preferences.json')) {
     prefReset();
 }
 

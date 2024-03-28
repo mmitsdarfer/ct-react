@@ -11,14 +11,14 @@ var data = {};  //object json data will be stored in
 var gameData = {};
 
 //league and priority come from preferencs.json on original call
-if (fs.existsSync('json/preferences.json')) {
-    const parsedPrefs = JSON.parse(fs.readFileSync('json/preferences.json', 'utf-8'));
+if (fs.existsSync('../json/preferences.json')) {
+    const parsedPrefs = JSON.parse(fs.readFileSync('../json/preferences.json', 'utf-8'));
     league = parsedPrefs[0];
     priority = parsedPrefs[1];
 }
 else{   //current, priority, ranked leagues with time visited
     prefData = ['NHL', ['diffs', 'times', 'standings'], ['NHL', 0], ['NFL', 0], ['MLB', 0], ['NBA', 0]]; 
-    fs.writeFile('json/preferences.json', JSON.stringify(prefData), function(err){
+    fs.writeFile('../json/preferences.json', JSON.stringify(prefData), function(err){
         if(err) throw err;
     }); 
     league = prefData[0];
@@ -52,16 +52,16 @@ var scrape = async function scrape(league, priority){
         times = [];
         nets = [];
         links = [];
-        teamLen = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName').length;
+        let teamLen = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName').length;
         numGames = teamLen/2;
         
         times = document.querySelectorAll('.ScoreboardScoreCell__Overview .ScoreCell__Time');
-        timeArr = Array.from(times);
+        let timeArr = Array.from(times);
         timeArr = timeArr.map(game => game.textContent);
 
-        endedLen = 0;
-        scoreLen = 0;
-        notEnded = 0;
+        let endedLen = 0;
+        let scoreLen = 0;
+        let notEnded = 0;
 
         for(let i = 0; i < teamLen; i++){
             teams[i] = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName')[i];

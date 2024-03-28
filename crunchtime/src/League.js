@@ -2,8 +2,18 @@ import nhlData from './json/nhl.json';
 import nflData from './json/nfl.json';
 import mlbData from './json/mlb.json';
 import nbaData from './json/nba.json';
+import React from 'react';
+//import prefs from './json/preferences.json';
 
-export default function LeaguePage({league, logoData}){
+export default function League({league, logoData}){
+    const [data, setData] = React.useState(null);
+  
+    React.useEffect(() => {
+    fetch('/'+league)
+      .then((res) => res.json())
+      .then((data) => setData(data.message));
+    }, []);
+
     let leagueData;
     if(league === 'NHL') leagueData = nhlData;
     else if(league === 'NFL') leagueData = nflData;
@@ -58,43 +68,41 @@ export default function LeaguePage({league, logoData}){
         }
         return colArr;
     }
+    
     return(
         <div>
-        <h1>{league} Games</h1>
-        <a href={'//localhost:3000/'+league}>
-            <button className="logo-img" type="submit">
-                <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
-            </button>
-        </a>
-        <h2>Click the league logo to refresh scores</h2>
-        <div className="date">
-                <h2>{leagueData.table[leagueData.table.length-1].date}</h2>
-            </div>
-        <div className='league-row'>
-            <div className='league-column'>
-                <h3>
-                    <Col colVal={0}></Col>
-                </h3>
-            </div>
-            <div className="league-column" id="alt-column">
-                <h3>
-                <Col colVal={1}></Col>
-                </h3>
-            </div>
-            <div className='league-column'>
-                <h3>
-                    <Col colVal={2}></Col>
-                </h3>
-            </div>
-            <div className="league-column" id="alt-column">
-                <h3>
-                <Col colVal={3}></Col>
-                </h3>
-            </div>
-        </div>
-        
-
-
+            <h1>{league} Games</h1>
+            <a href={'//localhost:3000/'+league}>
+                <button className="logo-img" type="submit">
+                    <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
+                </button>
+            </a>
+            <h2>Click the league logo to refresh scores</h2>
+            <div className="date">
+                    <h2>{leagueData.table[leagueData.table.length-1].date}</h2>
+                </div>
+            <div className='league-row'>
+                <div className='league-column'>
+                    <h3>
+                        <Col colVal={0}></Col>
+                    </h3>
+                </div>
+                <div className="league-column" id="alt-column">
+                    <h3>
+                    <Col colVal={1}></Col>
+                    </h3>
+                </div>
+                <div className='league-column'>
+                    <h3>
+                        <Col colVal={2}></Col>
+                    </h3>
+                </div>
+                <div className="league-column" id="alt-column">
+                    <h3>
+                    <Col colVal={3}></Col>
+                    </h3>
+                </div>
+            </div>            
         </div>
         
     )

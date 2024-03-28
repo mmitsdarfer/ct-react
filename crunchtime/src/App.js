@@ -2,13 +2,19 @@ import './main.css';
 import './league.css';
 import Preferences from './Preferences';
 import Home from './Home';
-import LeaguePage from './League';
+import League from './League';
 import { logos } from './logos';
+import prefs from './json/preferences.json';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
+import React from 'react';
+
+function makeCapital(lower){
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
 
 function HomeButton(){
   return (
@@ -30,10 +36,43 @@ function PrefButton(){
   )
 }
 
+function Priority(){
+  return(
+      <div>
+          <p>
+              Priorities: <br></br>
+              {makeCapital(prefs[1][0])} <br></br>
+              {makeCapital(prefs[1][1])} <br></br>
+              {makeCapital(prefs[1][2])}
+          </p>
+      </div>
+  )
+}
+
+function LeaguePage({league}){
+  function leagueLogo(){
+    if(league === 'NHL') return logos.NHL;
+    else if(league === 'NFL') return logos.NFL;
+    else if(league === 'MLB') return logos.MLB;
+    else if(league === 'NBA') return logos.NBA;
+  }
+  return(
+  <div>
+            <HomeButton></HomeButton>
+            <PrefButton></PrefButton>
+            <League league={league} logoData={leagueLogo()}></League>
+            <Priority></Priority>
+          </div>
+  )
+}
+
 function App(){
   return (
     <Router>
       <Routes>
+        <Route exact path='/test' element={
+          <p></p>
+        } />
         <Route exact path='/' element={
           <div>    
             <Home></Home>
@@ -47,31 +86,30 @@ function App(){
           </div>
         } />
         <Route exact path='/nhl' element={
-          <div>
-            <HomeButton></HomeButton>
-            <PrefButton></PrefButton>
-            <LeaguePage league={'NHL'} logoData={logos.NHL}></LeaguePage>
-          </div>
+          <LeaguePage league={'NHL'}></LeaguePage>
         } />
         <Route exact path='/nfl' element={
           <div>
             <HomeButton></HomeButton>
             <PrefButton></PrefButton>
-            <LeaguePage league={'NFL'} logoData={logos.NFL}></LeaguePage>
+            <League league={'NFL'} logoData={logos.NFL}></League>
+            <Priority></Priority>
           </div>
         } />
         <Route exact path='/mlb' element={
           <div>
             <HomeButton></HomeButton>
             <PrefButton></PrefButton>
-            <LeaguePage league={'MLB'} logoData={logos.MLB}></LeaguePage>
+            <League league={'MLB'} logoData={logos.MLB}></League>
+            <Priority></Priority>
           </div>
         } />
         <Route exact path='/nba' element={
           <div>
             <HomeButton></HomeButton>
             <PrefButton></PrefButton>
-            <LeaguePage league={'NBA'} logoData={logos.NBA}></LeaguePage>
+            <League league={'NBA'} logoData={logos.NBA}></League>
+            <Priority></Priority>
           </div>
         } />
       </Routes>

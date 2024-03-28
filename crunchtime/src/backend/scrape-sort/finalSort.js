@@ -204,7 +204,7 @@ function toJson(data, league, date){
         }      
     }
     jsonData.table.push({date: date});
-    fs.writeFile('json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
+    fs.writeFile('../json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
         if(err) throw err;
     }); 
 }

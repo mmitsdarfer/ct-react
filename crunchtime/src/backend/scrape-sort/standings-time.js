@@ -143,8 +143,8 @@ export async function standingsScrape(league, data){
     let leagueIndex;  
     let dateOut;
 
-    if(fs.existsSync('json/standings.json')){
-        const parsedStands = JSON.parse(fs.readFileSync('json/standings.json', 'utf-8'));
+    if(fs.existsSync('../json/standings.json')){
+        const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
         standings = parsedStands;
         for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
             if(parsedStands.table[i].league == league){
@@ -202,7 +202,7 @@ export async function standingsScrape(league, data){
         await browser.close();
     }
 
-    fs.writeFile('json/standings.json', JSON.stringify(standings), function(err){
+    fs.writeFile('../json/standings.json', JSON.stringify(standings), function(err){
         if(err) throw err;
      });
      let gameRanks = [];
