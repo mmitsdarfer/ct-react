@@ -21,6 +21,7 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
+- Run front and backend from one command 
 - Work on jsons before they exist
 - Add loading bar after implementing React (?)
 - Change tab icon
