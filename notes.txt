@@ -3,22 +3,11 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-- need to visit backend league page (8000/{league}) to create new json
-- detailed links for espn+ don't seem to be working
-- games ended in SO have progress ended but timeRank is treated like they're ongoing
 - when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
    until refreshing
-- still get:
-   "if((time[2].includes('OT')))
-                  ^
-   TypeError: Cannot read properties of undefined (reading 'includes') "
-         I think this is when period or quarter is shown without "End of" (eg "3rd" on its own)
-            Use NaN and length so if it's just 3rd (for example) vs 3:01 - 3rd I can differentiate (?)
 - rapidly refreshing no longer creates duplicates, but too many requests causes timeout and kills program
    - Maybe add some timeout like with getCookies() in server.js
-- when some games have channel links and others don't the columns become misaligned
-   - This pops up most when some games are ended
-      - Just create empty object (div?) to keep spacing consistent
+- when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
 
 To do:
 - Give option of how long to refresh server (?)
@@ -40,7 +29,6 @@ To do:
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
-
 
 WIWWO: 
 3/29: Cleaned up stylesheets and notes.txt
