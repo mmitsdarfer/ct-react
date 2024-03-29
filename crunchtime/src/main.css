@@ -1,10 +1,16 @@
 body{
     text-align: center;
+    background-color: rgb(50, 120, 167);
 }
 h1{
     font-size:50px;
     margin-top: 10px;
+    margin-bottom: 0px;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+h2{
+    margin-top: 5px; 
+    font-size: 20px;
 }
 h3{
     margin-bottom: 0px;
@@ -12,17 +18,17 @@ h3{
 h4{
     margin-bottom: 5px;
 }
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+} 
 .column{
     width: 200px;
     height: 120px;                             
 }
-.home{ /* repeated in league.css for organization */
-    background-color: rgb(50, 120, 167);
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    border: 0px;
-}
+
+/* all logos */
 .logo-img{
     background-color: rgb(50, 120, 167);
     border: 0;
@@ -31,7 +37,98 @@ h4{
     justify-content: center;
     display: flex;
 }
-.reset{
+
+/* League pages only */
+.games{                 
+    color: #1c1c1c;
+    padding-bottom: 10px;
+}
+.league-column{
+    padding: 16px;
+    display: table-cell;
+    border: 1px solid;
+    width: 25%;
+}
+.net{
+    font: bold 14px Arial;
+}  
+.scores{
+    float: right;
+}
+#alt-column{
+    background-color: rgb(50, 97, 141); 
+}
+#btn {
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #1c1c1c;
+    border-bottom: 1px solid #1c1c1c;
+    border-left: 1px solid #CCCCCC;
+}
+#date{
+    background-color: rgb(56, 127, 175);
+    border: 2px solid;
+}
+#league-row{
+    display: table;
+    width: 100%;
+}
+#time{ 
+    font: bold 14px Arial;        
+    text-decoration: none;
+    color: white;
+    background-color: #1c1c1c;
+    padding-top: 10px;  
+    padding-bottom: 5px; 
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-bottom: 1px solid #1c1c1c;
+    border-left: 1px solid #1c1c1c;
+    margin-bottom: 10px;
+}
+
+/* Home button */
+#home{ 
+    background-color: rgb(50, 120, 167);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: 0px;
+}
+
+/* Pref button */
+#prefs{
+    background-color: rgb(50, 120, 167);
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    border: 0px;
+}
+
+/* Preferences only */
+/* dropdowns */
+.drop{
+    margin: auto;
+    width: 100px;
+}
+.select-priority{
+    margin-top: 5px;
+}
+
+/* Pref logos only */
+#spacer{
+    width: 7em;
+}
+#vert-space{
+    height: 144px;
+}
+
+#reset{
     border-radius: 8px;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     font-size: 16px;                                           
@@ -40,35 +137,8 @@ h4{
     margin-top: 10px;
     margin-bottom: 30px;
 }
-.vert-space{
-    height: 144px;
-}
-#spacer{
-    width: 7em;
-}
-.select-priority{
-   
-    justify-content: flex-end;
-    width: 100%;
-    margin: 5px;
-}
-#drops{
-    justify-content: center;
-  
-}
-.drop{
-    justify-content: center;
-    margin: auto;
-    width: 100px;
 
-}
-.options{
-width: 100%;
-}
-
-/* rest of style section is for switch, above is everything else
-not currently using a switch though
-*/
+/* TakeMe switch */
 .switch {
     position: relative;
     display: block;
@@ -165,7 +235,6 @@ not currently using a switch though
     left: 74px;
     box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
 }
-
 /* Transition
 ========================== */
 .switch-label, .switch-handle {

@@ -39,17 +39,17 @@ export default function League({league, logoData}){
                     return <div className="net">{leagueData.table[i].network} has no available links</div>
             }
             else if(leagueData.table[i].network === undefined || leagueData.table[i].network === ''){
-                return <div className="blank-btn"><br></br></div>
+                return <br></br>
             }
-            else return <a className="btn" href={leagueData.table[i].link} target="_blank" rel="noreferrer">Watch on {leagueData.table[i].network}</a>
+            else return <a id="btn" href={leagueData.table[i].link} target="_blank" rel="noreferrer">Watch on {leagueData.table[i].network}</a>
         }
         else{
-            return <div className="blank-btn"><br></br></div>
+            return <br></br>
         }
     }
     function Time({i}){
         if(leagueData.table[i].time !== undefined){
-            return <div className='time'>{leagueData.table[i].time}
+            return <div id="time">{leagueData.table[i].time}
             </div>
         }
     }
@@ -59,16 +59,16 @@ export default function League({league, logoData}){
         }
         return(
             <div>
-            <div className='games'>
+            <div className="games">
                     <span>{leagueData.table[i].team1}</span>
-                    <div className='scores'>{leagueData.table[i].score1}</div>
+                    <div className="scores">{leagueData.table[i].score1}</div>
                 </div>
-                <div className='games'>
+                <div className="games">
                     <span>{leagueData.table[i].team2}</span>
-                    <div className='scores'>{leagueData.table[i].score2}</div>
+                    <div className="scores">{leagueData.table[i].score2}</div>
                 </div>
                 <Time i={i}></Time>
-                <div className='net'><Net i={i}></Net></div>
+                <div className="net"><Net i={i}></Net></div>
                 <br></br>
             </div> 
         )
@@ -89,10 +89,10 @@ export default function League({league, logoData}){
                 </button>
             </a>
             <h2>Click the league logo to refresh scores</h2>
-            <div className="date">
+            <div id="date">
                     <h2>{leagueData.table[leagueData.table.length-1].date}</h2>
                 </div>
-            <div className='league-row'>
+            <div id='league-row'>
                 <div className='league-column'>
                     <h3>
                         <Col colVal={0}></Col>

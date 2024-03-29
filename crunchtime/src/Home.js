@@ -41,12 +41,13 @@ export default function Home(){
     return(
         <div>        
             <title>Crunch Time</title>
-                <div className="top">
-                    <h1>Crunch Time</h1>
+                <h1>Crunch Time</h1>
+                <h3>Select a sport</h3>
+                <br></br><br></br>
+                <div className="logo-vis">
+                    <LeagueList></LeagueList>     
                 </div>
-                <p>Select a sport</p>
-                <br></br><br></br><br></br><br></br>
-                <LeagueList></LeagueList>        
+                  
         </div>
     )
 }

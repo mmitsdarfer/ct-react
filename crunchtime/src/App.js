@@ -1,5 +1,4 @@
 import './main.css';
-import './league.css';
 import Preferences from './Preferences';
 import Home from './Home';
 import League from './League';
@@ -19,7 +18,7 @@ function makeCapital(lower){
 function HomeButton(){
   return (
     <a href="//localhost:3000">
-      <button className="home" type="submit"> 
+      <button id="home" type="submit"> 
           <br></br><img type="image" width="70" height="70" src="./goHome.png" alt="home"/>
       </button> 
     </a>
@@ -29,7 +28,7 @@ function HomeButton(){
 function PrefButton(){
   return(
     <a href="//localhost:3000/preferences">
-      <button className="prefs" type="submit">
+      <button id="prefs" type="submit">
         Preferences <img type="image" width="60" height="60" src="./podium.png" alt="prefImage"/>
       </button>
     </a>      

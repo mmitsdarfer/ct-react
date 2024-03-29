@@ -111,11 +111,11 @@ function Dropdowns(){
 
     return(
         <div>
-            <div id="drops">
+         
             <TopDrop></TopDrop>     
             <MidDrop></MidDrop>
             <LastDrop></LastDrop>
-            </div>
+  
         
         <br></br>
         Sort by games with closest scores (diffs),
@@ -165,7 +165,7 @@ export default function PrefCopy(){
     const [reset, setReset] = useState('false'); 
     function ResetButton(){
         return(
-            <button className="reset"type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
+            <button id="reset"type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
                 Reset visit data 
             </button> 
         )
@@ -228,7 +228,7 @@ export default function PrefCopy(){
         return(
             <div className="logo-vis">
                 <div> 
-                    <div className="vert-space">
+                    <div id="vert-space">
                     </div>         
                     Times Visited:
                 </div> 
