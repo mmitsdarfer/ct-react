@@ -28,6 +28,7 @@ body{
     left: 0px;
     top: 0px;
     border: 0px;
+    
 }
 .top{
     position: relative;
@@ -54,7 +55,7 @@ img{
 .logos{
     margin: 0;                        
     transform: translateY(-50%);
-    display: table-cell;                        
+    display: table-cell;                       
 }
 .logo-img{
     background-color: rgb(50, 120, 167);
@@ -69,7 +70,7 @@ img{
     margin-right: 0 px;
     margin-bottom: 10px;
     top: 50%;
-    vertical-align: middle;
+
     width: 250px;
     font-size: 25px;
     font-family: 'Times New Roman', Times, serif;
@@ -86,43 +87,44 @@ img{
 .index-body{background-color: rgb(50, 120, 167);
     text-align: center;
     font-size: 0px;
-    vertical-align: middle;}
-.column{
-    padding: 0;
-    float: left;
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;                                                     
-}
-.row{
-    width: 66%;
-    position: relative;
-    margin-left: -33%;
-    left: 50%;
-    display: flex;
     vertical-align: middle;
-    float: left;              
-    align-items: center;
-    margin-bottom: 40px;
 }
-#priority-break{  /*break above priorities*/
-    margin-top: 5px;
-    display: block;
-    content: '';
+.column{
+    width: 200px;
+    height: 120px;
+    border: 1px solid #e88317;                                   
 }
-#explainer{     /*explains priority options*/
-    font-size: 16px;
-    margin-top: 5px;
+.vis-column{
+    border: 1px solid #900757;
+    justify-items: center;
+}
+.row{  
+    position: relative;
+    margin: auto;
+    display: flex;
+    align-items: baseline;
 }
 #times-visited{
-    position: absolute;
-    margin-left: 10%;
+    border: 1px solid #000000;
+    width: 7em;
+    bottom: 0;
 }
-.priority{
-    font-size: 16px;
+#spacer{
+    width: 7em;
+    
 }
-.selectPriority {
+.vert-space{
+    height: 120px;
+    border: 1px solid #38af20;
+
+}
+.logo-vis{
+    display: flex;
+    border: 1px solid #af2020;
+    height: 165px;
+   
+}
+.select-priority{
     position: relative;
     width: 8%;
     margin: 5px;

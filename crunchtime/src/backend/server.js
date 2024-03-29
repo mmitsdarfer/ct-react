@@ -13,12 +13,6 @@ import { callScrape } from './scrape-sort/scrape.js';
 
 var current;
 var takeMe;
- 
-//logo format = league, width, height, link
-const logos = [['NHL', 120, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/05_NHL_Shield.svg/1200px-05_NHL_Shield.svg.png'],
-['NFL', 100, 120, 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/1200px-National_Football_League_logo.svg.png'],
-['MLB', 160, 86, 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Major_League_Baseball_logo.svg/1200px-Major_League_Baseball_logo.svg.png'],
-['NBA', 73, 120, 'https://brandlogos.net/wp-content/uploads/2014/09/NBA-logo-big.png']];
 
 //merge and mergesort used to rank leagues by most views
 function merge(left, right){
@@ -39,138 +33,6 @@ function mergeSort(arr){
     let left = mergeSort(arr.slice(0, mid));
     let right = mergeSort(arr.slice(mid));
     return merge(left, right);
-}
-
-//use data from league jsons to transform league.html & leagueIndex.html
-function jsonHtml(league, priority, takeMe = 'off'){
-    var jsonParsed;
-    async function writeJson(){
-        setTimeout(() => {   
-            callScrape(league, priority);
-            jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
-            return jsonParsed;
-        }, );     
-    }
-    if(existsSync('json/' + league.toLowerCase() + '.json', 'utf-8')) {
-        jsonParsed = JSON.parse(readFileSync('json/' + league.toLowerCase() + '.json', 'utf-8'));
-    }
-    else{
-        jsonParsed = writeJson();    
-    }
-    
-    var leagueHtml = readFileSync('public/league.html', 'utf-8');
-    var leagueIndex = readFileSync('public/leagueIndex.html', 'utf-8');
-    var leagueOut0 = [];
-    var leagueOut1 = [];
-    var leagueOut2 = [];
-    var leagueOut3 = [];
-    var len = Math.ceil(jsonParsed.table.length);
-    var j = 0;
-    for(let i = 0; i < len-1; i++){
-        if(typeof jsonParsed.table[i] === 'undefined'){         
-          break;
-        }
-        if(i % 4 == 0){
-            leagueOut0[i] = leagueHtml.replace('{{%TEAM1%}}', jsonParsed.table[i].team1).replace('{{%SCORE1%}}', jsonParsed.table[i].score1);
-            leagueOut0[i] = leagueOut0[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
-            leagueOut0[i] = leagueOut0[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
-            if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
-                    leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
-                }
-                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
-                    leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
-                }
-                else leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
-                leagueOut0[i] = leagueOut0[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
-            }
-            else{
-                leagueOut0[i] = leagueOut0[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
-            }
-        }
-        if(i % 4 == 1){
-            leagueOut1[i] = leagueHtml.replace('{{%TEAM1%}}', jsonParsed.table[i].team1).replace('{{%SCORE1%}}', jsonParsed.table[i].score1);
-            leagueOut1[i] = leagueOut1[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
-            leagueOut1[i] = leagueOut1[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
-            if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
-                    leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
-                }
-                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
-                    leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn">NO LINK<br></a>');
-                }
-                else leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
-                leagueOut1[i] = leagueOut1[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
-            }
-            else{
-                leagueOut1[i] = leagueOut1[i].replace('{{%NETLINK%}}','<a class="blank-btn">NO LINK<br></a>');
-            }
-        }
-        if(i % 4 == 2){
-            leagueOut2[i] = leagueHtml.replace('{{%TEAM1%}}', jsonParsed.table[i].team1).replace('{{%SCORE1%}}', jsonParsed.table[i].score1);
-            leagueOut2[i] = leagueOut2[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
-            leagueOut2[i] = leagueOut2[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
-            if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
-                    leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
-                }
-                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
-                    leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
-                }
-                else leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
-                leagueOut2[i] = leagueOut2[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
-            }
-            else{
-                leagueOut2[i] = leagueOut2[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
-            }
-        }
-        if(i % 4 == 3){
-            leagueOut3[i] = leagueHtml.replace('{{%TEAM1%}}', jsonParsed.table[i].team1).replace('{{%SCORE1%}}', jsonParsed.table[i].score1);
-            leagueOut3[i] = leagueOut3[i].replace('{{%TEAM2%}}', jsonParsed.table[i].team2).replace('{{%SCORE2%}}', jsonParsed.table[i].score2);
-            leagueOut3[i] = leagueOut3[i].replace('{{%TIME%}}', jsonParsed.table[i].time)
-            if(jsonParsed.table[i].progress != 'ended'){
-                if(jsonParsed.table[i].network == 'NHL NET' || jsonParsed.table[i].network == 'NBA TV') {
-                    leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}', '<a class="net">{{%NETWORK%}} has no available links</a>');
-                }
-                else if(jsonParsed.table[i].network == undefined || jsonParsed.table[i].network == ''){
-                    leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
-                }
-                else leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}', '<a class="btn" href="{{%LINK%}}" target="_blank" style="padding: 0.35em;">Watch on {{%NETWORK%}}</a>');
-                leagueOut3[i] = leagueOut3[i].replace('{{%LINK%}}', jsonParsed.table[i].link).replace('{{%NETWORK%}}', jsonParsed.table[i].network);
-            }
-            else{
-                leagueOut3[i] = leagueOut3[i].replace('{{%NETLINK%}}','<a class="blank-btn"><br></a>');
-            }
-        }
-    }
-
-    var currentLogo = [];
-    for(let i = 0; i < logos.length; i++){
-        if(league == logos[i][0]){
-            currentLogo = logos[i].slice(1);
-        }
-    }
-
-    leagueOut0 = leagueOut0.join(' \n');
-    leagueOut1 = leagueOut1.join(' \n');
-    leagueOut2 = leagueOut2.join(' \n');
-    leagueOut3 = leagueOut3.join(' \n');
-
-
-    var leagueRes = leagueIndex.replace('{{%CONTENT0%}}', leagueOut0)
-    .replace('{{%CONTENT1%}}', leagueOut1).replace('{{%CONTENT2%}}', leagueOut2).replace('{{%CONTENT3%}}', leagueOut3);
-    leagueRes = leagueRes.replace('{{%LEAGUE%}}', league).replace('{{%LEAGUE%}}', league.toLowerCase()).replace('{{%WIDTH%}}', currentLogo[0])
-    .replace('{{%HEIGHT%}}', currentLogo[1]).replace('{{%LOGO%}}', currentLogo[2]).replace('{{%DATE%}}', jsonParsed.table[len-1].date)
-    .replace('{{%PRIORITY0%}}', priority[0].charAt(0).toUpperCase() + priority[0].slice(1)).replace('{{%PRIORITY1%}}', priority[1].charAt(0).toUpperCase() + priority[1].slice(1))
-    .replace('{{%PRIORITY2%}}', priority[2].charAt(0).toUpperCase() + priority[2].slice(1));
-
-    if(takeMe == 'on'){
-        leagueRes = leagueRes.replace('{{%TOP%}}', jsonParsed.table[0].link);
-    }
-    else{
-        leagueRes = leagueRes.replace("window.open('{{%TOP%}}');", '');
-    }
-    return leagueRes;
 }
 
 app.use(cookieParser());
@@ -319,10 +181,7 @@ app.get('/nhl', (req, res) => {
     async function writeNhl(){
         setTimeout(function () {
             preferences(current);   
-            callScrape(current, priority);
-           // var nhlRes = jsonHtml(current, priority, takeMe);
-           // res.writeHead(200, {'Content-Type': 'text/html'});
-          //  res.end(nhlRes);      
+            callScrape(current, priority);     
           res.json({message: "Scraping: " + current});    
         }, 100);       
     }
@@ -360,9 +219,6 @@ app.get('/nfl', (req, res) => {
         setTimeout(function () {
             preferences(current);
             callScrape(current, priority);
-            //var nflRes = jsonHtml(current, priority);
-           // res.writeHead(200, {'Content-Type': 'text/html'});
-            //res.end(nflRes);    
             res.json({message: "Scraping: " + current});    
         }, 100);
     }
@@ -397,10 +253,7 @@ app.get('/nba', (req, res) => {
     async function writeNba(){
         setTimeout(function () {     
             preferences(current);
-            callScrape(current, priority);
-            //var nbaRes = jsonHtml(current, priority);
-            //res.writeHead(200, {'Content-Type': 'text/html'});
-            //res.end(nbaRes);  
+            callScrape(current, priority); 
             res.json({message: "Scraping: " + current});           
         }, 100);     
     }
@@ -446,100 +299,6 @@ app.get('/mlb', (req, res) => {
     writeMlb();
 });
 
-app.get("/api", (req, res) => {
-     //res.send("Scraping " + current);
-    res.json({ message: "Hello from server!" });
-  });
-
-//fills in preferences.html with preferences.json data
-function prefsJsonHtml(priority, takeMe){
-    var leagueHtml = readFileSync('public/preferences.html', 'utf-8');
-    var prefsOut; 
-    var prefsParsed;
-    if(priority[0] == undefined){
-        if (existsSync('../json/preferences.json', 'utf-8')) {
-            prefsParsed = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-        }
-    }
-   
-    var prefLogos = [];
-    prefsParsed = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-    for(let i = prefsParsed.length - 1; i > 1; i--){  
-        for(let j = 0; j < logos.length; j++){
-            if(prefsParsed[i][0] == logos[j][0]){
-                prefLogos[prefsParsed.length - 1 - i] = logos[j];
-                if(prefLogos[prefsParsed.length - 1 - i].length == logos.length){
-                    prefLogos[prefsParsed.length - 1 - i].push(prefsParsed[i][1]);
-                }
-                else{
-                    prefLogos[prefsParsed.length - 1 - i][logos.length] = prefsParsed[i][1];
-                }
-            }
-        }
-    }
-    prefsOut = leagueHtml;
-    for(let i = 0; i < prefLogos.length; i++){
-        prefsOut = prefsOut.replace('{{%LEAGUE%}}', prefLogos[i][0]).replace('{{%WIDTH%}}', 0.9 * prefLogos[i][1])
-        .replace('{{%HEIGHT%}}', 0.9 * prefLogos[i][2]).replace('{{%LOGO%}}', prefLogos[i][3]); 
-        prefsOut = prefsOut.replace('{{%HITS%}}', prefLogos[i][4]);  
-    }
-    prefLogos.length = 0;
-    
-    var dropdownHtml = [];
-    for(let i = 0; i < priority.length; i++){
-        if(priority[i] == 'diffs'){
-            dropdownHtml[i] = '<option value="diffs">Diffs</option> <option value="times">Times</option>' + 
-            '<option value="standings">Standings</option>';
-        }
-        else if(priority[i] == 'times'){
-            dropdownHtml[i] = '<option value="times">Times</option> <option value="diffs">Diffs</option>' + 
-            '<option value="standings">Standings</option>'
-        }
-        else if(priority[i] == 'standings'){
-            dropdownHtml[i] = '<option value="standings">Standings</option> <option value="diffs">Diffs</option>' + 
-            '<option value="times">Times</option>';
-        }
-    }
-    prefsOut = prefsOut.replace('{{%DROP0%}}', dropdownHtml[0]).replace('{{%DROP1%}}', dropdownHtml[1])
-            .replace('{{%DROP2%}}', dropdownHtml[2]);
-
-    if(takeMe == 'off'){
-        prefsOut = prefsOut.replace('checked', '');
-    }
-    
-    return prefsOut;
-}
-
-app.get('/preferences', (req, res) => {
-    let priority = [];
-    getCookies(req, res);
-    priority[0] = (req.cookies.Priority0); 
-    priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2); 
-    let reset = (req.cookies.Reset);
-    let takeMe = req.cookies.Take;
-    function callReset(){    
-        res.cookie('Reset', 'false');
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-        let parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-        return parsedPrefs;
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        callReset();
-    }
-
-    async function writePrefs(){
-        setTimeout(function () {
-            let prefRes = prefsJsonHtml(priority, takeMe);
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(prefRes);          
-        }, 100);       
-    }
-    writePrefs();
-})
-
 app.use((req, res) => {
     res.status(404).send('Page not found');
 })
@@ -550,13 +309,4 @@ if (!existsSync('../json/preferences.json')) {
 
 app.listen(port, () => {
     console.log('Running on ' + port);
-    //let parsedPrefs = JSON.parse(readFileSync('json/preferences.json', 'utf-8'));
-    async function loadScrape(){
-        for(let i = parsedPrefs.length-1; i >= 2; i--){
-            //COMMENT OUT BELOW FOR QUICKER TESTING
-      //      if(parsedPrefs[i][0] == 'MLB') await mlbScrape(parsedPrefs[1]);
-        //    else await callScrape(parsedPrefs[i][0], parsedPrefs[1]);
-        }
-    }
-   // loadScrape();
 })

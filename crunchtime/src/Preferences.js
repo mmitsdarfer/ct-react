@@ -47,7 +47,7 @@ function Dropdowns(){
 
     function LastDrop(){
         return(
-            <select className="selectPriority" defaultValue={lastPriority}>
+            <select className="select-priority" defaultValue={lastPriority}>
                 <option value={lastPriority}>{makeCapital(lastPriority)}</option>
             </select>
         )
@@ -56,7 +56,7 @@ function Dropdowns(){
     function MidDrop(){
         if(topPriority === 'diffs'){
             return(
-                <select className="selectPriority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
+                <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="times">Times</option> 
                     <option value="standings">Standings</option>
                 </select>
@@ -64,7 +64,7 @@ function Dropdowns(){
         }
         else if(topPriority === 'times'){
             return(
-                <select className="selectPriority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
+                <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="diffs">Diffs</option>
                     <option value="standings">Standings</option>
                 </select>
@@ -72,7 +72,7 @@ function Dropdowns(){
         }
         else if(topPriority === 'standings'){
             return(
-                <select className="selectPriority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
+                <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="diffs">Diffs</option>
                     <option value="times">Times</option> 
                 </select>
@@ -85,7 +85,7 @@ function Dropdowns(){
         return(
             <div>
                 Top:
-                <select className="selectPriority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
+                <select className="select-priority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
                     <option value="diffs">Diffs</option>
                     <option value="times">Times</option> 
                     <option value="standings">Standings</option>
@@ -192,10 +192,15 @@ export default function Preferences(){
             {  
                     if(data[i][0] === Object.keys(logos)[index]){
                         leagueList[i] = (
-                            <div key={"leagueId"+index} className="column">
-                                <League current={data[i][0]}></League>
-                                <Visits current={data[i][1]}></Visits>
+                            <div>
+                                <div key={"leagueId"+index} className="column">
+                                    <League current={data[i][0]}></League>
+                                </div>
+                                <div key={"leagueId"+index} className="vis-column">
+                                 <Visits current={data[i][1]}></Visits>
+                                </div>
                             </div>
+                            
                         )
                     } 
                 index++;
@@ -204,15 +209,25 @@ export default function Preferences(){
             return leagueList.reverse();
         }
         return(
-            <div>
-                <div id="times-visited">
-                      <br></br><br></br><br></br>
+            <div className="logo-vis">
+                <div className="row">
+                    <div>
+                    <div className="vert-space">
+                    
+                    </div>
+                    <div id="times-visited">          
                         Times Visited:
-                </div>
-                <div className="row">         
+                    </div>
+                    </div>
+                             
+                    
                     <LeagueList></LeagueList>
+                    <div id="spacer">          
                 </div>
+                </div>
+                
             </div>
+            
         )
     }
     return(
@@ -228,7 +243,10 @@ export default function Preferences(){
 
         <br></br><br></br>
         <ResetButton></ResetButton>
-        <VisitData></VisitData>
+        <div>
+            <VisitData></VisitData>
+        </div>
+        
     </div>
     )
 }

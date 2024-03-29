@@ -31,6 +31,7 @@
     border-right: 1px solid #CCCCCC;
     border-bottom: 1px solid #1c1c1c;
     border-left: 1px solid #1c1c1c;
+    margin-bottom: 10px;
 }
 .scores{
     text-align: right;
@@ -38,7 +39,8 @@
 }
 .net{
     text-align:center; 
-    padding-top: 10px;
+    padding-top: 2px;
+    margin-top: 0px;
     font: bold 14px Arial;
 }  
 

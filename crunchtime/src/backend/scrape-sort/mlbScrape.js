@@ -24,16 +24,17 @@ export async function mlbScrape(priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames;
+    var fullDate, teams, times, scores, nets, numGames, links;
 
     await page.waitForSelector('div.ScoreCell__Score'); //scores are loaded a bit later, so need to wait for them (I think...)
     
-    [fullDate, teams, times, scores, numGames] = await page.evaluate(() => {
+    [fullDate, teams, times, scores, nets, numGames, links] = await page.evaluate(() => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
         times = [];
         nets = [];
+        links = [];
         let firstFin = 0;
         let firstUnstart = 0;
 
@@ -85,7 +86,7 @@ export async function mlbScrape(priority){
         //put networks in nodelist
         let netLen = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem').length;
         for(let i = 0; i < netLen; i++){
-            nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
+            nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i].textContent;
         }
         for(let i = 0; i < numGames; i++){
             if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
@@ -93,8 +94,10 @@ export async function mlbScrape(priority){
             }
             else links[i] = "teststs";
         }
+        linkArr = Array.from(links);
+        linkArr = linkArr.map(link => link.href);
 
-        return [fullDate, teams, times, scores, numGames];
+        return [fullDate, teams, times, scores, nets, numGames, linkArr];
     })
 
     //date with day of the week stripped off
@@ -134,8 +137,11 @@ export async function mlbScrape(priority){
         } 
     }
 
+    var channels = netToLink(nets, teams, progress, numGames, links);
+
     var obj = {};
     for(let i = 0; i < numGames; i++){
+        console.log(i);
         obj = {
             team1: teams[2*i],
             score1: scores[2*i],
@@ -159,6 +165,55 @@ export async function mlbScrape(priority){
     callStandings();
       
     await browser.close();
+}
+
+//takes in listed channel and provides streaming link
+function netToLink(nets, teams, progress, numGames, links){
+    //make sure to log in first
+    const tnt = 'https://www.tntdrama.com/watchtnt/east';
+    const espn = 'https://www.espn.com/watch/';
+    const nbcsp = 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia';
+    const fox = 'https://www.foxsports.com/live';
+    const abc = 'https://abc.com/watch-live/abc';
+    const channels = [];
+    let notPlus = 0;
+
+    for(let i = 0; i < numGames; i++){  
+        if(progress[i] != 'ended'){
+            if(i > 0){
+                if(nets[i-1] == 'ESPN+' && nets[i] == 'Hulu'){
+                    nets[i-1] = 'ESPN+/Hulu';
+                    nets[i] = nets[i-1];
+                }
+            }
+            if((teams[i*2] == 'Flyers' || teams[i*2+1] == 'Flyers') && (nets[i] != 'ABC' && nets[i] != 'TNT')){
+                channels[i] = nbcsp;    //TO DO: when on regular espn or tnt Flyers aren't on nbcsp
+                nets[i] = 'NBCSP';
+                notPlus++;
+            }  
+            else if(nets[i] == 'TNT'){
+                channels[i] = tnt;
+                notPlus++;
+            }
+            else if(nets[i] == 'ESPN' || nets[i] == 'ESPN+' || nets[i] == 'NHLPP|ESPN+' || nets[i] == 'ESPN+/Hulu' || nets[i] == 'Hulu'){
+                if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
+                else channels[i] = espn;      
+            }  
+            else if(nets[i] == 'FOX'){
+                channels[i] = fox;
+                notPlus++;
+            }
+            else if(nets[i] == 'ABC'){
+                channels[i] = abc;
+                notPlus++;
+            }
+            else { 
+                channels[i] = '';
+                notPlus++;
+            }   
+        }
+    }
+    return channels;
 }
 
 export default mlbScrape;
