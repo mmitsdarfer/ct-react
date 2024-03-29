@@ -21,9 +21,8 @@ known errors:
       - Just create empty object (div?) to keep spacing consistent
 
 To do:
-- New cookies only made by running backend
-- Add mlb links (like nesn has no links)
-- Switch from px to em font (>)
+- Give option of how long to refresh server (?)
+- Switch from px to em font (?)
 - Run front and backend from one command 
 - Work on jsons before they exist
 - Add loading bar after implementing React (?)
