@@ -22,71 +22,28 @@ known errors:
 
 To do:
 - Give option of how long to refresh server (?)
-- Switch from px to em font (?)
-- Run front and backend from one command 
 - Work on jsons before they exist
-- Add loading bar after implementing React (?)
 - Change tab icon
-- Iron out when to split by progress if not sorting by time
-   - Sorting by standings isn't split into progresses. Should it be and/or should diffs of ongoing and ended be mixed together when sorting by diffs
 - Add favorite teams(?)
 - Switch to for-of loops if applicable
 - See if specific errors above still exist
 - getCookies is kind of repeated in calls to league pages because each cookie is collected again
-- Revisit MLB after spring training
-- Move the html conversion(s) in server.js to a new js file
-- Look into react (base on platform computing work?)
-   - Would want all the scores to update at once because element by element would show repeats
-   - Could use to remake preferences to update hits with less code
-- Show previous json data on webpage, scrape and update json, repeat (?)
-   - So, in server if [league].json already exists write that with jsonHtml then scrape (?)
-   - Maybe if I really can't get it to load dynamically
 - Update readme
 - See what happens when cookies don't yet exist
    - They can only be created in home page or with a delay in /preference
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
-   - When Flyers are on national broadcasts replace NBCSP link
-      - Think I did this
-- Add timer to auto refresh 
-   - Run scrape in the background on its own and have refresh just implement those scraped values
-      - Do I want to refresh the page (and in turn data) without clicking refresh?
- - Add team logos
- - (Evergreen) Document code and get rid of unneeded parts
-- Check out bootstrap for cleaner UI (?)
-   - At least change fonts
-      - Make dropdown same as everything else?
-   - Use platform computing notes for a guide
-   - https://bootstrapshuffle.com/classes
+- Add team logos
+- (Evergreen) Document code and get rid of unneeded parts
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
    - Add upcoming days
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
-   - Split into separate files (?)
-   - Some people preach against for loops so maybe try forEach, map, and/or filter
-      - Idk if it's actually not great to use and this is a small dataset so probs not worth it
 
-To do but this time it's specific:
-1. Figure out how to update scores when they load
-2. Fix known errors
 
 WIWWO: 
-3/29: cleaning up stylesheets
-3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
-      -> All standRanks are higher than number of teams
-3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
-   as of ~9pm allSorted works for time-diff-stand and diff-time-stand but not stand-x-x or x-stand-x
-   -> 3/8: All combos working currently w/ allSorted but I've changed nothing
-      -> probably just no ties while sorting
-2/8: Wanna use how preferences.html is updated with zeros to show scores as they load. Might be tricky
-since I can't use require
-   -> This method might not be possible because idk how I'd trigger the update from the html
-      -> Refresh button gets the scores but still has to wait
-   -> What about updating a cookie after scrape is done and have html constantly checking for that cookie?
-      -> Wouldn't want scores to be on cookie tho. Too much info and formatting concerns
-      -> But if a scoresUpdated cookie exists, how would it get scores?
-
+3/29: Cleaned up stylesheets and notes.txt
 
 Using git:
 1. Make changes to code
