@@ -176,6 +176,7 @@ function netToLink(nets, teams, progress, numGames, links){
     const fox = 'https://www.foxsports.com/live';
     const abc = 'https://abc.com/watch-live/abc';
     const apple = 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2';
+    const mlbTv = 'https://www.mlb.com/network/live?success=true';
     const channels = [];
     let notPlus = 0;
 
@@ -210,6 +211,10 @@ function netToLink(nets, teams, progress, numGames, links){
             }
             else if(nets[i] == 'Apple TV+'){
                 channels[i] = apple;
+                notPlus++;
+            }
+            else if(nets[i] == 'MLBN'){
+                channels[i] = mlbTv;
                 notPlus++;
             }
             else { 

@@ -3,6 +3,13 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+- MLB all broken
+- MLB still crashes sometimes:
+         file:///C:/Users/mikey/OneDrive/Desktop/CrunchTime/Crunchtime/crunchtime/src/backend/scrape-sort/mlbScrape.js:156
+                  data.table.push(obj);
+                                  ^
+         TypeError: Cannot read properties of undefined (reading 'push')
+
 - when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
    until refreshing
 - rapidly refreshing no longer creates duplicates, but too many requests causes timeout and kills program
