@@ -82,10 +82,8 @@ img {display: block;
     margin-left: auto;
     margin-right: auto;
 } 
-.home{
+.home{ /* repeated in main.css for organization */
     background-color: rgb(50, 120, 167);
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 18px;
     position: absolute;
     left: 0px;
     top: 0px;

@@ -72,11 +72,7 @@ To do but this time it's specific:
 2. Fix known errors
 
 WIWWO: 
-3/27: Just about everything working w/ React, just need to implement preferences in its json
-         Priorities works
-         TakeMe works
-         Reset works
-      Need to realign Times Visited
+3/29: cleaning up stylesheets
 3/8: Gonna wait until regular season to revisit MLB because only spring standings are by grapefruit/cactus leagues
       -> All standRanks are higher than number of teams
 3/7: All the mlb games are in right place w/ postponed and canceled, so problem must be in finalSort/endedSort
