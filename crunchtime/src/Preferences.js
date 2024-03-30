@@ -161,7 +161,7 @@ function Switch(){
     )
 }
 
-export default function PrefCopy(){
+export default function Preferences(){
     const [reset, setReset] = useState('false'); 
     function ResetButton(){
         return(
