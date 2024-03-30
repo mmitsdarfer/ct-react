@@ -253,8 +253,7 @@ export default function PrefCopy(){
         <ResetButton></ResetButton>
         <div>
             <VisitData></VisitData>
-        </div>
-        
+        </div> 
     </div>
     )
 }

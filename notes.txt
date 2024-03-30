@@ -3,6 +3,8 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+- When takeMe is enabled but no link is available a blank tab opens
+   - I think only for "[net] has no available links"
 - MLB all broken
 - MLB still crashes sometimes:
          file:///C:/Users/mikey/OneDrive/Desktop/CrunchTime/Crunchtime/crunchtime/src/backend/scrape-sort/mlbScrape.js:156
