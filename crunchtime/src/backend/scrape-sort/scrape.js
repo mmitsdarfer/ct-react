@@ -173,7 +173,6 @@ var scrape = async function scrape(league, priority){
 
     const callStandings = async () => {
        data = await standingsScrape(league, gameData.table);
-
         timeToObj(gameData.table, league);
         finalSort(gameData.table, priority, league, date);
       }
@@ -204,7 +203,7 @@ function netToLink(nets, teams, progress, numGames, links){
                 }
             }
             if((teams[i*2] == 'Flyers' || teams[i*2+1] == 'Flyers') && (nets[i] != 'ABC' && nets[i] != 'TNT')){
-                channels[i] = nbcsp;    //TO DO: when on regular espn or tnt Flyers aren't on nbcsp
+                channels[i] = nbcsp;
                 nets[i] = 'NBCSP';
                 notPlus++;
             }  
@@ -212,7 +211,7 @@ function netToLink(nets, teams, progress, numGames, links){
                 channels[i] = tnt;
                 notPlus++;
             }
-            else if(nets[i] == 'ESPN' || nets[i] == 'ESPN+' || nets[i] == 'NHLPP|ESPN+' || nets[i] == 'ESPN+/Hulu' || nets[i] == 'Hulu'){
+            else if(nets[i].includes('ESPN') || nets[i] == 'Hulu'){
                 if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
                 else channels[i] = espn;      
             }  

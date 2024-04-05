@@ -4,7 +4,6 @@ import puppeteer from 'puppeteer';
 import { timeConversion, standingsScrape } from './standings-time.js';
 import finalSort from './finalSort.js';
 var url;
-var data = {};
 
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
@@ -18,6 +17,7 @@ export async function mlbScrape(priority){
     console.log('Current league: ' + league);
     console.log('Priority: ' + priority);
     url = 'https://www.espn.com/'+league.toLowerCase()+'/scoreboard';
+    var data = {};
     data.table = []; 
 
     //use puppeteer to open link
@@ -36,7 +36,7 @@ export async function mlbScrape(priority){
         nets = [];
         links = [];
         let firstFin = 0;
-        let firstUnstart = 0;
+        //let firstUnstart = 0;
 
         teamLen = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName').length;
         numGames = teamLen/2;
@@ -46,23 +46,25 @@ export async function mlbScrape(priority){
         }
         
         scoreLen = document.querySelectorAll('.ScoreCell__Score').length;
+        let notStarted = 0;
 
         for(let i = 0; i < teamLen; i++){
             teams[i] = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName')[i].textContent;
             if(!(i%2)){
                 if(times[i/2] == ('Final')){
                     if(firstFin == 0) firstFin = i;
-                    scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
-                    scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
+                    scores[i] = document.querySelectorAll('.ScoreboardScoreCell__Value')[(i-notStarted)*3].textContent;
+                    scores[i+1] =  document.querySelectorAll('.ScoreboardScoreCell__Value')[(i-notStarted+1)*3].textContent;
                 }
                 else if(times[i/2] == 'Postponed' || times[i/2] == 'Canceled'){
                     scores[i] = '-';
-                    scores[i+1] = '-';                
+                    scores[i+1] = '-';              
                 }
                 else if(times[i/2].includes('AM') || times[i/2].includes('PM')){
-                    if(firstUnstart == 0) firstUnstart = i;
+                    //if(firstUnstart == 0) firstUnstart = i;
                     scores[i] = '-';
                     scores[i+1] = '-';
+                    notStarted += 2; 
                 }
                 else{
                     scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
@@ -71,11 +73,13 @@ export async function mlbScrape(priority){
             }
         }
 
+        /*
         if(firstUnstart != 0){
             for(let i = firstUnstart; i < firstFin; i++){
-                scores.splice(firstUnstart, 0, '-');
+             //   scores.splice(firstUnstart, 0, '-');
             }
         }
+        */
         for(let i = 0; i < teamLen; i++){
             if(scores[i].includes('-') && /^\d/.test(scores[i])){   //if has dash and starts with a number for when espn puts records in place of scores for unstarted games 
                 scores.splice(i, 1);
@@ -141,7 +145,6 @@ export async function mlbScrape(priority){
 
     var obj = {};
     for(let i = 0; i < numGames; i++){
-        console.log(i);
         obj = {
             team1: teams[2*i],
             score1: scores[2*i],
@@ -155,7 +158,6 @@ export async function mlbScrape(priority){
         }
         data.table.push(obj);
     }
-
 
     const callStandings = async () => {
         data = await standingsScrape('MLB', data.table); 
@@ -177,6 +179,7 @@ function netToLink(nets, teams, progress, numGames, links){
     const abc = 'https://abc.com/watch-live/abc';
     const apple = 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2';
     const mlbTv = 'https://www.mlb.com/network/live?success=true';
+    const tbs = 'https://www.tbs.com/watchtbs/east';
     const channels = [];
     let notPlus = 0;
 
@@ -188,8 +191,8 @@ function netToLink(nets, teams, progress, numGames, links){
                     nets[i] = nets[i-1];
                 }
             }
-            if((teams[i*2] == 'Flyers' || teams[i*2+1] == 'Flyers') && (nets[i] != 'ABC' && nets[i] != 'TNT')){
-                channels[i] = nbcsp;    //TO DO: when on regular espn or tnt Flyers aren't on nbcsp
+            if((teams[i*2] == 'Phillies' || teams[i*2+1] == 'Phillies') && (nets[i] != 'FOX' && nets[i] != 'Apple')){
+                channels[i] = nbcsp;  
                 nets[i] = 'NBCSP';
                 notPlus++;
             }  
@@ -215,6 +218,10 @@ function netToLink(nets, teams, progress, numGames, links){
             }
             else if(nets[i] == 'MLBN'){
                 channels[i] = mlbTv;
+                notPlus++;
+            }
+            else if(nets[i] == 'TBS'){
+                channels[i] = tbs;
                 notPlus++;
             }
             else { 

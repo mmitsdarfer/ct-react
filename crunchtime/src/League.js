@@ -35,7 +35,7 @@ export default function League({league, logoData}){
     function Net({i}){
         if(leagueData.table[i].progress !== 'ended'){
             if(leagueData.table[i].network === 'NHL NET' || leagueData.table[i].network === 'NBA TV'
-                || leagueData.table[i].network === 'NESN') {
+                || leagueData.table[i].network === 'NESN' || leagueData.table[i].network === 'NESN+') {
                     return <div className="net">{leagueData.table[i].network} has no available links</div>
             }
             else if(leagueData.table[i].network === undefined || leagueData.table[i].network === ''){

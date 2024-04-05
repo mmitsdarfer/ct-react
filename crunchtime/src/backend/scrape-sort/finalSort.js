@@ -53,6 +53,8 @@ function timeSort(data){
         }
     }
     sorted = mergeSort(times).reverse();
+    console.log(sorted);
+    console.log('!!!!!!!!');
 
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < data.length; j++){
@@ -128,17 +130,17 @@ function standingsSort(data){
     let endedStands = [];
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ongoing'){
-            ongoingStands[i] = data[i].avgStanding;
+            ongoingStands.push(data[i].avgStanding);
         }
     }
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'unstarted'){
-            unstartedStands[i] = data[i].avgStanding;
+            unstartedStands.push(data[i].avgStanding);
         }
     }
     for(let i = 0; i < data.length; i++){
         if(data[i].progress == 'ended'){
-            endedStands[i] = data[i].avgStanding;
+            endedStands.push(data[i].avgStanding);
         }
     }
     
@@ -215,268 +217,239 @@ export function finalSort(data, priority, league, date){
     data = diffSort(data);
     data = standingsSort(data);
 
-    let sorted = [];
-    let midSorted = [];
-    let lastSorted = [];
-    let allSorted = [];
-    let endSorted = [];
-
+    let firstOrder = [];
+    let secondOrder = [];
+    let thirdOrder = [];
     if(priority[0] == 'diffs'){
-        for(let i = 0; i < data.length+1; i++){       //+1 because max diff/time/standing is set equal to length
-            sorted[i] = [];
+        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/standing is set equal to length
+            firstOrder[i] = [];
             for(let j = 0; j < data.length; j++){
-                if(data[j].diffRank == i){
-                    sorted[i].push(data[j]);
+                if(data[j].diffRank == i) firstOrder[i].push(data[j]);
+            }
+        }
+        dropEmpties(firstOrder);
+        if(priority[1] == 'times'){
+            for(let i = 0; i < firstOrder.length; i++){
+                secondOrder[i] = [];
+                if(firstOrder[i] !== undefined){
+                    if(firstOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < firstOrder[i].length; k++){
+                                if(firstOrder[i][k].timeRank == j) secondOrder[i].push(firstOrder[i][k]);
+                            }
+                        }
+                    }
+                    else if(firstOrder[i].length == 1){
+                        secondOrder[i].push(firstOrder[i][0]);
+                    }
+                }
+            }
+            //priority[2] starts here
+            for(let i = 0; i < secondOrder.length; i++){
+                thirdOrder[i] = [];
+                if(secondOrder !== undefined){
+                    if(secondOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < secondOrder[i].length; k++){
+                                if(secondOrder[i][k].standRank == j) thirdOrder[i].push(secondOrder[i][k]);
+                            }
+                        }
+                    }
+                    else if(secondOrder[i].length == 1){
+                        thirdOrder[i].push(secondOrder[i][0]);
+                    }
                 }
             }
         }
-        if(priority[1] == 'times'){
-            for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
-                        midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                        
-                            if(sorted[i][k].timeRank == j){
-                                midSorted[j].push(sorted[i][k]);
-                            }
-                        } 
-                        allSorted.push(midSorted[j]);
-                    }
-                }
-                else{
-                    allSorted.push(sorted[i]);
-                }               
-            }           
-            dropEmpties(allSorted);
-
-            for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){  
-                    for(let j = 0; j < data.length+1; j++){                       
-                        lastSorted[j] = [];
-                        for(let k = 0; k < allSorted[i].length; k++){                        
-                            if(allSorted[i][k].standRank == j){
-                                
-                                lastSorted[j].push(allSorted[i][k]);
-                            }
-                        } 
-                        endSorted.push(lastSorted[j]);                   
-                    }
-                }
-                else{
-                    endSorted.push(allSorted[i]);
-                }
-            }  
-        }
         else if(priority[1] == 'standings'){
-            for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
-                        midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                                            
-                            if(sorted[i][k].standRank == j){
-                                midSorted[j].push(sorted[i][k]);
+            for(let i = 0; i < firstOrder.length; i++){
+                secondOrder[i] = [];
+                if(firstOrder[i] !== undefined){
+                    if(firstOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < firstOrder[i].length; k++){
+                                if(firstOrder[i][k].standRank == j) secondOrder[i].push(firstOrder[i][k]);
                             }
-                        } 
-                        allSorted.push(midSorted[j]);
+                        }
+                    }
+                    else if(firstOrder[i].length == 1){
+                        secondOrder[i].push(firstOrder[i][0]);
                     }
                 }
-                else{
-                    allSorted.push(sorted[i]);
-                }
-            }            
-            dropEmpties(allSorted); 
-            for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){                     
-                    for(let j = 0; j < data.length+1; j++){                                              
-                        lastSorted[j] = [];
-                        for(let k = 0; k < allSorted[i].length; k++){                        
-                            if(allSorted[i][k].timeRank == j){
-                                lastSorted[j].push(allSorted[i][k]);
+            }
+            //priority[2] starts here
+            for(let i = 0; i < secondOrder.length; i++){
+                thirdOrder[i] = [];
+                if(secondOrder !== undefined){
+                    if(secondOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < secondOrder[i].length; k++){
+                                if(secondOrder[i][k].timeRank == j) thirdOrder[i].push(secondOrder[i][k]);
                             }
-                        } 
-                        endSorted.push(lastSorted[j]);               
+                        }             
+                    }
+                    else if(secondOrder[i].length == 1){
+                        thirdOrder[i].push(secondOrder[i][0]);
                     }
                 }
-                else{
-                    endSorted.push(allSorted[i]);
-                }
-            }  
-        }        
+            }
+        }   
     }
     else if(priority[0] == 'times'){
-        for(let i = 0; i < data.length+1; i++){    
-            sorted[i] = [];
+        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/standing is set equal to length
+            firstOrder[i] = [];
             for(let j = 0; j < data.length; j++){
-                if(data[j].timeRank == i){
-                    sorted[i].push(data[j]);
-                }
+                if(data[j].timeRank == i) firstOrder[i].push(data[j]);
             }
         }
+        dropEmpties(firstOrder);
         if(priority[1] == 'diffs'){
-            for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
-                        midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                        
-                            if(sorted[i][k].diffRank == j){
-                                midSorted[j].push(sorted[i][k]);
+            for(let i = 0; i < firstOrder.length; i++){
+                secondOrder[i] = [];
+                if(firstOrder[i] !== undefined){
+                    if(firstOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < firstOrder[i].length; k++){
+                                if(firstOrder[i][k].diffRank == j) secondOrder[i].push(firstOrder[i][k]);
                             }
-                        } 
-                        allSorted.push(midSorted[j]);
+                        }
                     }
-                }
-                else{
-                    allSorted.push(sorted[i]);
+                    else if(firstOrder[i].length == 1){
+                        secondOrder[i].push(firstOrder[i][0]);
+                    }
                 }
             }
-            dropEmpties(allSorted);
-            for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){  
-                    for(let j = 0; j < data.length+1; j++){                       
-                        lastSorted[j] = [];
-                        for(let k = 0; k < allSorted[i].length; k++){                        
-                            if(allSorted[i][k].standRank == j){
-                                lastSorted[j].push(allSorted[i][k]);
+            //priority[2] starts here
+            for(let i = 0; i < secondOrder.length; i++){
+                thirdOrder[i] = [];
+                if(secondOrder !== undefined){
+                    if(secondOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < secondOrder[i].length; k++){
+                                if(secondOrder[i][k].standRank == j) thirdOrder[i].push(secondOrder[i][k]);
                             }
-                        } 
-                        endSorted.push(lastSorted[j]);             
+                        }                
+                    }
+                    else if(secondOrder[i].length == 1){
+                        thirdOrder[i].push(secondOrder[i][0]);
                     }
                 }
-                else{
-                    endSorted.push(allSorted[i]);
-                }
-            }  
+            }
         }
         else if(priority[1] == 'standings'){
-            for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
-                        midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                                            
-                            if(sorted[i][k].standRank == j){
-                                midSorted[j].push(sorted[i][k]);
+            for(let i = 0; i < firstOrder.length; i++){
+                secondOrder[i] = [];
+                if(firstOrder[i] !== undefined){
+                    if(firstOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < firstOrder[i].length; k++){
+                                if(firstOrder[i][k].standRank == j) secondOrder[i].push(firstOrder[i][k]);
                             }
-                        } 
-                        allSorted.push(midSorted[j]);
+                        }
+                    }
+                    else if(firstOrder[i].length == 1){
+                        secondOrder[i].push(firstOrder[i][0]);
                     }
                 }
-                else{
-                    allSorted.push(sorted[i]);
-                }
-            }             
-            dropEmpties(allSorted); 
-            for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){                     
-                    for(let j = 0; j < data.length+1; j++){                                              
-                        lastSorted[j] = [];
-                        for(let k = 0; k < allSorted[i].length; k++){                        
-                            if(allSorted[i][k].diffRank == j){
-                                lastSorted[j].push(allSorted[i][k]);
+            }
+            //priority[2] starts here
+            for(let i = 0; i < secondOrder.length; i++){
+                thirdOrder[i] = [];
+                if(secondOrder !== undefined){
+                    if(secondOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < secondOrder[i].length; k++){
+                                if(secondOrder[i][k].diffRank == j) thirdOrder[i].push(secondOrder[i][k]);
                             }
-                        } 
-                        endSorted.push(lastSorted[j]);               
+                        }          
+                    }
+                    else if(secondOrder[i].length == 1){
+                        thirdOrder[i].push(secondOrder[i][0]);
                     }
                 }
-                else{
-                    endSorted.push(allSorted[i]);
-                }
-            }  
-        } 
+            }
+        }
     }
     else if(priority[0] == 'standings'){
-        for(let i = 0; i < data.length+1; i++){  
-            sorted[i] = [];     
+        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/standing is set equal to length
+            firstOrder[i] = [];
             for(let j = 0; j < data.length; j++){
-                if(data[j].standRank == i){
-                    sorted[i].push(data[j]);
-                }
+                if(data[j].standRank == i) firstOrder[i].push(data[j]);
             }
         }
+        dropEmpties(firstOrder);
         if(priority[1] == 'diffs'){
-            for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
-                        midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                        
-                            if(sorted[i][k].diffRank == j){
-                                midSorted[j].push(sorted[i][k]);
+            for(let i = 0; i < firstOrder.length; i++){
+                secondOrder[i] = [];
+                if(firstOrder[i] !== undefined){
+                    if(firstOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < firstOrder[i].length; k++){
+                                if(firstOrder[i][k].diffRank == j) secondOrder[i].push(firstOrder[i][k]);
                             }
-                        } 
-                        allSorted.push(midSorted[j]);
+                        }
                     }
-                }
-                else{
-                    allSorted.push(sorted[i]);
+                    else if(firstOrder[i].length == 1){
+                        secondOrder[i].push(firstOrder[i][0]);
+                    }
                 }
             }
-            dropEmpties(allSorted);
-            for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){  
-                    for(let j = 0; j < data.length+1; j++){                       
-                        lastSorted[j] = [];
-                        for(let k = 0; k < allSorted[i].length; k++){                        
-                            if(allSorted[i][k].timeRank == j){
-                                lastSorted[j].push(allSorted[i][k]);
+            //priority[2] starts here
+            for(let i = 0; i < secondOrder.length; i++){
+                thirdOrder[i] = [];
+                if(secondOrder !== undefined){
+                    if(secondOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < secondOrder[i].length; k++){
+                                if(secondOrder[i][k].timeRank == j) thirdOrder[i].push(secondOrder[i][k]);
                             }
-                        } 
-                        endSorted.push(lastSorted[j]);             
+                        }
+                        
+                    }
+                    else if(secondOrder[i].length == 1){
+                        thirdOrder[i].push(secondOrder[i][0]);
                     }
                 }
-                else{
-                    endSorted.push(allSorted[i]);
-                }
-            }  
+            }
         }
         else if(priority[1] == 'times'){
-            for(let i = 0; i < data.length+1; i++){
-                if(sorted[i] !== undefined && sorted[i].length > 1){    
-                    for(let j = 0; j < data.length+1; j++){
-                        midSorted[j] = [];
-                        for(let k = 0; k < sorted[i].length; k++){                        
-                            if(sorted[i][k].timeRank == j){
-                                midSorted[j].push(sorted[i][k]);
+            for(let i = 0; i < firstOrder.length; i++){
+                secondOrder[i] = [];
+                if(firstOrder[i] !== undefined){
+                    if(firstOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < firstOrder[i].length; k++){
+                                if(firstOrder[i][k].timeRank == j) secondOrder[i].push(firstOrder[i][k]);
                             }
-                        } 
-                        allSorted.push(midSorted[j]);
+                        }
+                    }
+                    else if(firstOrder[i].length == 1){
+                        secondOrder[i].push(firstOrder[i][0]);
                     }
                 }
-                else{
-                    allSorted.push(sorted[i]);
-                }
-            }         
-            dropEmpties(allSorted);
-            for(let i = 0; i < data.length+1; i++){
-                if(allSorted[i] !== undefined && allSorted[i].length > 1){  
-                    for(let j = 0; j < data.length+1; j++){                       
-                        lastSorted[j] = [];
-                        for(let k = 0; k < allSorted[i].length; k++){                        
-                            if(allSorted[i][k].diffRank == j){
-                                lastSorted[j].push(allSorted[i][k]);
+            }
+            //priority[2] starts here
+            for(let i = 0; i < secondOrder.length; i++){
+                thirdOrder[i] = [];
+                if(secondOrder !== undefined){
+                    if(secondOrder[i].length > 1){
+                        for(let j = 0; j < data.length+1; j++){
+                            for(let k = 0; k < secondOrder[i].length; k++){
+                                if(secondOrder[i][k].diffRank == j) thirdOrder[i].push(secondOrder[i][k]);
                             }
-                        } 
-                        endSorted.push(lastSorted[j]);                     
+                        }
+                    }
+                    else if(secondOrder[i].length == 1){
+                        thirdOrder[i].push(secondOrder[i][0]);
                     }
                 }
-                else{
-                    endSorted.push(allSorted[i]);
-                }
-            }  
-        }
+            }
+        }   
     }
-    dropEmpties(endSorted);
 
-    //not yet sure why MLB's endSorted gets messed up. allSorted does what it's supposed to but need endSorted to break ties
-    //going to revisit after spring training because spring standings (split into grapefruit & cactus) seem to cause issues
-    if(league == 'MLB'){
-        console.log('Priority: ' + priority);
-        console.log(allSorted); 
-        toJson(allSorted, league, date); 
-    }
-    else{
-        console.log('Priority: ' + priority);
-        console.log(endSorted); 
-        toJson(endSorted, league, date); 
-    }
+    console.log('Priority: ' + priority);
+    console.log(thirdOrder); 
+    toJson(thirdOrder, league, date); 
 }
 
 export default finalSort;
