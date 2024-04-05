@@ -62,13 +62,15 @@ export function timeConversion(league, time){
             frame = 1;
         }
         else if(time[0] == 'End'){
-            frame = 0;
-            time[1] ++;
+            frame = 0.9;
         }
         else if(time[0] == 'Rain'){
             time[1] = parseInt(time[3]);
             if(time[2] == 'Top'){
                 frame = 0;
+            }
+            else if(time[2] == 'Mid'){
+                frame = 0.5;
             }
             else if(time[2] == 'Bot'){
                 frame = 1;
@@ -120,7 +122,7 @@ export function timeConversion(league, time){
 
 //compares current timestamp with last standings check
 function dateAndTime(last, current){  
-    let timeDiff = current - last; // current.getTime() - last.getTime();
+    let timeDiff = current - last; 
     let diffHrs = Math.round(timeDiff / (1000 * 3600));
     var cDate = new Date(current); 
     console.log('current timestamp: ' + cDate.toString());
@@ -157,7 +159,9 @@ export async function standingsScrape(league, data){
         if(!leagueExists || needCheck){
             console.log(league + ' standings');
             dateOut = currentDate;
-            let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+            let url;
+            if(league == 'MLB') url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/overall'; 
+            else url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
             await page.goto(url);         
@@ -184,7 +188,9 @@ export async function standingsScrape(league, data){
     else{
         console.log(league + ' standings');
         dateOut = currentDate;
-        let url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+        let url;
+        if(league == 'MLB') url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/overall'; 
+        else url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.goto(url);              

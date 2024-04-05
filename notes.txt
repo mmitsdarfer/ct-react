@@ -3,6 +3,12 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
+- Sometimes preferences.json is parsed before it is done updating. I think just for mlb, so maybe add some await/async to mlbScrape
+- Incorrect links are back 
+- When takeMe is enabled but no link is available a blank tab opens
+   - I think only for "[net] has no available links"
+- MLB all broken (not showing some scores)
+   - Just when not all games have same progress (?)
 - when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
    until refreshing
 - rapidly refreshing no longer creates duplicates, but too many requests causes timeout and kills program
@@ -10,6 +16,10 @@ known errors:
 - when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
 
 To do:
+- Vertically center mlb logo
+- I feel like when dropdowns are actuallly down the choices don't look centered and maybe too small
+- Make channels/nets/links their own js file
+   - Improve efficiency by only calling if net is defined
 - Give option of how long to refresh server (?)
 - Work on jsons before they exist
 - Change tab icon
@@ -22,7 +32,8 @@ To do:
    - They can only be created in home page or with a delay in /preference
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
 - Add team logos
-- (Evergreen) Document code and get rid of unneeded parts
+- (Evergreen) Document code and check for unneeded parts
+      - make sure I don't need firstUnstart in mlbScrape and remove it
 - Host on netlify or simlar?
 - Pie in the sky/longterm:   
    - Add upcoming days
@@ -31,7 +42,8 @@ To do:
       - Or could show the 1st of each sport, then the 2nd of each, and so on
 
 WIWWO: 
-3/29: Cleaned up stylesheets and notes.txt
+4/5: Think all mlb and sort are fixed
+Next: center mlb logo & fix dropdowns
 
 Using git:
 1. Make changes to code

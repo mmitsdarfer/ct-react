@@ -36,6 +36,7 @@ img {
 .logo-vis{
     justify-content: center;
     display: flex;
+    margin-bottom: 3em
 }
 
 /* League pages only */
@@ -118,6 +119,8 @@ img {
 }
 .select-priority{
     margin-top: 5px;
+    width: 7em;
+    text-align: center;
 }
 
 /* Pref logos only */
