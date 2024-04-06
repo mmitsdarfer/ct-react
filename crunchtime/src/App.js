@@ -56,14 +56,13 @@ function LeaguePage({league}){
     else if(league === 'NBA') return logos.NBA;
   }
   
-  
   return(
   <div>
-            <HomeButton></HomeButton>
-            <PrefButton></PrefButton>
-            <League league={league} logoData={leagueLogo()}></League>
-            <Priority></Priority>
-          </div>
+    <HomeButton></HomeButton>
+    <PrefButton></PrefButton>
+    <League league={league} logoData={leagueLogo()} load={true}></League>
+    <Priority></Priority>
+  </div>
   )
 }
 
@@ -90,13 +89,13 @@ function App(){
           <LeaguePage league={'NHL'}></LeaguePage>
         } />
         <Route exact path='/nfl' element={
-            <LeaguePage league={'NFL'} logoData={logos.NFL}></LeaguePage>
+            <LeaguePage league={'NFL'}></LeaguePage>
         } />
         <Route exact path='/mlb' element={
-            <LeaguePage league={'MLB'} logoData={logos.MLB}></LeaguePage>
+            <LeaguePage league={'MLB'}></LeaguePage>
         } />
         <Route exact path='/nba' element={
-            <LeaguePage league={'NBA'} logoData={logos.NBA}></LeaguePage>
+            <LeaguePage league={'NBA'}></LeaguePage>
         } />
       </Routes>
     </Router>      

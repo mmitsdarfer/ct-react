@@ -16,6 +16,7 @@ known errors:
 - when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
 
 To do:
+- Improve visit counter so it's only once per opening page/refreshing 
 - Vertically center mlb logo
 - I feel like when dropdowns are actuallly down the choices don't look centered and maybe too small
 - Make channels/nets/links their own js file

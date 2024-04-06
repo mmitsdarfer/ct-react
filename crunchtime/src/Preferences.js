@@ -111,16 +111,13 @@ function Dropdowns(){
 
     return(
         <div>
-         
             <TopDrop></TopDrop>     
             <MidDrop></MidDrop>
-            <LastDrop></LastDrop>
-  
-        
-        <br></br>
-        Sort by games with closest scores (diffs),
-        <br></br>closest to ending (times),
-        <br></br>or highest average of 2 teams' league rankings (standings)
+            <LastDrop></LastDrop>     
+            <br></br>
+            Sort by games with closest scores (diffs),
+            <br></br>closest to ending (times),
+            <br></br>or highest average of 2 teams' league rankings (standings)
         <br></br><br></br>
         </div>  
     )
@@ -191,8 +188,8 @@ export default function Preferences(){
             if(reset === 'true'){
                 return(
                     <div>
-                    <br></br>0 
-                </div> 
+                     <br></br>0 
+                    </div> 
                 )
             }
             return(   
@@ -207,19 +204,19 @@ export default function Preferences(){
             for(let i = 2; i < data.length; i++){
             Object.values(logos).forEach((value, index) => 
             {  
-                    if(data[i][0] === Object.keys(logos)[index]){
-                        leagueList[i] = (
-                            <div>
-                                <div key={"leagueId"+index} className="column">
-                                    <League current={data[i][0]}></League>
-                                </div>
-                                <div key={"leagueId"+index}>
-                                 <Visits current={data[i][1]}></Visits>
-                                </div>
+                if(data[i][0] === Object.keys(logos)[index]){
+                    leagueList[i] = (
+                        <div>
+                            <div key={"leagueId"+index} className="column">
+                                <League current={data[i][0]}></League>
                             </div>
-                            
-                        )
-                    } 
+                            <div key={"leagueId"+index}>
+                                <Visits current={data[i][1]}></Visits>
+                            </div>
+                        </div>
+                        
+                    )
+                } 
                 index++;
             })
         }

@@ -6,7 +6,9 @@ import React from 'react';
 
 let took = false;
 
-export default function League({league, logoData}){ 
+export default function League({league, logoData, load}){ 
+    if(load) console.log('ttttttt');
+    load = false;
     let leagueData;
     if(league === 'NHL') leagueData = nhlData;
     else if(league === 'NFL') leagueData = nflData;
@@ -27,7 +29,9 @@ export default function League({league, logoData}){
     fetch('/'+league)
       .then((res) => res.json())
       .then((data) => setData(data.message));
-    }, []);
+        // line below hides unneeded warning
+    },  // eslint-disable-next-line react-hooks/exhaustive-deps
+    []);
 
 
     let len = leagueData.table.length-1
@@ -115,6 +119,5 @@ export default function League({league, logoData}){
                 </div>
             </div>            
         </div>
-        
     )
 }
