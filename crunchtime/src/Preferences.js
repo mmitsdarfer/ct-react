@@ -206,11 +206,11 @@ export default function Preferences(){
             {  
                 if(data[i][0] === Object.keys(logos)[index]){
                     leagueList[i] = (
-                        <div>
+                        <div key={"leagueList"+(i-2)}>
                             <div key={"leagueId"+index} className="column">
                                 <League current={data[i][0]}></League>
                             </div>
-                            <div key={"leagueId"+index}>
+                            <div key={"visitId"+index}>
                                 <Visits current={data[i][1]}></Visits>
                             </div>
                         </div>

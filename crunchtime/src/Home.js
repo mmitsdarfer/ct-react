@@ -12,8 +12,7 @@ function League({current}){
                         </button>
                     </a>
                 </div>
-            )
-        
+            )    
         }
     }
 }
@@ -24,7 +23,6 @@ function LeagueList(){
     Object.values(logos).forEach((value, index) => 
     {  
             if(data[i][0] === Object.keys(logos)[index]){
-                console.log(data[i][0]);
                 leagueList[i] = (
                     <div key={"leagueId"+index} className="column">
                         <League current={data[i][0]}></League>
@@ -33,7 +31,7 @@ function LeagueList(){
             } 
         index++;
     })
-}
+    }
     return leagueList.reverse();
 }
 
@@ -46,8 +44,7 @@ export default function Home(){
                 <br></br><br></br>
                 <div className="logo-vis">
                     <LeagueList></LeagueList>     
-                </div>
-                  
+                </div>           
         </div>
     )
 }

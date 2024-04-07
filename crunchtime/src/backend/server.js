@@ -95,7 +95,7 @@ function getCookies(req, res){
 }
 
 //home page
-app.get('/', (req, res) => { 
+app.get('/', (req, res) => {
     getCookies(req, res);
     res.sendFile(__dirname + '\\index.html');
 });
@@ -289,10 +289,7 @@ app.get('/mlb', (req, res) => {
     async function writeMlb(){
         setTimeout(function () {
             mlbScrape(priority);
-            preferences(current);
-            //var mlbRes = jsonHtml(current, priority);
-           // res.writeHead(200, {'Content-Type': 'text/html'});
-            //res.end(mlbRes);       
+            preferences(current);     
             res.json({message: "Scraping: " + current});       
         }, 100);     
     }

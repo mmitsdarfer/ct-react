@@ -14,6 +14,7 @@ Crunch Time requires the following to run:
 * [react-router-dom](https://www.npmjs.com/package/react-router-dom)
 * [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 * [puppeteer](https://pptr.dev/)
+* [react-cookie](https://www.npmjs.com/package/react-cookie)
 
 
 ## Usage/Examples

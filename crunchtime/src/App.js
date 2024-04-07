@@ -10,15 +10,18 @@ import {
   Route,
 } from "react-router-dom";
 import React from 'react';
+import { useCookies } from 'react-cookie';
 
 function makeCapital(lower){
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 }
 
+
 function HomeButton(){
+  const [cookies, setCookie] = useCookies('Current');
   return (
     <a href="//localhost:3000">
-      <button id="home" type="submit"> 
+      <button id="home" type="submit" onClick={() => setCookie('Current', null, { path: '/' })}> 
           <br></br><img type="image" width="70" height="70" src="./goHome.png" alt="home"/>
       </button> 
     </a>
@@ -26,9 +29,10 @@ function HomeButton(){
 }
 
 function PrefButton(){
+  const [cookies, setCookie] = useCookies('Current');
   return(
     <a href="//localhost:3000/preferences">
-      <button id="prefs" type="submit">
+      <button id="prefs" type="submit"  onClick={() => setCookie('Current', null, { path: '/' })}>
         Preferences <img type="image" width="60" height="60" src="./podium.png" alt="prefImage"/>
       </button>
     </a>      
@@ -60,7 +64,7 @@ function LeaguePage({league}){
   <div>
     <HomeButton></HomeButton>
     <PrefButton></PrefButton>
-    <League league={league} logoData={leagueLogo()} load={true}></League>
+    <League league={league} logoData={leagueLogo()}></League>
     <Priority></Priority>
   </div>
   )
@@ -101,6 +105,5 @@ function App(){
     </Router>      
   );
 }
-
 
 export default App;

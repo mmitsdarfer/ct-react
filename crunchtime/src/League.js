@@ -2,13 +2,17 @@ import nhlData from './json/nhl.json';
 import nflData from './json/nfl.json';
 import mlbData from './json/mlb.json';
 import nbaData from './json/nba.json';
-import React from 'react';
+import React from 'react'; //switch over to {useEffect, useState}
+import { useCookies } from 'react-cookie';
 
 let took = false;
 
-export default function League({league, logoData, load}){ 
-    if(load) console.log('ttttttt');
-    load = false;
+export default function League({league, logoData}){
+    // line below hides unneeded warning (cookies not used)
+    // eslint-disable-next-line 
+    const [cookies, setCookie] = useCookies('Current');
+    const [refreshed, setRefreshed] = React.useState(window.performance.navigation.type ? 1 : 0); 
+
     let leagueData;
     if(league === 'NHL') leagueData = nhlData;
     else if(league === 'NFL') leagueData = nflData;
@@ -24,15 +28,21 @@ export default function League({league, logoData, load}){
         if(leagueData.table[0].link !== undefined) window.open(leagueData.table[0].link);
     }
 
+    // line below hides unneeded warning (data not used)
+    // eslint-disable-next-line
     const [data, setData] = React.useState(null);
+    
     React.useEffect(() => {
-    fetch('/'+league)
-      .then((res) => res.json())
-      .then((data) => setData(data.message));
-        // line below hides unneeded warning
-    },  // eslint-disable-next-line react-hooks/exhaustive-deps
+        if(league !== getCookieValue('Current')  || refreshed === 1){
+        fetch('/'+league)
+        .then((res) => res.json())
+        .then((data) => setData(data.message));
+        setCookie('Current', league, { path: '/' });
+        setRefreshed(0);
+    }
+    },  // line below hides unneeded warning
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
-
 
     let len = leagueData.table.length-1
     let rows = Math.ceil(len/4); 
@@ -86,9 +96,9 @@ export default function League({league, logoData, load}){
     }
     return(
         <div>         
-            <h1>{league} Games</h1>
+            <h1 onLoad={() => setCookie('Current', null, { path: '/' })}>{league} Games</h1>
             <a href={'//localhost:3000/'+league}>
-                <button className="logo-img" type="submit">
+                <button className="logo-img" type="submit" onClick={() => setCookie('Current', null, { path: '/' })}>
                     <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
                 </button>
             </a>
