@@ -44,6 +44,8 @@ export default function League({league, logoData}){
         // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
 
+    
+
     let len = leagueData.table.length-1
     let rows = Math.ceil(len/4); 
     function Net({i}){
@@ -95,13 +97,15 @@ export default function League({league, logoData}){
         return colArr;
     }
     return(
-        <div>         
+        <div>        
             <h1 onLoad={() => setCookie('Current', null, { path: '/' })}>{league} Games</h1>
-            <a href={'//localhost:3000/'+league}>
-                <button className="logo-img" type="submit" onClick={() => setCookie('Current', null, { path: '/' })}>
-                    <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
-                </button>
-            </a>
+            <div id="league-logo">
+                <a href={'//localhost:3000/'+league}>
+                    <button className="logo-img" type="submit" onClick={() => setCookie('Current', null, { path: '/' })}>
+                        <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
+                    </button>
+                </a>
+            </div>
             <h2>Click the league logo to refresh scores</h2>
             <div id="date">
                     <h2>{leagueData.table[leagueData.table.length-1].date}</h2>

@@ -25,13 +25,17 @@ img {
 } 
 .column{
     width: 200px;
-    height: 120px;                             
+    height: 120px;  
+    position: relative;                    
 }
 
 /* all logos */
 .logo-img{
     background-color: rgb(50, 120, 167);
     border: 0;
+    margin-top: 6em;
+    margin-bottom: 2em;
+    transform: translateY(-60%);
 }
 .logo-vis{
     justify-content: center;
@@ -77,6 +81,9 @@ img {
     display: table;
     width: 100%;
 }
+#league-logo{
+    height: 140px
+}
 #time{ 
     font: bold 14px Arial;        
     text-decoration: none;
@@ -115,20 +122,34 @@ img {
 /* dropdowns */
 .drop{
     margin: auto;
-    width: 100px;
+    width: 7em;
+    text-align-last: center;
+    text-align: center;
+    
 }
 .select-priority{
     margin-top: 5px;
     width: 7em;
+    text-align: left;
+}
+#timer{
+    width: 10em;
+    margin: auto;
+    text-align-last: center;
     text-align: center;
+}
+#select-timer{
+    margin-top: 5px;
+    width: 10em;
+    text-align: left;
 }
 
 /* Pref logos only */
 #spacer{
-    width: 7em;
+    width: 4em;
 }
 #vert-space{
-    height: 144px;
+    height: 140px;
 }
 
 #reset{
@@ -137,8 +158,8 @@ img {
     font-size: 16px;                                           
     padding: 8px;
     margin: auto;
-    margin-top: 10px;
-    margin-bottom: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 /* TakeMe switch */

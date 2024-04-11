@@ -158,6 +158,27 @@ function Switch(){
     )
 }
 
+function Timer(){
+    const getCookieValue = (name) => (
+        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+    )
+    let cookieTime = getCookieValue('Timer')
+    return(
+        <div>
+            <br></br><h4>Choose auto-refresh frequency:</h4>
+            <div id="timer">
+                <select id="select-timer" defaultValue={cookieTime} onChange={e => document.cookie = "Timer="+e.target.value}>
+                    <option value="manual">Don't auto refresh</option>
+                    <option value="30">30 seconds</option> 
+                    <option value="60">1 minute</option> 
+                    <option value="300">5 minute</option> 
+                </select>
+            </div>
+           
+        </div>  
+    )
+}
+
 export default function Preferences(){
     const [reset, setReset] = useState('false'); 
     function ResetButton(){
@@ -168,6 +189,7 @@ export default function Preferences(){
         )
     }
     
+    //nested in Preferences function because it uses state of reset
     function VisitData(){
         function League({current}){    
             for (let [key, value] of Object.entries(logos)) {
@@ -222,6 +244,7 @@ export default function Preferences(){
         }
             return leagueList.reverse();
         }
+
         return(
             <div className="logo-vis">
                 <div> 
@@ -235,6 +258,7 @@ export default function Preferences(){
             </div>            
         )
     }
+
     return(
     <div>
         <h1>Preferences</h1>
@@ -246,11 +270,14 @@ export default function Preferences(){
         Turn on to be sent to a stream of #1 game by priority if available<br></br>
         (You must allow popups to automatically be redirected to your stream)
 
+        <br></br>
+        <Timer></Timer>
+
         <br></br><br></br>
         <ResetButton></ResetButton>
-        <div>
-            <VisitData></VisitData>
-        </div> 
+
+        <VisitData></VisitData>
+    
     </div>
     )
 }

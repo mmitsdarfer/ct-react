@@ -44,6 +44,10 @@ function getCookies(req, res){
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
     takeMe = req.cookies.Take;
+    let timer = req.cookies.Timer;
+    if(timer === undefined){
+        res.cookie('Timer', 'manual');
+    }
     if(takeMe === undefined){
         takeMe = 'off';
         res.cookie('Take', 'off');
@@ -151,6 +155,19 @@ function preferences(league){
     }); 
 }
 
+function timer(duration, league, res){
+    if(duration == 'manual') console.log('Auto-refresh set to manual')
+    else if (duration == 30 || duration == 60 || duration == 300){
+        console.log('Timer length: ' + duration);
+        function redir(){
+            res.redirect('/'+league);
+        }
+        setTimeout(redir, duration*1000);
+    }
+    else duration = 'manual';
+    
+}
+
 app.get('/nhl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
     var data = {};
@@ -167,7 +184,6 @@ app.get('/nhl', (req, res) => {
     priority[1] = req.cookies.Priority1; 
     priority[2] = req.cookies.Priority2;   
     let reset = req.cookies.Reset;
-    takeMe = req.cookies.Take;
 
     function callReset(){    
         res.cookie('Reset', 'false');
@@ -182,7 +198,8 @@ app.get('/nhl', (req, res) => {
         setTimeout(function () {
             preferences(current);   
             callScrape(current, priority);     
-          res.json({message: "Scraping: " + current});    
+            let duration = req.cookies.Timer;
+            timer(duration, current, res);   
         }, 100);       
     }
     writeNhl();
@@ -219,7 +236,8 @@ app.get('/nfl', (req, res) => {
         setTimeout(function () {
             preferences(current);
             callScrape(current, priority);
-            res.json({message: "Scraping: " + current});    
+            let duration = req.cookies.Timer;
+            timer(duration, current, res);    
         }, 100);
     }
     writeNfl();
@@ -254,7 +272,8 @@ app.get('/nba', (req, res) => {
         setTimeout(function () {     
             preferences(current);
             callScrape(current, priority); 
-            res.json({message: "Scraping: " + current});           
+            let duration = req.cookies.Timer;
+            timer(duration, current, res);      
         }, 100);     
     }
     writeNba();
@@ -290,7 +309,8 @@ app.get('/mlb', (req, res) => {
         setTimeout(function () {
             mlbScrape(priority);
             preferences(current);     
-            res.json({message: "Scraping: " + current});       
+            let duration = req.cookies.Timer;
+            timer(duration, current, res);   
         }, 100);     
     }
     writeMlb();

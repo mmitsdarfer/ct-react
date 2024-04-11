@@ -71,6 +71,8 @@ function LeaguePage({league}){
 }
 
 function App(){
+  const [cookies, setCookie] = useCookies('Current');
+  setCookie('Current', null, { path: '/' });
   return (
     <Router>
       <Routes>

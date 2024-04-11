@@ -12,37 +12,35 @@ known errors:
 - when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
 
 To do:
-- Vertically center mlb logo
-- I feel like when dropdowns are actuallly down the choices don't look centered and maybe too small
+- It's working but I don't understand why finalSort 2nd order pushes the opposite rank
 - Make channels/nets/links their own js file
    - Improve efficiency by only calling if net is defined
-- Give option of how long to refresh server (?)
 - Work on jsons before they exist
 - Change tab icon
 - Add favorite teams(?)
 - Switch to for-of loops if applicable
 - See if specific errors above still exist
-- Update readme
+- (Evergreen) Update readme
 - See what happens when cookies don't yet exist
    - They can only be created in home page or with a delay in /preference
 - (do if any new links show up) Add streaming/other online links for non-NHL sports
 - Add team logos
 - (Evergreen) Document code and check for unneeded parts
       - make sure I don't need firstUnstart in mlbScrape and remove it
-- Host on netlify or simlar?
+- Host on netlify or simlar (?)
 - Pie in the sky/longterm:   
    - Add upcoming days
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
+   - Don't re-scrape ended games to improve efficiency (?)
 
 WIWWO: 
-4/6: Fixed auto-refreshing which was increasing visits inaccurately
+4/11: Think timer is fully implemented
+Next: Error roundup
 
 Using git:
 1. Make changes to code
 2. Commit
 3. Branch -> merge
 4. Compare and confirm merge/pull
-
-server.js -> preferences -> outCount
