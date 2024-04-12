@@ -195,7 +195,7 @@ function netToLink(nets, teams, progress, numGames, links){
     let notPlus = 0;
 
     for(let i = 0; i < numGames; i++){  
-        if(progress[i] != 'ended'){
+        if(progress[i] !== 'ended' && nets[i] !== undefined){
             if(i > 0){
                 if(nets[i-1] == 'ESPN+' && nets[i] == 'Hulu'){
                     nets[i-1] = 'ESPN+/Hulu';

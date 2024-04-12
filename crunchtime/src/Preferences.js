@@ -45,15 +45,17 @@ function Dropdowns(){
         setLast(priority[2]);
     }
 
-    function LastDrop(){
+    function TopDrop(){
+        let topVal = priority[0];
         return(
             <div className="drop">
-                3rd:
-            <select className="select-priority" defaultValue={lastPriority}>
-                <option value={lastPriority}>{makeCapital(lastPriority)}</option>
-            </select>
+                Top:
+                <select className="select-priority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
+                    <option value="diffs">Diffs</option>
+                    <option value="times">Times</option> 
+                    <option value="standings">Standings</option>
+                </select>            
             </div>
-           
         )
     }
 
@@ -85,27 +87,24 @@ function Dropdowns(){
             return(
                 <div className="drop">
                     2nd:
-                <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
-                    <option value="diffs">Diffs</option>
-                    <option value="times">Times</option> 
-                </select>
-                </div>
-                
+                    <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
+                        <option value="diffs">Diffs</option>
+                        <option value="times">Times</option> 
+                    </select>
+                </div>             
             )
         }
     }
 
-    function TopDrop(){
-        let topVal = priority[0];
+    function LastDrop(){
         return(
             <div className="drop">
-                Top:
-                <select className="select-priority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
-                    <option value="diffs">Diffs</option>
-                    <option value="times">Times</option> 
-                    <option value="standings">Standings</option>
-                </select>            
+                3rd:
+            <select className="select-priority" defaultValue={lastPriority}>
+                <option value={lastPriority}>{makeCapital(lastPriority)}</option>
+            </select>
             </div>
+           
         )
     }
 
@@ -118,7 +117,7 @@ function Dropdowns(){
             Sort by games with closest scores (diffs),
             <br></br>closest to ending (times),
             <br></br>or highest average of 2 teams' league rankings (standings)
-        <br></br><br></br>
+            <br></br><br></br>
         </div>  
     )
 }
@@ -162,7 +161,7 @@ function Timer(){
     const getCookieValue = (name) => (
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
-    let cookieTime = getCookieValue('Timer')
+    let cookieTime = getCookieValue('Timer');
     return(
         <div>
             <br></br><h4>Choose auto-refresh frequency:</h4>
@@ -171,7 +170,7 @@ function Timer(){
                     <option value="manual">Don't auto refresh</option>
                     <option value="30">30 seconds</option> 
                     <option value="60">1 minute</option> 
-                    <option value="300">5 minute</option> 
+                    <option value="300">5 minutes</option> 
                 </select>
             </div>
            
@@ -180,7 +179,12 @@ function Timer(){
 }
 
 export default function Preferences(){
-    const [reset, setReset] = useState('false'); 
+    const getCookieValue = (name) => (
+        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+    )
+    let resVal = getCookieValue('Reset');
+    const [reset, setReset] = useState(resVal); 
+
     function ResetButton(){
         return(
             <button id="reset"type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
@@ -275,9 +279,7 @@ export default function Preferences(){
 
         <br></br><br></br>
         <ResetButton></ResetButton>
-
         <VisitData></VisitData>
-    
     </div>
     )
 }

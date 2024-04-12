@@ -86,6 +86,7 @@ function getCookies(req, res){
     }
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
         parsedPrefs = callReset();
+        reset = 'false';
     }
     else{
         parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
@@ -156,7 +157,7 @@ function preferences(league){
 }
 
 function timer(duration, league, res){
-    if(duration == 'manual') console.log('Auto-refresh set to manual')
+    if(duration == 'manual') console.log('Auto-refresh set to manual');
     else if (duration == 30 || duration == 60 || duration == 300){
         console.log('Timer length: ' + duration);
         function redir(){
@@ -185,8 +186,9 @@ app.get('/nhl', (req, res) => {
     priority[2] = req.cookies.Priority2;   
     let reset = req.cookies.Reset;
 
-    function callReset(){    
+    function callReset(){   
         res.cookie('Reset', 'false');
+        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -194,7 +196,7 @@ app.get('/nhl', (req, res) => {
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
         callReset();
     }
-    async function writeNhl(){
+    async function writeLeague(){
         setTimeout(function () {
             preferences(current);   
             callScrape(current, priority);     
@@ -202,9 +204,7 @@ app.get('/nhl', (req, res) => {
             timer(duration, current, res);   
         }, 100);       
     }
-    writeNhl();
-
-    
+    writeLeague();    
 });
 
 app.get('/nfl', (req, res) => {
@@ -219,12 +219,14 @@ app.get('/nfl', (req, res) => {
     }
     getCookies(req, res);
     let priority = [];
-    priority[0] = (req.cookies.Priority0); 
-    priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2); 
-    let reset = (req.cookies.Reset);
-    function callReset(){    
+    priority[0] = req.cookies.Priority0; 
+    priority[1] = req.cookies.Priority1; 
+    priority[2] = req.cookies.Priority2;   
+    let reset = req.cookies.Reset;
+
+    function callReset(){   
         res.cookie('Reset', 'false');
+        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -232,15 +234,15 @@ app.get('/nfl', (req, res) => {
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
         callReset();
     }
-    async function writeNfl(){
+    async function writeLeague(){
         setTimeout(function () {
-            preferences(current);
-            callScrape(current, priority);
+            preferences(current);   
+            callScrape(current, priority);     
             let duration = req.cookies.Timer;
-            timer(duration, current, res);    
-        }, 100);
+            timer(duration, current, res);   
+        }, 100);       
     }
-    writeNfl();
+    writeLeague();    
 });
 
 app.get('/nba', (req, res) => {
@@ -255,12 +257,14 @@ app.get('/nba', (req, res) => {
     }
     getCookies(req, res);
     let priority = [];
-    priority[0] = (req.cookies.Priority0); 
-    priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2);  
-    let reset = (req.cookies.Reset);
-    function callReset(){    
+    priority[0] = req.cookies.Priority0; 
+    priority[1] = req.cookies.Priority1; 
+    priority[2] = req.cookies.Priority2;   
+    let reset = req.cookies.Reset;
+
+    function callReset(){   
         res.cookie('Reset', 'false');
+        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -268,15 +272,15 @@ app.get('/nba', (req, res) => {
     if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
         callReset();
     }
-    async function writeNba(){
-        setTimeout(function () {     
-            preferences(current);
-            callScrape(current, priority); 
+    async function writeLeague(){
+        setTimeout(function () {
+            preferences(current);   
+            callScrape(current, priority);     
             let duration = req.cookies.Timer;
-            timer(duration, current, res);      
-        }, 100);     
+            timer(duration, current, res);   
+        }, 100);       
     }
-    writeNba();
+    writeLeague();    
 });
 
 import mlbScrape from './scrape-sort/mlbScrape.js';
@@ -296,8 +300,9 @@ app.get('/mlb', (req, res) => {
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
     let reset = (req.cookies.Reset);
-    function callReset(){    
+    function callReset(){  
         res.cookie('Reset', 'false');
+        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response  
         setTimeout(() => {   
             prefReset(priority);     
         }, );

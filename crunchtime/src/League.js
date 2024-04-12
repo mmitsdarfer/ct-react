@@ -23,7 +23,10 @@ export default function League({league, logoData}){
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
     let take = getCookieValue('Take');
-    if(take === 'true' && !took){
+
+    //CALL TO NET/CHANNEL js FILE IF I MAKE THAT?
+    if(take === 'true' && !took && !(leagueData.table[0].network === 'NHL NET' || leagueData.table[0].network === 'NBA TV'
+        || leagueData.table[0].network === 'NESN' || leagueData.table[0].network === 'NESN+')){
         took=true;
         if(leagueData.table[0].link !== undefined) window.open(leagueData.table[0].link);
     }
@@ -101,7 +104,7 @@ export default function League({league, logoData}){
             <h1 onLoad={() => setCookie('Current', null, { path: '/' })}>{league} Games</h1>
             <div id="league-logo">
                 <a href={'//localhost:3000/'+league}>
-                    <button className="logo-img" type="submit" onClick={() => setCookie('Current', null, { path: '/' })}>
+                    <button className="logo-img" type="submit" onClick={() => setCookie('Current', league, { path: '/' })}>
                         <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
                     </button>
                 </a>

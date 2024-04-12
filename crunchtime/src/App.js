@@ -18,6 +18,8 @@ function makeCapital(lower){
 
 
 function HomeButton(){
+  // line below hides unneeded warning (cookies not used)
+  // eslint-disable-next-line 
   const [cookies, setCookie] = useCookies('Current');
   return (
     <a href="//localhost:3000">
@@ -29,6 +31,8 @@ function HomeButton(){
 }
 
 function PrefButton(){
+  // line below hides unneeded warning (cookies not used)
+  // eslint-disable-next-line 
   const [cookies, setCookie] = useCookies('Current');
   return(
     <a href="//localhost:3000/preferences">
@@ -70,9 +74,27 @@ function LeaguePage({league}){
   )
 }
 
+function checkCookies(){
+  const getCookieValue = (name) => (
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+  )
+  if(getCookieValue('Priority0') === '' || getCookieValue('Priority1') === '' || getCookieValue('Priority2') === ''){
+    document.cookie = 'Priority0=diffs';
+    document.cookie = 'Priority1=times';
+    document.cookie = 'Priority2=standings';
+  }
+  if(getCookieValue('Current') === '') document.cookie = 'Current=null';
+  if(getCookieValue('Reset') === '') document.cookie = 'Reset=false';
+  if(getCookieValue('Take') === '') document.cookie = 'Take=false';
+  if(getCookieValue('Timer') === '') document.cookie = 'Timer=manual';
+}
+
 function App(){
+  // line below hides unneeded warning (cookies not used)
+  // eslint-disable-next-line 
   const [cookies, setCookie] = useCookies('Current');
   setCookie('Current', null, { path: '/' });
+  checkCookies();
   return (
     <Router>
       <Routes>

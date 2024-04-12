@@ -3,15 +3,11 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-- Sometimes preferences.json is parsed before it is done updating
-- Incorrect links are back?
-- When takeMe is enabled but no link is available a blank tab opens
-   - I think only for "[net] has no available links"
-- when cookies don't exist they can only be created on home page & /preferences, but /preferences doesn't populate dropdowns
-   until refreshing
-- when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
+- [NEED TESTING] Incorrect links are back?
 
 To do:
+- when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
+- Change setRefreshed to true/false
 - It's working but I don't understand why finalSort 2nd order pushes the opposite rank
 - Make channels/nets/links their own js file
    - Improve efficiency by only calling if net is defined
@@ -36,8 +32,7 @@ To do:
    - Don't re-scrape ended games to improve efficiency (?)
 
 WIWWO: 
-4/11: Think timer is fully implemented
-Next: Error roundup
+4/12: Error roundup done other than bad/no links
 
 Using git:
 1. Make changes to code
