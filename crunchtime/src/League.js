@@ -1,8 +1,8 @@
 import nhlData from './json/nhl.json';
-import nflData from './json/nfl.json';
+import nflData from './json/nfl.json'
 import mlbData from './json/mlb.json';
 import nbaData from './json/nba.json';
-import React from 'react'; //switch over to {useEffect, useState}
+import {useEffect, useState} from 'react';
 import { useCookies } from 'react-cookie';
 
 let took = false;
@@ -11,7 +11,14 @@ export default function League({league, logoData}){
     // line below hides unneeded warning (cookies not used)
     // eslint-disable-next-line 
     const [cookies, setCookie] = useCookies('Current');
-    const [refreshed, setRefreshed] = React.useState(window.performance.navigation.type ? 1 : 0); 
+    const [refreshed, setRefreshed] = useState(true); 
+
+    //only want league to be current when opening page so visit count only increments once
+    const [origin, setOrigin] = useState(document.referrer); // gives url of previous page)
+    if(origin !== window.location.href && performance.navigation.type !== 1) {
+        setOrigin(window.location.href);
+        setCookie('Current', league, { path: '/' });
+    }    
 
     let leagueData;
     if(league === 'NHL') leagueData = nhlData;
@@ -23,8 +30,8 @@ export default function League({league, logoData}){
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
     let take = getCookieValue('Take');
-
-    //CALL TO NET/CHANNEL js FILE IF I MAKE THAT?
+;
+    //TO DO: CALL TO NET/CHANNEL js FILE IF I MAKE THAT?
     if(take === 'true' && !took && !(leagueData.table[0].network === 'NHL NET' || leagueData.table[0].network === 'NBA TV'
         || leagueData.table[0].network === 'NESN' || leagueData.table[0].network === 'NESN+')){
         took=true;
@@ -33,21 +40,18 @@ export default function League({league, logoData}){
 
     // line below hides unneeded warning (data not used)
     // eslint-disable-next-line
-    const [data, setData] = React.useState(null);
+    const [data, setData] = useState(null);
     
-    React.useEffect(() => {
-        if(league !== getCookieValue('Current')  || refreshed === 1){
-        fetch('/'+league)
-        .then((res) => res.json())
-        .then((data) => setData(data.message));
-        setCookie('Current', league, { path: '/' });
-        setRefreshed(0);
+    useEffect(() => {
+        if(league === getCookieValue('Current')  || refreshed){
+            fetch('/'+league)
+            .then((res) => res.json())
+            .then((data) => setData(data.message));
+            setRefreshed(false);
     }
     },  // line below hides unneeded warning
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    []);
-
-    
+    []);    
 
     let len = leagueData.table.length-1
     let rows = Math.ceil(len/4); 
@@ -99,12 +103,14 @@ export default function League({league, logoData}){
         }
         return colArr;
     }
+
+
     return(
         <div>        
-            <h1 onLoad={() => setCookie('Current', null, { path: '/' })}>{league} Games</h1>
+            <h1>{league} Games</h1>
             <div id="league-logo">
                 <a href={'//localhost:3000/'+league}>
-                    <button className="logo-img" type="submit" onClick={() => setCookie('Current', league, { path: '/' })}>
+                    <button className="logo-img" type="submit" onClick={() => {setRefreshed(true); }}>
                         <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
                     </button>
                 </a>

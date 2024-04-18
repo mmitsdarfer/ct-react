@@ -94,7 +94,8 @@ function App(){
   // eslint-disable-next-line 
   const [cookies, setCookie] = useCookies('Current');
   setCookie('Current', null, { path: '/' });
-  checkCookies();
+  checkCookies()
+  
   return (
     <Router>
       <Routes>
@@ -105,6 +106,7 @@ function App(){
           <div>    
             <Home></Home>
             <PrefButton></PrefButton>
+            
           </div>
         } />
         <Route exact path='/preferences' element={

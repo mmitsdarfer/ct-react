@@ -3,9 +3,20 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-- [NEED TESTING] Incorrect links are back?
+- visits are counting auto refresh again
+   - could maybe have server read cookie
+   - move onload in League.js to server?
+- failed to fetch when using logo to refresh
+- preferences.json ending unexpectedly. add some wait/async?
 
 To do:
+- Add json checking in league functions (if json not present after start up, create it when league page visited)
+- When takeMe enabled add extra button that refreshes and takes to new link 
+   - Not the same as previous link to implement original "It's a commercial!" idea
+- in server.js can I consolidate app.get using league variables?
+   - at least move to one function they all call
+- If json.length == 0, make new json
+- Test manually changing timer cookie
 - when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
 - Change setRefreshed to true/false
 - It's working but I don't understand why finalSort 2nd order pushes the opposite rank
@@ -32,7 +43,8 @@ To do:
    - Don't re-scrape ended games to improve efficiency (?)
 
 WIWWO: 
-4/12: Error roundup done other than bad/no links
+4/16: Need to fix visits so they don't increase with auto refresh
+4/13: Do existsync on server launch?
 
 Using git:
 1. Make changes to code

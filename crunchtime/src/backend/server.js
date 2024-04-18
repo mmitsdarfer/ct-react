@@ -13,6 +13,7 @@ import { callScrape } from './scrape-sort/scrape.js';
 
 var current;
 var takeMe;
+var isLoad
 
 //merge and mergesort used to rank leagues by most views
 function merge(left, right){
@@ -118,7 +119,7 @@ async function prefReset(priority = ['diffs', 'times', 'standings']){
 }
 
 //increases preference value when league selected and updates preferences.json
-function preferences(league){
+function preferences(league, isLoad){
     var prefData;
     if (existsSync('../json/preferences.json')) {
         prefData = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
@@ -133,7 +134,7 @@ function preferences(league){
     //increase hit number
     for(let i = 2; i < prefsList.length; i++){
         if(prefsList[i][0] == league){
-            prefsList[i][1]++;
+            if(isLoad) prefsList[i][1]++;
             prefsList[i] = [prefsList[i][0], prefsList[i][1]];
         }
         prefHits[i-2] = prefsList[i][1];
@@ -162,10 +163,15 @@ function timer(duration, league, res){
         console.log('Timer length: ' + duration);
         function redir(){
             res.redirect('/'+league);
+            //replace with call to league page once I split them up
         }
         setTimeout(redir, duration*1000);
     }
-    else duration = 'manual';
+    else{
+        duration = 'manual';
+        res.cookie('Timer', 'manual');
+        
+    }
     
 }
 
@@ -185,10 +191,12 @@ app.get('/nhl', (req, res) => {
     priority[1] = req.cookies.Priority1; 
     priority[2] = req.cookies.Priority2;   
     let reset = req.cookies.Reset;
+    isLoad = (req.cookies.Current == current);
+
+    res.cookie('Current', 'null');
 
     function callReset(){   
         res.cookie('Reset', 'false');
-        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -198,10 +206,11 @@ app.get('/nhl', (req, res) => {
     }
     async function writeLeague(){
         setTimeout(function () {
-            preferences(current);   
+            preferences(current, isLoad);   
             callScrape(current, priority);     
             let duration = req.cookies.Timer;
-            timer(duration, current, res);   
+            timer(duration, current, res);  
+            
         }, 100);       
     }
     writeLeague();    
@@ -223,10 +232,12 @@ app.get('/nfl', (req, res) => {
     priority[1] = req.cookies.Priority1; 
     priority[2] = req.cookies.Priority2;   
     let reset = req.cookies.Reset;
+    isLoad = (req.cookies.Current == current);
+
+    res.cookie('Current', 'null');
 
     function callReset(){   
         res.cookie('Reset', 'false');
-        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -236,13 +247,14 @@ app.get('/nfl', (req, res) => {
     }
     async function writeLeague(){
         setTimeout(function () {
-            preferences(current);   
+            preferences(current, isLoad);   
             callScrape(current, priority);     
             let duration = req.cookies.Timer;
-            timer(duration, current, res);   
+            timer(duration, current, res);  
+            
         }, 100);       
     }
-    writeLeague();    
+    writeLeague();     
 });
 
 app.get('/nba', (req, res) => {
@@ -261,10 +273,11 @@ app.get('/nba', (req, res) => {
     priority[1] = req.cookies.Priority1; 
     priority[2] = req.cookies.Priority2;   
     let reset = req.cookies.Reset;
+    isLoad = (req.cookies.Current == current);
+    res.cookie('Current', 'null');
 
     function callReset(){   
         res.cookie('Reset', 'false');
-        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -274,13 +287,14 @@ app.get('/nba', (req, res) => {
     }
     async function writeLeague(){
         setTimeout(function () {
-            preferences(current);   
+            preferences(current, isLoad);   
             callScrape(current, priority);     
             let duration = req.cookies.Timer;
-            timer(duration, current, res);   
+            timer(duration, current, res);  
+            
         }, 100);       
     }
-    writeLeague();    
+    writeLeague();   
 });
 
 import mlbScrape from './scrape-sort/mlbScrape.js';
@@ -299,10 +313,12 @@ app.get('/mlb', (req, res) => {
     priority[0] = (req.cookies.Priority0); 
     priority[1] = (req.cookies.Priority1); 
     priority[2] = (req.cookies.Priority2); 
-    let reset = (req.cookies.Reset);
+    let reset = req.cookies.Reset;
+    isLoad = (req.cookies.Current == current);
+    res.cookie('Current', 'null');
+
     function callReset(){  
         res.cookie('Reset', 'false');
-        res.send('Resetting visits'); //cookie is written with response (res), so need to send some response  
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -312,8 +328,9 @@ app.get('/mlb', (req, res) => {
     }
     async function writeMlb(){
         setTimeout(function () {
-            mlbScrape(priority);
-            preferences(current);     
+            
+            preferences(current, isLoad);  
+            mlbScrape(priority);   
             let duration = req.cookies.Timer;
             timer(duration, current, res);   
         }, 100);     
