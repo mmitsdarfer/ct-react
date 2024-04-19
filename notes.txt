@@ -3,41 +3,37 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-- preferences.json ending unexpectedly. add some wait/async?
-- clicking logo fails to fetch sometimes
+1 preferences.json ending unexpectedly. add some wait/async?
+2 clicking logo fails to fetch sometimes
+   - just occasionally really slow (?)
 
 To do:
-- remove    else links[i] = "teststs";     from scrape and mlbScrape
-- in server.js can I consolidate app.get using league variables?
-   - at least move to one function they all call
-- If json.length == 0, make new json
-- Test manually changing timer cookie
-- when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
-- Change setRefreshed to true/false
-- It's working but I don't understand why finalSort 2nd order pushes the opposite rank
-- Make channels/nets/links their own js file
-   - Improve efficiency by only calling if net is defined
-- Work on jsons before they exist
-- Change tab icon
-- Add favorite teams(?)
-- Switch to for-of loops if applicable
-- See if specific errors above still exist
-- (Evergreen) Update readme
-- See what happens when cookies don't yet exist
-   - They can only be created in home page or with a delay in /preference
-- (do if any new links show up) Add streaming/other online links for non-NHL sports
-- Add team logos
-- (Evergreen) Document code and check for unneeded parts
+1 If json.length == 0, make new json
+2 when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
+7 Add favorite teams(?)
+   - Might make sense to wait until adding multiple sports
+8 Switch to for-of loops if applicable
+9 See if specific errors above still exist
+10 Add team logos
+11 Replace "standings" with "stands" everywhere
+12 (Evergreen) Document code and check for unneeded parts
       - make sure I don't need firstUnstart in mlbScrape and remove it
-- Host on netlify or simlar (?)
+13 (Evergreen) Update readme
+14 (Evergreen/do if any new links show up) Add streaming/other online links for non-NHL sports
 - Pie in the sky/longterm:   
    - Add upcoming days
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
    - Don't re-scrape ended games to improve efficiency (?)
+   - Host on netlify or simlar (?)
+
+Recently completed:
+- Test manually changing timer cookie
+6 Change tab icon
 
 WIWWO: 
+4/19: TD8
 
 
 Using git:

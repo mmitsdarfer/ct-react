@@ -16,7 +16,7 @@ export default function netLinks(nets, teams, progress, numGames, links){
 
     function localStream(i){
         for(let j = 0; j < locTeams.length; j++){
-            if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX' || nets[j] === 'Apple')){
+            if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){
                 channels[i] = nbcsp;  
                 nets[i] = 'NBCSP';
                 notPlus++;
@@ -52,8 +52,10 @@ export default function netLinks(nets, teams, progress, numGames, links){
                 notPlus++;
             }
             else if(nets[i] === 'Apple TV+'){
-                channels[i] = apple;
-                notPlus++;
+                if(!localStream(i)){
+                    channels[i] = apple;
+                    notPlus++;
+                }
             }
             else if(nets[i] === 'MLBN'){
                 if(!localStream(i)){

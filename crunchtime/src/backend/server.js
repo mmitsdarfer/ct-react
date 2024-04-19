@@ -170,7 +170,7 @@ function timer(duration, league, res){
     else{
         duration = 'manual';
         res.cookie('Timer', 'manual');
-        
+        res.send('Timer updated'); //need to send for res to update cookie
     }
 }
 
