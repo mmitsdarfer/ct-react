@@ -4,8 +4,10 @@ The what (my original idea):
 
 known errors:
 - preferences.json ending unexpectedly. add some wait/async?
+- clicking logo fails to fetch sometimes
 
 To do:
+- remove    else links[i] = "teststs";     from scrape and mlbScrape
 - in server.js can I consolidate app.get using league variables?
    - at least move to one function they all call
 - If json.length == 0, make new json

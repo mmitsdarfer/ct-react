@@ -172,148 +172,7 @@ function timer(duration, league, res){
         res.cookie('Timer', 'manual');
         
     }
-    
 }
-
-app.get('/nhl', (req, res) => {
-    current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    checkJson();
-    getCookies(req, res);
-    let priority = [];
-    priority[0] = req.cookies.Priority0; 
-    priority[1] = req.cookies.Priority1; 
-    priority[2] = req.cookies.Priority2;   
-    let reset = req.cookies.Reset;
-    isLoad = (req.cookies.Current == current);
-
-    res.cookie('Current', 'null');
-
-    function callReset(){   
-        res.cookie('Reset', 'false');
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        callReset();
-    }
-    async function writeLeague(){
-        setTimeout(function () {
-            preferences(current, isLoad);   
-            callScrape(current, priority);     
-            let duration = req.cookies.Timer;
-            timer(duration, current, res);  
-            
-        }, 100);       
-    }
-    writeLeague();    
-});
-
-app.get('/nfl', (req, res) => {
-    current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    checkJson();
-    getCookies(req, res);
-    let priority = [];
-    priority[0] = req.cookies.Priority0; 
-    priority[1] = req.cookies.Priority1; 
-    priority[2] = req.cookies.Priority2;   
-    let reset = req.cookies.Reset;
-    isLoad = (req.cookies.Current == current);
-
-    res.cookie('Current', 'null');
-
-    function callReset(){   
-        res.cookie('Reset', 'false');
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        callReset();
-    }
-    async function writeLeague(){
-        setTimeout(function () {
-            preferences(current, isLoad);   
-            callScrape(current, priority);     
-            let duration = req.cookies.Timer;
-            timer(duration, current, res);  
-            
-        }, 100);       
-    }
-    writeLeague();     
-});
-
-app.get('/nba', (req, res) => {
-    current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    checkJson();
-    getCookies(req, res);
-    let priority = [];
-    priority[0] = req.cookies.Priority0; 
-    priority[1] = req.cookies.Priority1; 
-    priority[2] = req.cookies.Priority2;   
-    let reset = req.cookies.Reset;
-    isLoad = (req.cookies.Current == current);
-    res.cookie('Current', 'null');
-
-    function callReset(){   
-        res.cookie('Reset', 'false');
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        callReset();
-    }
-    async function writeLeague(){
-        setTimeout(function () {
-            preferences(current, isLoad);   
-            callScrape(current, priority);     
-            let duration = req.cookies.Timer;
-            timer(duration, current, res);  
-            
-        }, 100);       
-    }
-    writeLeague();   
-});
-
-import mlbScrape from './scrape-sort/mlbScrape.js';
-app.get('/mlb', (req, res) => {
-    current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    checkJson();
-    getCookies(req, res);
-    let priority = [];
-    priority[0] = (req.cookies.Priority0); 
-    priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2); 
-    let reset = req.cookies.Reset;
-    isLoad = (req.cookies.Current == current);
-    res.cookie('Current', 'null');
-
-    function callReset(){  
-        res.cookie('Reset', 'false');
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        callReset();
-    }
-    async function writeMlb(){
-        setTimeout(function () {
-            
-            preferences(current, isLoad);  
-            mlbScrape(priority);   
-            let duration = req.cookies.Timer;
-            timer(duration, current, res);   
-        }, 100);     
-    }
-    writeMlb();
-});
-
-app.use((req, res) => {
-    res.status(404).send('Page not found');
-})
-
 
 function checkJson(){
     if(!existsSync('../json/preferences.json')) {
@@ -331,6 +190,64 @@ function checkJson(){
         }
     }
 }
+
+function leagueCall(league, req, res){
+    checkJson();
+    getCookies(req, res);
+    let priority = [];
+    priority[0] = req.cookies.Priority0; 
+    priority[1] = req.cookies.Priority1; 
+    priority[2] = req.cookies.Priority2;   
+    let reset = req.cookies.Reset;
+    isLoad = (req.cookies.Current == current);
+    res.cookie('Current', 'null');
+
+    function callReset(){   
+        res.cookie('Reset', 'false');
+        setTimeout(() => {   
+            prefReset(priority);     
+        }, );
+    }
+    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
+        callReset();
+    }
+    async function writeLeague(){
+        setTimeout(function () {
+            preferences(current, isLoad);  
+            if(league == 'MLB') mlbScrape(priority); 
+            else callScrape(current, priority);     
+            let duration = req.cookies.Timer;
+            timer(duration, current, res);  
+            
+        }, 100);       
+    }
+    writeLeague();  
+}
+
+app.get('/nhl', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    leagueCall(current, req, res);
+});
+
+app.get('/nfl', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    leagueCall(current, req, res);    
+});
+
+app.get('/nba', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    leagueCall(current, req, res);
+});
+
+import mlbScrape from './scrape-sort/mlbScrape.js';
+app.get('/mlb', (req, res) => {
+    current = parse(req.url).pathname.replace('/', '').toUpperCase();
+    leagueCall(current, req, res);
+});
+
+app.use((req, res) => {
+    res.status(404).send('Page not found');
+})
 
 checkJson();
 

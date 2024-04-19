@@ -3,6 +3,7 @@
 import puppeteer from 'puppeteer';
 import { timeConversion, standingsScrape } from './standings-time.js';
 import finalSort from './finalSort.js';
+import netLinks from './netLinks.js';
 var url;
 
 //converts time and saves it to data obj separately
@@ -73,13 +74,6 @@ export async function mlbScrape(priority){
             }
         }
 
-        /*
-        if(firstUnstart != 0){
-            for(let i = firstUnstart; i < firstFin; i++){
-             //   scores.splice(firstUnstart, 0, '-');
-            }
-        }
-        */
         for(let i = 0; i < teamLen; i++){
             if(scores[i].includes('-') && /^\d/.test(scores[i])){   //if has dash and starts with a number for when espn puts records in place of scores for unstarted games 
                 scores.splice(i, 1);
@@ -96,7 +90,6 @@ export async function mlbScrape(priority){
             if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
                 links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
             }
-            else links[i] = "teststs";
         }
         linkArr = Array.from(links);
         linkArr = linkArr.map(link => link.href);
@@ -141,7 +134,13 @@ export async function mlbScrape(priority){
         } 
     }
 
-    var channels = netToLink(nets, teams, progress, numGames, links);
+    var channels = [];
+    if(nets.length > 0) channels = netLinks(nets, teams, progress, numGames, links);
+    else{
+        for(let i = 0; i < numGames; i++){
+            channels[i] = '';
+        }
+    }
 
     var obj = {};
     for(let i = 0; i < numGames; i++){
@@ -167,75 +166,6 @@ export async function mlbScrape(priority){
     callStandings();
       
     await browser.close();
-}
-
-//takes in listed channel and provides streaming link
-function netToLink(nets, teams, progress, numGames, links){
-    //make sure to log in first
-    const tnt = 'https://www.tntdrama.com/watchtnt/east';
-    const espn = 'https://www.espn.com/watch/';
-    const nbcsp = 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia';
-    const fox = 'https://www.foxsports.com/live';
-    const abc = 'https://abc.com/watch-live/abc';
-    const apple = 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2';
-    const mlbTv = 'https://www.mlb.com/network/live?success=true';
-    const tbs = 'https://www.tbs.com/watchtbs/east';
-    const fs1 = 'https://www.foxsports.com/live/fs1';
-    const channels = [];
-    let notPlus = 0;
-
-    for(let i = 0; i < numGames; i++){  
-        if(progress[i] != 'ended'){
-            if(i > 0){
-                if(nets[i-1] == 'ESPN+' && nets[i] == 'Hulu'){
-                    nets[i-1] = 'ESPN+/Hulu';
-                    nets[i] = nets[i-1];
-                }
-            }
-            if((teams[i*2] == 'Phillies' || teams[i*2+1] == 'Phillies') && (nets[i] != 'FOX' && nets[i] != 'Apple')){
-                channels[i] = nbcsp;  
-                nets[i] = 'NBCSP';
-                notPlus++;
-            }  
-            else if(nets[i] == 'TNT'){
-                channels[i] = tnt;
-                notPlus++;
-            }
-            else if(nets[i] == 'ESPN' || nets[i] == 'ESPN+' || nets[i] == 'NHLPP|ESPN+' || nets[i] == 'ESPN+/Hulu' || nets[i] == 'Hulu'){
-                if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
-                else channels[i] = espn;      
-            }  
-            else if(nets[i] == 'FOX'){
-                channels[i] = fox;
-                notPlus++;
-            }
-            else if(nets[i] == 'ABC'){
-                channels[i] = abc;
-                notPlus++;
-            }
-            else if(nets[i] == 'Apple TV+'){
-                channels[i] = apple;
-                notPlus++;
-            }
-            else if(nets[i] == 'MLBN'){
-                channels[i] = mlbTv;
-                notPlus++;
-            }
-            else if(nets[i] == 'TBS'){
-                channels[i] = tbs;
-                notPlus++;
-            }
-            else if(nets[i] == 'FS1'){
-                channels[i] = fs1;
-                notPlus++;
-            }
-            else { 
-                channels[i] = '';
-                notPlus++;
-            }   
-        }
-    }
-    return channels;
 }
 
 export default mlbScrape;
