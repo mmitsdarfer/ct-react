@@ -6,8 +6,6 @@ known errors:
 - preferences.json ending unexpectedly. add some wait/async?
 
 To do:
-- When takeMe enabled add extra button that refreshes and takes to new link 
-   - Not the same as previous link to implement original "It's a commercial!" idea
 - in server.js can I consolidate app.get using league variables?
    - at least move to one function they all call
 - If json.length == 0, make new json
