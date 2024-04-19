@@ -177,14 +177,7 @@ function timer(duration, league, res){
 
 app.get('/nhl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    var data = {};
-    data.table = [];
-    data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
-            if(err) throw err;
-        }); 
-    }
+    checkJson();
     getCookies(req, res);
     let priority = [];
     priority[0] = req.cookies.Priority0; 
@@ -218,14 +211,7 @@ app.get('/nhl', (req, res) => {
 
 app.get('/nfl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    var data = {};
-    data.table = [];
-    data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
-            if(err) throw err;
-        }); 
-    }
+    checkJson();
     getCookies(req, res);
     let priority = [];
     priority[0] = req.cookies.Priority0; 
@@ -259,14 +245,7 @@ app.get('/nfl', (req, res) => {
 
 app.get('/nba', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    var data = {};
-    data.table = [];
-    data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
-            if(err) throw err;
-        }); 
-    }
+    checkJson();
     getCookies(req, res);
     let priority = [];
     priority[0] = req.cookies.Priority0; 
@@ -300,14 +279,7 @@ app.get('/nba', (req, res) => {
 import mlbScrape from './scrape-sort/mlbScrape.js';
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    var data = {};
-    data.table = [];
-    data.table.push({"date":"December 21, 2000"});
-    if(!existsSync('../json/' + current.toLowerCase() + '.json', 'utf-8')) {
-        fs.writeFile('../json/' + current.toLowerCase()+'.json', JSON.stringify(data), function(err){
-            if(err) throw err;
-        }); 
-    }
+    checkJson();
     getCookies(req, res);
     let priority = [];
     priority[0] = (req.cookies.Priority0); 
@@ -342,9 +314,25 @@ app.use((req, res) => {
     res.status(404).send('Page not found');
 })
 
-if (!existsSync('../json/preferences.json')) {
-    prefReset();
+
+function checkJson(){
+    if(!existsSync('../json/preferences.json')) {
+        prefReset();
+    }
+    let leagueArr = ['nhl', 'nfl', 'mlb', 'nba'];
+    for(let i = 0; i < leagueArr.length; i++){
+        let blankData = {};
+        blankData.table = [];
+        blankData.table.push({"date":"December 21, 2000"});
+        if (!existsSync('../json/'+leagueArr[i]+'.json')) {
+            writeFile('../json/'+leagueArr[i]+'.json', (JSON.stringify(blankData)), function(err){
+                if(err) throw err;
+            });
+        }
+    }
 }
+
+checkJson();
 
 app.listen(port, () => {
     console.log('Running on ' + port);
