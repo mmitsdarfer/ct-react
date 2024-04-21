@@ -179,8 +179,10 @@ function toJson(data, league, date){
                 obj = {
                     team1: data[i][j].team1,
                     score1: data[i][j].score1,
+                    logo1: data[i][j].logo1,
                     team2: data[i][j].team2,
                     score2: data[i][j].score2,
+                    logo2: data[i][j].logo2,
                     progress: data[i][j].progress,
                     time: data[i][j].time,
                     network: data[i][j].network,

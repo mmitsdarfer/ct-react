@@ -239,8 +239,7 @@ export default function Preferences(){
                             <div key={"visitId"+index}>
                                 <Visits current={data[i][1]}></Visits>
                             </div>
-                        </div>
-                        
+                        </div>      
                     )
                 } 
                 index++;
@@ -252,8 +251,7 @@ export default function Preferences(){
         return(
             <div className="logo-vis">
                 <div> 
-                    <div id="vert-space">
-                    </div>         
+                    <div id="vert-space"></div>         
                     Times Visited:
                 </div> 
                 <LeagueList></LeagueList>

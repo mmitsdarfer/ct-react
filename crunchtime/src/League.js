@@ -4,6 +4,7 @@ import mlbData from './json/mlb.json';
 import nbaData from './json/nba.json';
 import {useEffect, useState} from 'react';
 import { useCookies } from 'react-cookie';
+import { noLinks } from './backend/scrape-sort/netLinks';
 
 let took = false;
 
@@ -15,6 +16,7 @@ export default function League({league, logoData}){
 
     //only want league to be current when opening page so visit count only increments once
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page)
+    console.log(origin);
     if(origin !== window.location.href && performance.navigation.type !== 1) {
         setOrigin(window.location.href);
         setCookie('Current', league, { path: '/' });
@@ -30,12 +32,10 @@ export default function League({league, logoData}){
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
     let take = getCookieValue('Take');
-;
-    //TO DO: CALL TO NET/CHANNEL js FILE IF I MAKE THAT?
-    if(take === 'true' && !took && !(leagueData.table[0].network === 'NHL NET' || leagueData.table[0].network === 'NBA TV'
-        || leagueData.table[0].network === 'NESN' || leagueData.table[0].network === 'NESN+')){
-        took=true;
-        if(leagueData.table[0].link !== undefined) window.open(leagueData.table[0].link);
+
+    if(!noLinks(leagueData.table[0].network) && take === 'true' && !took && leagueData.table[0].progress !== 'ended'){
+        took = true;
+        window.open(leagueData.table[0].link);
     }
 
     // line below hides unneeded warning (data not used)
@@ -57,12 +57,11 @@ export default function League({league, logoData}){
     let rows = Math.ceil(len/4); 
     function Net({i}){
         if(leagueData.table[i].progress !== 'ended'){
-            if(leagueData.table[i].network === 'NHL NET' || leagueData.table[i].network === 'NBA TV'
-                || leagueData.table[i].network === 'NESN' || leagueData.table[i].network === 'NESN+') {
-                    return <div className="net">{leagueData.table[i].network} has no available links</div>
-            }
-            else if(leagueData.table[i].network === undefined || leagueData.table[i].network === ''){
+            if(leagueData.table[i].network === undefined || leagueData.table[i].network === ''){
                 return <br></br>
+            }
+            else if(noLinks(leagueData.table[i].network)) {
+                    return <div className="net">{leagueData.table[i].network} has no available links</div>
             }
             else return <a id="btn" href={leagueData.table[i].link} target="_blank" rel="noreferrer">Watch on {leagueData.table[i].network}</a>
         }
@@ -72,8 +71,21 @@ export default function League({league, logoData}){
     }
     function Time({i}){
         if(leagueData.table[i].time !== undefined){
-            return <div id="time">{leagueData.table[i].time}
-            </div>
+            return <div id="time">{leagueData.table[i].time}</div>
+        }
+    }
+    function Logo1({i}){
+        if(leagueData.table[i].logo1 !== undefined){
+            return(
+                <img className='team-logo' width={30} height={30} src={leagueData.table[i].logo1} alt={leagueData.table[i].team1 + " logo"}/>
+            )
+        }
+    }
+    function Logo2({i}){
+        if(leagueData.table[i].logo2 !== undefined){
+            return(
+                <img className='team-logo' width={30} height={30} src={leagueData.table[i].logo2} alt={leagueData.table[i].team2 + " logo"}/>
+            )
         }
     }
     function Game({i}){
@@ -82,13 +94,19 @@ export default function League({league, logoData}){
         }
         return(
             <div>
-            <div className="games">
-                    <span>{leagueData.table[i].team1}</span>
-                    <div className="scores">{leagueData.table[i].score1}</div>
+                <div className="games">
+                    <div className='team-info'> {/*team-info is nested in games so position: absolute can be inside of a position: relative*/}
+                        <Logo1 i={i}></Logo1>
+                        <span className='team'>{leagueData.table[i].team1}</span>
+                        <div className="scores">{leagueData.table[i].score1}</div>
+                    </div>      
                 </div>
                 <div className="games">
-                    <span>{leagueData.table[i].team2}</span>
-                    <div className="scores">{leagueData.table[i].score2}</div>
+                    <div className='team-info'>
+                        <Logo2 i={i}></Logo2>
+                        <span className='team'>{leagueData.table[i].team2}</span>
+                        <div className="scores">{leagueData.table[i].score2}</div>
+                    </div>
                 </div>
                 <Time i={i}></Time>
                 <div className="net"><Net i={i}></Net></div>

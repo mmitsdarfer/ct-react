@@ -7,7 +7,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "concurrently": "^8.2.2",
-    "forever": "^4.0.3",
     "fs": "^0.0.1-security",
     "react": "^18.2.0",
     "react-cookie": "^7.1.4",
@@ -18,7 +17,7 @@
   },
   "scripts": {
     "client": "react-scripts start",
-    "server": "cd src/backend && npm start",
+    "server": "cd src/backend && nodemon server.js",
     "start": "concurrently --names \"CLIENT,SERVER\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run client\" \"npm run server\" ",
     "build": "react-scripts build",
     "test": "react-scripts test",

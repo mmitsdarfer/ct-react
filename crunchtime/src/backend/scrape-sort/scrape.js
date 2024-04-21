@@ -44,15 +44,16 @@ var scrape = async function scrape(league, priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, links;
+    var fullDate, teams, times, scores, nets, numGames, links, logos;
     
-    [fullDate, teams, times, scores, nets, numGames, links] = await page.evaluate((league) => {
+    [fullDate, teams, times, scores, nets, numGames, links, logos] = await page.evaluate((league) => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
         times = [];
         nets = [];
         links = [];
+        logos = [];
         let teamLen = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName').length;
         numGames = teamLen/2;
         
@@ -66,6 +67,7 @@ var scrape = async function scrape(league, priority){
 
         for(let i = 0; i < teamLen; i++){
             teams[i] = document.querySelectorAll('.AnchorLink .ScoreCell__TeamName')[i];
+            logos[i] = document.querySelectorAll('.AnchorLink .ScoreboardScoreCell__Logo')[i].src;
             if(!(i%2) && timeArr[i/2].includes('Final')){
                 endedLen++;
             }
@@ -107,12 +109,13 @@ var scrape = async function scrape(league, priority){
         //convert nodelists into arrays
         teamArr = Array.from(teams);
         teamArr = teamArr.map(team => team.textContent);  
+        
         netArr = Array.from(nets);
         netArr = netArr.map(net => net.textContent);
         linkArr = Array.from(links);
         linkArr = linkArr.map(link => link.href);
 
-        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, linkArr];
+        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, linkArr, logos];
     }, league);
 
     //date with day of the week stripped off
@@ -169,8 +172,10 @@ var scrape = async function scrape(league, priority){
         gameObj = {
             team1: teams[2*i],
             score1: scores[2*i],
+            logo1: logos[2*i],
             team2: teams[2*i+1],
             score2: scores[2*i+1],
+            logo2: logos[2*i+1],
             progress: progress[i],  //unstarted, ended, ongoing
             time: times[i],   //time left or start time
             network: nets[i],

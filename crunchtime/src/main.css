@@ -47,6 +47,8 @@ img {
 .games{                 
     color: #1c1c1c;
     padding-bottom: 10px;
+    height: 30px;
+   position: relative;   
 }
 .league-column{
     padding: 16px;
@@ -58,7 +60,21 @@ img {
     font: bold 14px Arial;
 }  
 .scores{
-    float: right;
+    float: right;   
+    margin-right: 10px;
+}
+.team{    
+    margin-left: 10px;
+    float: left;
+}
+.team-info{
+    width: 100%;
+    position: absolute;
+    height: 30px;
+    top: 10%;
+}
+.team-logo{
+    float: left;     
 }
 #alt-column{
     background-color: rgb(50, 97, 141); 

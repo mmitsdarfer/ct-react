@@ -25,17 +25,18 @@ export async function mlbScrape(priority){
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
-    var fullDate, teams, times, scores, nets, numGames, links;
+    var fullDate, teams, times, scores, nets, numGames, links, logos;
 
     await page.waitForSelector('div.ScoreCell__Score'); //scores are loaded a bit later, so need to wait for them (I think...)
     
-    [fullDate, teams, times, scores, nets, numGames, links] = await page.evaluate(() => {
+    [fullDate, teams, times, scores, nets, numGames, links, logos] = await page.evaluate(() => {
         fullDate = document.querySelector('.Card__Header__Title__Wrapper .Card__Header__Title').textContent;
         teams = [];
         scores = [];
         times = [];
         nets = [];
         links = [];
+        logos = [];
         let firstFin = 0;
         //let firstUnstart = 0;
 
@@ -51,6 +52,7 @@ export async function mlbScrape(priority){
 
         for(let i = 0; i < teamLen; i++){
             teams[i] = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName')[i].textContent;
+            logos[i] = document.querySelectorAll('.AnchorLink .ScoreboardScoreCell__Logo')[i].src;
             if(!(i%2)){
                 if(times[i/2] == ('Final')){
                     if(firstFin == 0) firstFin = i;
@@ -94,7 +96,7 @@ export async function mlbScrape(priority){
         linkArr = Array.from(links);
         linkArr = linkArr.map(link => link.href);
 
-        return [fullDate, teams, times, scores, nets, numGames, linkArr];
+        return [fullDate, teams, times, scores, nets, numGames, linkArr, logos];
     })
 
     //date with day of the week stripped off
@@ -147,8 +149,10 @@ export async function mlbScrape(priority){
         obj = {
             team1: teams[2*i],
             score1: scores[2*i],
+            logo1: logos[2*i],
             team2: teams[2*i+1],
             score2: scores[2*i+1],
+            logo2: logos[2*i+1],
             progress: progress[i],  //unstarted, ended, ongoing
             time: times[i],   //time left or start time
             network: nets[i],

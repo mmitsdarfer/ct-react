@@ -29,7 +29,7 @@ export default function netLinks(nets, teams, progress, numGames, links){
     for(let i = 0; i < numGames; i++){
         if(progress[i] !== 'ended' && nets[i] !== undefined){
             if(i > 0){
-                if(nets[i-1] == 'ESPN+' && nets[i] == 'Hulu'){
+                if(nets[i-1] === 'ESPN+' && nets[i] === 'Hulu'){
                     nets[i-1] = 'ESPN+/Hulu';
                     nets[i] = nets[i-1];
                 }
@@ -69,7 +69,7 @@ export default function netLinks(nets, teams, progress, numGames, links){
                     notPlus++;
                 }
             }
-            else if(nets[i] == 'FS1'){
+            else if(nets[i] === 'FS1'){
                 if(!localStream(i)){
                     channels[i] = fs1;
                     notPlus++;
@@ -84,4 +84,13 @@ export default function netLinks(nets, teams, progress, numGames, links){
         }
     }
     return channels;
+}
+
+export function noLinks(net){
+    let noNet = ['NHL NET', 'NBA TV', 'NESN', 'NESN+']; //ESPN.com will show these nets but they don't have streaming links 
+                                                        //(or the dev doesn't have them)
+    for(let no of noNet){
+        if(no === net) return true;
+    }
+    return false;
 }

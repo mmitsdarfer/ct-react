@@ -3,23 +3,20 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-1 preferences.json ending unexpectedly. add some wait/async?
-2 clicking logo fails to fetch sometimes
-   - just occasionally really slow (?)
+1 clicking logo fails to fetch sometimes
+   - just occasionally really slow
+      - every time I try to fix this it stops happening or at least isn't as slow as before 
+         - this is because opening devtools changes how it loads
 
 To do:
-1 If json.length == 0, make new json
-2 when server crashes frontend stays up, so can I reboot it programmatically or signal it crashed?
-7 Add favorite teams(?)
+1 Add favorite teams(?)
    - Might make sense to wait until adding multiple sports
-8 Switch to for-of loops if applicable
-9 See if specific errors above still exist
-10 Add team logos
-11 Replace "standings" with "stands" everywhere
-12 (Evergreen) Document code and check for unneeded parts
-      - make sure I don't need firstUnstart in mlbScrape and remove it
-13 (Evergreen) Update readme
-14 (Evergreen/do if any new links show up) Add streaming/other online links for non-NHL sports
+2 Replace "standings" with "stands" everywhere
+3 Let user define what streaming service/channels they have
+4 (Evergreen) Document code and check for unneeded parts
+5 (Evergreen) See if specific errors above still exist
+6 (Evergreen) Update readme
+7 (Evergreen/do if any new links show up) Add streaming/other online links for non-NHL sports
 - Pie in the sky/longterm:   
    - Add upcoming days
    - Combine multiple sports 
@@ -29,11 +26,12 @@ To do:
    - Host on netlify or simlar (?)
 
 Recently completed:
-- Test manually changing timer cookie
-6 Change tab icon
+10 Add team logos
+   Fix: put in both scrapes and made new react div to format properly
+
 
 WIWWO: 
-4/19: TD8
+4/21: Use noLink function in netLink w/ "no stream available"
 
 
 Using git:
