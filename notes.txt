@@ -3,36 +3,37 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-1 clicking logo fails to fetch sometimes
+1 reset getting caught on true after clicking
+   reset also deletes 1 league -> only mlb & nba
+2 clicking logo fails to fetch sometimes
    - just occasionally really slow
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
 
 To do:
-1 Add favorite teams(?)
-   - Might make sense to wait until adding multiple sports
-2 Replace "standings" with "stands" everywhere
-3 Let user define what streaming service/channels they have
-4 (Evergreen) Document code and check for unneeded parts
-5 (Evergreen) See if specific errors above still exist
-6 (Evergreen) Update readme
-7 (Evergreen/do if any new links show up) Add streaming/other online links for non-NHL sports
+2 Put react js files into a folder (?)
+3 Change tab name to reflect current page
+4 Fetch POST instead of cookies (?)
+6 ctrl+f todo/to do
+5 (Evergreen) Document code and check for unneeded parts
+6 (Evergreen) See if specific errors above still exist
+7 (Evergreen) Update readme
+8 (Evergreen/do if any new links show up) Add streaming/other online links
 - Pie in the sky/longterm:   
    - Add upcoming days
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
+   - Add favorite teams(?)
+      - Might make sense to wait until adding multiple sports
    - Don't re-scrape ended games to improve efficiency (?)
    - Host on netlify or simlar (?)
+   - Let user enter their local streams (?)
 
-Recently completed:
-10 Add team logos
-   Fix: put in both scrapes and made new react div to format properly
-
+Recently completed (since last push, so put in commit msg):
 
 WIWWO: 
-4/21: Use noLink function in netLink w/ "no stream available"
-
+4/25: finished td1
 
 Using git:
 1. Make changes to code

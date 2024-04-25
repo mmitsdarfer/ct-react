@@ -19,7 +19,7 @@ function League({current}){
 
 function LeagueList(){
     let leagueList = []; 
-    for(let i = 2; i < data.length; i++){
+    for(let i = 3; i < data.length; i++){
     Object.values(logos).forEach((value, index) => 
     {  
             if(data[i][0] === Object.keys(logos)[index]){

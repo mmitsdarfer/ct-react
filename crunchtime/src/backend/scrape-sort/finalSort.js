@@ -122,7 +122,7 @@ function diffSort(data){
 }
 
 //groups games by progress and sorts them by average standings of teams
-function standingsSort(data){
+function standSort(data){
     let ongoingStands = [];
     let unstartedStands = [];
     let endedStands = [];
@@ -143,23 +143,23 @@ function standingsSort(data){
     }
     
     
-    let onStandsSort = mergeSort(ongoingStands);
-    let unstartStandsSort = mergeSort(unstartedStands);
-    let endStandsSort = mergeSort(endedStands);
+    let onStandSort = mergeSort(ongoingStands);
+    let unstartStandSort = mergeSort(unstartedStands);
+    let endStandSort = mergeSort(endedStands);
 
     for(let i = 0; i < data.length; i++){
         for(let j = 0; j < ongoingStands.length; j++){
-            if(data[i].progress == 'ongoing' && data[i].avgStanding == onStandsSort[j]){
+            if(data[i].progress == 'ongoing' && data[i].avgStanding == onStandSort[j]){
                 data[i].standRank = j
             }
         }
         for(let j = 0; j < unstartedStands.length; j++){
-            if(data[i].progress == 'unstarted' && data[i].avgStanding == unstartStandsSort[j]){
+            if(data[i].progress == 'unstarted' && data[i].avgStanding == unstartStandSort[j]){
                 data[i].standRank = j + ongoingStands.length;
             }
         }
         for(let j = 0; j < endedStands.length; j++){
-            if(data[i].progress == 'ended' && data[i].avgStanding == endStandsSort[j]){
+            if(data[i].progress == 'ended' && data[i].avgStanding == endStandSort[j]){
                 data[i].standRank = j + ongoingStands.length + unstartedStands.length;
             }
         }
@@ -215,13 +215,13 @@ function toJson(data, league, date){
 export function finalSort(data, priority, league, date){
     data = timeSort(data);
     data = diffSort(data);
-    data = standingsSort(data);
+    data = standSort(data);
 
     let firstOrder = [];
     let secondOrder = [];
     let thirdOrder = [];
     if(priority[0] == 'diffs'){
-        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/standing is set equal to length
+        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/stand is set equal to length
             firstOrder[i] = [];
             for(let j = 0; j < data.length; j++){
                 if(data[j].diffRank == i) firstOrder[i].push(data[j]);
@@ -261,7 +261,7 @@ export function finalSort(data, priority, league, date){
                 }
             }
         }
-        else if(priority[1] == 'standings'){
+        else if(priority[1] == 'stands'){
             for(let i = 0; i < firstOrder.length; i++){
                 secondOrder[i] = [];
                 if(firstOrder[i] !== undefined){
@@ -296,7 +296,7 @@ export function finalSort(data, priority, league, date){
         }   
     }
     else if(priority[0] == 'times'){
-        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/standing is set equal to length
+        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/stand is set equal to length
             firstOrder[i] = [];
             for(let j = 0; j < data.length; j++){
                 if(data[j].timeRank == i) firstOrder[i].push(data[j]);
@@ -336,7 +336,7 @@ export function finalSort(data, priority, league, date){
                 }
             }
         }
-        else if(priority[1] == 'standings'){
+        else if(priority[1] == 'stands'){
             for(let i = 0; i < firstOrder.length; i++){
                 secondOrder[i] = [];
                 if(firstOrder[i] !== undefined){
@@ -370,8 +370,8 @@ export function finalSort(data, priority, league, date){
             }
         }
     }
-    else if(priority[0] == 'standings'){
-        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/standing is set equal to length
+    else if(priority[0] == 'stands'){
+        for(let i = 0; i < data.length+1; i++){    //+1 because max diff/time/stand is set equal to length
             firstOrder[i] = [];
             for(let j = 0; j < data.length; j++){
                 if(data[j].standRank == i) firstOrder[i].push(data[j]);
@@ -412,14 +412,14 @@ export function finalSort(data, priority, league, date){
                 }
             }
         }
-        else if(priority[1] == 'times'){
+        else  if(priority[1] == 'times'){
             for(let i = 0; i < firstOrder.length; i++){
                 secondOrder[i] = [];
                 if(firstOrder[i] !== undefined){
                     if(firstOrder[i].length > 1){
                         for(let j = 0; j < data.length+1; j++){
                             for(let k = 0; k < firstOrder[i].length; k++){
-                                if(firstOrder[i][k].diffank == j) secondOrder[i].push(firstOrder[i][k]);
+                                if(firstOrder[i][k].standRank == j) secondOrder[i].push(firstOrder[i][k]);
                             }
                         }
                     }
@@ -444,7 +444,7 @@ export function finalSort(data, priority, league, date){
                     }
                 }
             }
-        }   
+        } 
     }
 
     console.log('Priority: ' + priority);

@@ -11,6 +11,7 @@ Crunch Time requires the following to run:
 * [express](https://expressjs.com/)
 * [React](https://react.dev/)
 * [concurrently](https://www.npmjs.com/package/concurrently)
+* [cors](https://www.npmjs.com/package/cors)
 * [react-router-dom](https://www.npmjs.com/package/react-router-dom)
 * [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 * [puppeteer](https://pptr.dev/)

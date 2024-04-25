@@ -114,6 +114,28 @@ img {
     margin-bottom: 10px;
 }
 
+/* Stream page only */
+.net-box{
+    width: 20em;
+    justify-content: center;
+    margin: auto;
+    border-left: 1px solid;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    height: 1.5em;
+}
+.net-button{
+    float: right;
+    transform: translateY(5%);
+}
+.net-check{
+    float: left;
+    transform: translateY(15%);
+}
+.net-text{
+    float: left;
+}
+
 /* Home button */
 #home{ 
     background-color: rgb(50, 120, 167);
@@ -138,14 +160,14 @@ img {
 /* dropdowns */
 .drop{
     margin: auto;
-    width: 7em;
+    width: 5em;
     text-align-last: center;
     text-align: center;
     
 }
 .select-priority{
     margin-top: 5px;
-    width: 7em;
+    width: 5em;
     text-align: left;
 }
 #timer{

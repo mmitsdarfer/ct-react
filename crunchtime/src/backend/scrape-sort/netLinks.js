@@ -1,24 +1,21 @@
+//converts networks to applicable links and determines if those links are available
+let streamLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], ['FOX', 'https://www.foxsports.com/live'],
+    ['ABC', 'https://abc.com/watch-live/abc'], ['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
+    ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], ['MLB Network', 'https://www.mlb.com/network/live?success=true'],
+    ['MLBTV', 'https://www.mlb.com/tv'], ['NBA TV', 'https://www.nba.com/watch/nba-tv'],
+    ['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
 
-export default function netLinks(nets, teams, progress, numGames, links){
-    //make sure to log in first
-    const tnt = 'https://www.tntdrama.com/watchtnt/east';
-    const espn = 'https://www.espn.com/watch/';
-    const nbcsp = 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia';
-    const fox = 'https://www.foxsports.com/live';
-    const abc = 'https://abc.com/watch-live/abc';
-    const apple = 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2';
-    const mlbn = 'https://www.mlb.com/network/live?success=true';
-    const tbs = 'https://www.tbs.com/watchtbs/east';
-    const fs1 = 'https://www.foxsports.com/live/fs1';
+export default function netLinks(nets, teams, progress, numGames, links, league, availNets){
     const locTeams = ['Flyers', 'Phillies', '76ers'];
     const channels = [];
     let notPlus = 0; //need non-ESPN+ links since I can get specific games just for ESPN+
 
     function localStream(i){
         for(let j = 0; j < locTeams.length; j++){
-            if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){
-                channels[i] = nbcsp;  
+            if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){ 
                 nets[i] = 'NBCSP';
+                if(availNets.find(chan => chan[0] === 'NBC Sports (local)') !== undefined) channels[i] = availNets.find(chan => chan[0] === 'NBC Sports (local)')[1];
+                else channels[i] = '/stream';
                 notPlus++;
                 return true;
             }
@@ -33,62 +30,127 @@ export default function netLinks(nets, teams, progress, numGames, links){
                     nets[i-1] = 'ESPN+/Hulu';
                     nets[i] = nets[i-1];
                 }
+                else if(nets[i-1] === 'NESN' && nets[i] === 'NESN+'){
+                    nets[i-1] = 'NESN/NESN+';
+                    nets[i] = nets[i-1];
+                }
+                else if(nets[i-1] === 'ESPN' && nets[i] === 'NESN'){
+                    nets[i-1] = 'ESPN/NESN';
+                    nets[i] = nets[i-1];
+                }
             }
             if(nets[i] === 'TNT'){
-                channels[i] = tnt;
+                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                }
+                else channels[i] = '/stream';
+                notPlus++;
             }
-            else if(nets[i] === 'ESPN' || nets[i] === 'ESPN+' || nets[i] === 'NHLPP|ESPN+' || nets[i] === 'ESPN+/Hulu' || nets[i] === 'Hulu'){
+            else if(nets[i].includes('ESPN') || nets[i].includes('Hulu')){
                 if(!localStream(i)){
                     if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
-                    else channels[i] = espn;    
+                    else {
+                        nets[i] = 'ESPN+';
+                        if(availNets.find(chan => chan === nets[i]) !== undefined){
+                            channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                        }
+                        else channels[i] = '/stream';
+                    }
                 }
             }
             else if(nets[i] === 'FOX'){
-                channels[i] = fox;
+                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                }
+                else channels[i] = '/stream';
                 notPlus++;
             }
             else if(nets[i] === 'ABC'){
-                channels[i] = abc;
+                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                }
+                else channels[i] = '/stream';
                 notPlus++;
             }
             else if(nets[i] === 'Apple TV+'){
                 if(!localStream(i)){
-                    channels[i] = apple;
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
                     notPlus++;
                 }
             }
             else if(nets[i] === 'MLBN'){
                 if(!localStream(i)){
-                    channels[i] = mlbn;
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
                     notPlus++;
                 }
             }
             else if(nets[i] === 'TBS'){
                 if(!localStream(i)){
-                    channels[i] = tbs;
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
                     notPlus++;
                 }
             }
             else if(nets[i] === 'FS1'){
                 if(!localStream(i)){
-                    channels[i] = fs1;
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
                     notPlus++;
                 }
             }
-            else{
+            else if((nets[i].includes('NESN') && league === 'MLB') || nets[i].includes('MLBTV')){
+                if(!localStream(i)){
+                    nets[i] = 'MLBTV';
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
+                    notPlus++;
+                }
+            }
+            else if(nets[i].includes('NESN') && league === 'NHL'){ //standard espn+ has nhl games, not mlb games
+                if(!localStream(i)){
+                    nets[i] = 'ESPN+';
+                    i--; //go back thru loop with new net to check for specific espn+ link
+                }
+            }
+            else if(nets[i] === 'NBA TV'){
+                if(!localStream(i)){
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
+                }
+            }
+            else{ 
                 if(!localStream(i)){
                     channels[i] = '';
                     notPlus++;
                 }
             }
         }
+        else if(progress[i] !== 'ended' && nets[i] === undefined){
+            localStream(i);
+            notPlus++;
+        }
     }
+
     return channels;
 }
 
 export function noLinks(net){
-    let noNet = ['NHL NET', 'NBA TV', 'NESN', 'NESN+']; //ESPN.com will show these nets but they don't have streaming links 
-                                                        //(or the dev doesn't have them)
+    let noNet = ['NHL NET']; //ESPN.com will show these nets but they don't have streaming links 
+
     for(let no of noNet){
         if(no === net) return true;
     }

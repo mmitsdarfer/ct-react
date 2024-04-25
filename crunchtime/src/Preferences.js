@@ -53,7 +53,7 @@ function Dropdowns(){
                 <select className="select-priority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
                     <option value="diffs">Diffs</option>
                     <option value="times">Times</option> 
-                    <option value="standings">Standings</option>
+                    <option value="stands">Stands</option>
                 </select>            
             </div>
         )
@@ -66,7 +66,7 @@ function Dropdowns(){
                     2nd:
                 <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="times">Times</option> 
-                    <option value="standings">Standings</option>
+                    <option value="stands">Stands</option>
                 </select>
                 </div>
             )
@@ -77,13 +77,13 @@ function Dropdowns(){
                     2nd:
                     <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="diffs">Diffs</option>
-                    <option value="standings">Standings</option>
+                    <option value="stands">Stands</option>
                 </select>
                 </div>
                 
             )
         }
-        else if(topPriority === 'standings'){
+        else if(topPriority === 'stands'){
             return(
                 <div className="drop">
                     2nd:
@@ -116,7 +116,7 @@ function Dropdowns(){
             <br></br>
             Sort by games with closest scores (diffs),
             <br></br>closest to ending (times),
-            <br></br>or highest average of 2 teams' league rankings (standings)
+            <br></br>or highest average of 2 teams' league rankings (stands)
             <br></br><br></br>
         </div>  
     )
@@ -187,7 +187,7 @@ export default function Preferences(){
 
     function ResetButton(){
         return(
-            <button id="reset"type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
+            <button id="reset" type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
                 Reset visit data 
             </button> 
         )
@@ -227,7 +227,7 @@ export default function Preferences(){
     
         function LeagueList(){
             let leagueList = []; 
-            for(let i = 2; i < data.length; i++){
+            for(let i = 3; i < data.length; i++){
             Object.values(logos).forEach((value, index) => 
             {  
                 if(data[i][0] === Object.keys(logos)[index]){
@@ -270,7 +270,12 @@ export default function Preferences(){
         <h4>Take me out to the ball (or puck) game:</h4>   
         <Switch></Switch>
         Turn on to be sent to a stream of #1 game by priority if available<br></br>
-        (You must allow popups to automatically be redirected to your stream)
+        (You must allow popups to automatically be redirected to your stream)<br></br>
+        <br></br>
+
+        <a href={'//localhost:3000/stream'}>
+            <button button id="reset" type="submit">Change stream preferences</button>
+        </a>
 
         <br></br>
         <Timer></Timer>

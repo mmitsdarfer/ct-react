@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 import { existsSync, readFileSync, writeFile } from "fs";
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { callScrape } from './scrape-sort/scrape.js';
 
 var current;
@@ -62,8 +63,8 @@ function getCookies(req, res){
         res.cookie('Priority1', 'times');
     }
     if(priority[2] === undefined){
-        priority[2] = 'standings';
-        res.cookie('Priority2', 'standings');
+        priority[2] = 'stands';
+        res.cookie('Priority2', 'stands');
     }
 
     let reset = (req.cookies.Reset);
@@ -108,10 +109,12 @@ app.get('/', (req, res) => {
 
 app.use(express.static(__dirname + '/')); 
 app.use(express.static(join(__dirname, 'public')));
+app.use(express.json());
 
 //resets values of preferences.json or creates it with reset values
-async function prefReset(priority = ['diffs', 'times', 'standings']){
-    let prefData = JSON.stringify(['NHL', priority, ['NBA', 0], ['MLB', 0], ['NFL', 0], ['NHL', 0]]);
+async function prefReset(priority = ['diffs', 'times', 'stands']){
+    let prefData = JSON.stringify(["NHL", priority, ["TNT","ESPN","FOX","ABC","AppleTV+","TBS","FS1","MLB Network","NBC Sports (local)"],
+         ["NBA", 0], ["MLB", 0], ["NFL", 0], ["NHL", 0]]);
     writeFile('../json/preferences.json', prefData, function(err){
         if(err) throw err;
     });  
@@ -132,7 +135,7 @@ function preferences(league, isLoad){
     let prefHits = [];
 
     //increase hit number
-    for(let i = 2; i < prefsList.length; i++){
+    for(let i = 3; i < prefsList.length; i++){
         if(prefsList[i][0] == league){
             if(isLoad) prefsList[i][1]++;
             prefsList[i] = [prefsList[i][0], prefsList[i][1]];
@@ -140,18 +143,20 @@ function preferences(league, isLoad){
         prefHits[i-2] = prefsList[i][1];
     }
     let sorted = mergeSort(prefHits);
-    let outList = [league, prefsList[1]];
+    let outList = [league, prefsList[1], prefsList[2]];
 
     let outCount = 2; //start at lowest league position in preferences.json
     for(let i = 0; i < sorted.length; i++){
-        for(let j = 2; j < prefsList.length; j++){
+        for(let j = outCount; j < prefsList.length; j++){
             if(sorted.indexOf(prefsList[j][1]) == i){
-                outList[outCount] = (prefsList[j]);
                 outCount++;
+                outList[outCount] = prefsList[j];                
             }
         }
     }
-    //preferences.json format: [current league selected, priority, [least visited team, team visits], [2nd least visit team, team visits], ... [most visited team, team visits]]
+
+    //preferences.json format: [current league selected, [priority], [avail nets], [least visited team, team visits],
+        // [2nd least visit team, team visits], ... [most visited team, team visits]]
     writeFile('../json/preferences.json', JSON.stringify(outList), function(err){
         if(err) throw err;
     }); 
@@ -163,7 +168,7 @@ function timer(duration, league, res){
         console.log('Timer length: ' + duration);
         function redir(){
             res.redirect('/'+league);
-            //replace with call to league page once I split them up
+            //TODO: replace with call to league page once I split them up
         }
         setTimeout(redir, duration*1000);
     }
@@ -191,7 +196,10 @@ function checkJson(){
     }
 }
 
-function leagueCall(league, req, res){
+var streamPrefs = ['TNT', 'ESPN+','FOX','ABC','AppleTV+','TBS','FS1','MLB Network','MLBTV','NBATV','NBC Sports (local)'];
+//read from prefs
+
+function leagueCall(league, req, res, streamPrefs){
     checkJson();
     getCookies(req, res);
     let priority = [];
@@ -214,8 +222,8 @@ function leagueCall(league, req, res){
     async function writeLeague(){
         setTimeout(function () {
             preferences(current, isLoad);  
-            if(league == 'MLB') mlbScrape(priority); 
-            else callScrape(current, priority);     
+            if(league == 'MLB') mlbScrape(priority, streamPrefs); 
+            else callScrape(current, priority, streamPrefs);     
             let duration = req.cookies.Timer;
             timer(duration, current, res);  
             
@@ -226,26 +234,40 @@ function leagueCall(league, req, res){
 
 app.get('/nhl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res);
+    leagueCall(current, req, res, streamPrefs);
 });
 
 app.get('/nfl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res);    
+    leagueCall(current, req, res, streamPrefs);    
 });
 
 app.get('/nba', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res);
+    leagueCall(current, req, res, streamPrefs);
 });
 
 import mlbScrape from './scrape-sort/mlbScrape.js';
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res);
+    leagueCall(current, req, res, streamPrefs);
 });
 
-app.use((req, res) => {
+app.use(cors({origin:true,credentials: true}));
+
+app.post('/stream', (req, res) => {
+    var availNets = req.body;
+   // updateNets(availNets);
+    let parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
+    parsedPrefs[2] = availNets;
+    streamPrefs = availNets;
+    writeFile('../json/preferences.json', (JSON.stringify(parsedPrefs)), function(err){
+        if(err) throw err;
+    });
+    res.send(JSON.stringify(availNets));
+})
+
+app.post((req, res) => {
     res.status(404).send('Page not found');
 })
 

@@ -2,7 +2,8 @@ import './main.css';
 import Preferences from './Preferences';
 import Home from './Home';
 import League from './League';
-import { logos } from './logos';
+import Stream from './StreamPref';
+import { logos } from './logos.js';
 import prefs from './json/preferences.json';
 import {
   BrowserRouter as Router,
@@ -81,7 +82,7 @@ function checkCookies(){
   if(getCookieValue('Priority0') === '' || getCookieValue('Priority1') === '' || getCookieValue('Priority2') === ''){
     document.cookie = 'Priority0=diffs';
     document.cookie = 'Priority1=times';
-    document.cookie = 'Priority2=standings';
+    document.cookie = 'Priority2=stands';
   }
   if(getCookieValue('Current') === '') document.cookie = 'Current=null';
   if(getCookieValue('Reset') === '') document.cookie = 'Reset=false';
@@ -94,25 +95,28 @@ function App(){
   // eslint-disable-next-line 
   const [cookies, setCookie] = useCookies('Current');
   setCookie('Current', null, { path: '/' });
-  checkCookies()
+  checkCookies();
   
   return (
     <Router>
       <Routes>
-        <Route exact path='/test' element={
-        <p></p>
-        } />
         <Route exact path='/' element={
           <div>    
             <Home></Home>
             <PrefButton></PrefButton>
-            
           </div>
         } />
         <Route exact path='/preferences' element={
           <div>
           <HomeButton></HomeButton>
           <Preferences></Preferences>  
+          </div>
+        } />
+        <Route exact path='/stream' element={
+          <div>
+            <HomeButton></HomeButton>
+            <PrefButton></PrefButton>
+            <Stream></Stream>
           </div>
         } />
         <Route exact path='/nhl' element={

@@ -17,14 +17,6 @@ if (fs.existsSync('../json/preferences.json')) {
     league = parsedPrefs[0];
     priority = parsedPrefs[1];
 }
-else{   //current, priority, ranked leagues with time visited
-    prefData = ['NHL', ['diffs', 'times', 'standings'], ['NHL', 0], ['NFL', 0], ['MLB', 0], ['NBA', 0]]; 
-    fs.writeFile('../json/preferences.json', JSON.stringify(prefData), function(err){
-        if(err) throw err;
-    }); 
-    league = prefData[0];
-    priority = prefData[1];
-}
 
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
@@ -34,7 +26,7 @@ function timeToObj(data, league){
 }
 
 //scrapes all of the game data for a league
-var scrape = async function scrape(league, priority){
+var scrape = async function scrape(league, priority, availNets){
     console.log('Current league: ' + league);
     console.log('Priority: ' + priority);
     url = 'https://www.espn.com/'+league.toLowerCase()+'/scoreboard';
@@ -95,12 +87,12 @@ var scrape = async function scrape(league, priority){
             scoreArr[i] =  document.querySelectorAll('.ScoreboardScoreCell__Item .ScoreCell__Score')[scoreLen - endedLen + i - notEnded].textContent;
         }
         
-        //put networks in nodelist
-        let netLen = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem').length;
-        for(let i = 0; i < netLen; i++){
-            nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i];
-        }
+        //put networks and links in respective lists
         for(let i = 0; i < numGames; i++){
+            if(document.querySelectorAll('.ScoreboardScoreCell')[i].querySelector('.ScoreCell__NetworkItem') != null){
+                nets[i] = document.querySelectorAll('.ScoreboardScoreCell')[i].querySelector('.ScoreCell__NetworkItem').textContent;
+            }
+            else nets[i] = '';
             if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
                 links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
             }
@@ -109,13 +101,10 @@ var scrape = async function scrape(league, priority){
         //convert nodelists into arrays
         teamArr = Array.from(teams);
         teamArr = teamArr.map(team => team.textContent);  
-        
-        netArr = Array.from(nets);
-        netArr = netArr.map(net => net.textContent);
         linkArr = Array.from(links);
         linkArr = linkArr.map(link => link.href);
 
-        return [fullDate, teamArr, timeArr, scoreArr, netArr, numGames, linkArr, logos];
+        return [fullDate, teamArr, timeArr, scoreArr, nets, numGames, linkArr, logos];
     }, league);
 
     //date with day of the week stripped off
@@ -156,7 +145,7 @@ var scrape = async function scrape(league, priority){
     }
 
     var channels = [];
-    if(nets.length > 0) channels = netLinks(nets, teams, progress, numGames, links);
+    if(nets.length > 0) channels = netLinks(nets, teams, progress, numGames, links, league, availNets);
     else{
         for(let i = 0; i < numGames; i++){
             channels[i] = '';
@@ -197,8 +186,8 @@ var scrape = async function scrape(league, priority){
     await browser.close();
 }
 
-export function callScrape(league, priority){
-    scrape(league, priority);
+export function callScrape(league, priority, availNets){
+    scrape(league, priority, availNets);
 }
 
 export default scrape;

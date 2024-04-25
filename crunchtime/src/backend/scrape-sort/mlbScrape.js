@@ -13,7 +13,7 @@ function timeToObj(data, league){
     }
 }
 
-export async function mlbScrape(priority){
+export async function mlbScrape(priority, availNets){
     var league = 'MLB'; 
     console.log('Current league: ' + league);
     console.log('Priority: ' + priority);
@@ -83,12 +83,12 @@ export async function mlbScrape(priority){
             }
         }
 
-        //put networks in nodelist
-        let netLen = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem').length;
-        for(let i = 0; i < netLen; i++){
-            nets[i] = document.querySelectorAll('.ScoreboardScoreCell .ScoreCell__NetworkItem')[i].textContent;
-        }
+        //put networks and links in respective lists
         for(let i = 0; i < numGames; i++){
+            if(document.querySelectorAll('.ScoreboardScoreCell')[i].querySelector('.ScoreCell__NetworkItem') != null){
+                nets[i] = document.querySelectorAll('.ScoreboardScoreCell')[i].querySelector('.ScoreCell__NetworkItem').textContent;
+            }
+            else nets[i] = '';
             if(document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i] !== undefined){
                 links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
             }
@@ -137,7 +137,7 @@ export async function mlbScrape(priority){
     }
 
     var channels = [];
-    if(nets.length > 0) channels = netLinks(nets, teams, progress, numGames, links);
+    if(nets.length > 0) channels = netLinks(nets, teams, progress, numGames, links, league, availNets);
     else{
         for(let i = 0; i < numGames; i++){
             channels[i] = '';
