@@ -221,7 +221,7 @@ function leagueCall(league, req, res, streamPrefs){
     }
     async function writeLeague(){
         setTimeout(function () {
-            preferences(current, isLoad);  
+            preferences(current, isLoad); 
             if(league == 'MLB') mlbScrape(priority, streamPrefs); 
             else callScrape(current, priority, streamPrefs);     
             let duration = req.cookies.Timer;

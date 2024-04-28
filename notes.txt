@@ -5,6 +5,7 @@ The what (my original idea):
 known errors:
 1 reset getting caught on true after clicking
    reset also deletes 1 league -> only mlb & nba
+      this might not just be due to reset because it happened multiple times a good while after manually making reset false
 2 clicking logo fails to fetch sometimes
    - just occasionally really slow
       - every time I try to fix this it stops happening or at least isn't as slow as before 
@@ -34,6 +35,7 @@ Recently completed (since last push, so put in commit msg):
 
 WIWWO: 
 4/25: finished td1
+Next: fix reset
 
 Using git:
 1. Make changes to code
