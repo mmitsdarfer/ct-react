@@ -1,11 +1,11 @@
-import nhlData from './json/nhl.json';
-import nflData from './json/nfl.json'
-import mlbData from './json/mlb.json';
-import nbaData from './json/nba.json';
-import prefData from './json/preferences.json';
+import nhlData from '../json/nhl.json';
+import nflData from '../json/nfl.json'
+import mlbData from '../json/mlb.json';
+import nbaData from '../json/nba.json';
+import prefData from '../json/preferences.json';
 import {useEffect, useState} from 'react';
 import { useCookies } from 'react-cookie';
-import { noLinks } from './backend/scrape-sort/netLinks';
+import { noLinks } from '../backend/scrape-sort/netLinks';
 import { useNavigate } from 'react-router-dom';
 
 var fullNets = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], ['FOX', 'https://www.foxsports.com/live'],
@@ -15,6 +15,7 @@ var fullNets = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'ht
 ['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']];
 
 export default function League({league, logoData}){
+    document.title = league + ': Crunch Time';
     const navigate = useNavigate();
 
     // line below hides unneeded warning (cookies not used)

@@ -118,6 +118,7 @@ async function prefReset(priority = ['diffs', 'times', 'stands']){
     writeFile('../json/preferences.json', prefData, function(err){
         if(err) throw err;
     });  
+    
     return true;    
 }
 
@@ -162,13 +163,15 @@ function preferences(league, isLoad){
     }); 
 }
 
-function timer(duration, league, res){
-    if(duration == 'manual') console.log('Auto-refresh set to manual');
+function timer(duration, league, req, res){
+    if(duration == 'manual') {
+        console.log('Auto-refresh set to manual');
+        res.send('Timer on manual');
+    }
     else if (duration == 30 || duration == 60 || duration == 300){
         console.log('Timer length: ' + duration);
-        function redir(){
-            res.redirect('/'+league);
-            //TODO: replace with call to league page once I split them up
+        function redir(){;
+            leagueCall(league, req, res, streamPrefs);
         }
         setTimeout(redir, duration*1000);
     }
@@ -207,11 +210,12 @@ function leagueCall(league, req, res, streamPrefs){
     priority[1] = req.cookies.Priority1; 
     priority[2] = req.cookies.Priority2;   
     let reset = req.cookies.Reset;
+    res.cookie('Reset', 'false');
     isLoad = (req.cookies.Current == current);
     res.cookie('Current', 'null');
 
     function callReset(){   
-        res.cookie('Reset', 'false');
+        
         setTimeout(() => {   
             prefReset(priority);     
         }, );
@@ -225,7 +229,7 @@ function leagueCall(league, req, res, streamPrefs){
             if(league == 'MLB') mlbScrape(priority, streamPrefs); 
             else callScrape(current, priority, streamPrefs);     
             let duration = req.cookies.Timer;
-            timer(duration, current, res);  
+            timer(duration, current, req, res);  
             
         }, 100);       
     }

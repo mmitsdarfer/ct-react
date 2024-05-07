@@ -1,10 +1,10 @@
-import './main.css';
-import Preferences from './Preferences';
-import Home from './Home';
-import League from './League';
-import Stream from './StreamPref';
-import { logos } from './logos.js';
-import prefs from './json/preferences.json';
+import '../main.css';
+import Home from '../Pages/Home.js';
+import League from '../Pages/League.js';
+import Preferences from '../Pages/Preferences.js';
+import Stream from '../Pages/StreamPref.js';
+import { logos } from '../logos.js';
+import prefs from '../json/preferences.json';
 import {
   BrowserRouter as Router,
   Routes,

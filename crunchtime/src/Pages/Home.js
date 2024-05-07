@@ -1,5 +1,5 @@
-import data from './json/preferences.json';
-import { logos } from './logos';
+import data from '../json/preferences.json';
+import { logos } from '../logos';
 
 function League({current}){    
     for (let [key, value] of Object.entries(logos)) {
@@ -36,6 +36,7 @@ function LeagueList(){
 }
 
 export default function Home(){
+    
     return(
         <div>        
             <title>Crunch Time</title>

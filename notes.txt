@@ -3,21 +3,15 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-1 reset getting caught on true after clicking
-   reset also deletes 1 league -> only mlb & nba
-      this might not just be due to reset because it happened multiple times a good while after manually making reset false
-2 clicking logo fails to fetch sometimes
+1 clicking logo fails to fetch sometimes
    - just occasionally really slow
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
+   - curious if this happens on my desktop...could be a RAM thing (?)
 
 To do:
-2 Put react js files into a folder (?)
-3 Change tab name to reflect current page
-4 Fetch POST instead of cookies (?)
-5 Make so when standings are updated old standings are used until new ones are done scraping
-6 ctrl+f todo/to do
-7 is there a way to distinguish btwn espn+ and espn on cable? most people just have latter
+1 Fetch POST instead of cookies (?)
+2 Make so when standings are updated old standings are used until new ones are done scraping
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -35,13 +29,18 @@ To do:
    - Let user enter their local streams (?)
 
 Recently completed (since last push, so put in commit msg):
+Fixed reset getting stuck on true
+Made folders for React and Pages
+Made tab names reflect current page
 
 WIWWO: 
-4/25: finished td1
-Next: fix reset
+5/7: Made tab names reflect current page
 
-Using git:
-1. Make changes to code
-2. Commit
-3. Branch -> merge
-4. Compare and confirm merge/pull
+Odds, ends, and reminders
+   Using git:
+   1. Make changes to code
+   2. Commit
+   3. Branch -> merge
+   4. Compare and confirm merge/pull
+
+   When using res (like updating cookies) must eventually send res for it to be updated

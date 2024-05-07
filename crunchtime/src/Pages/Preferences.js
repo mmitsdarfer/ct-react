@@ -1,6 +1,6 @@
 import { useState } from "react";
-import data from './json/preferences.json';
-import { logos } from "./logos";
+import data from '../json/preferences.json';
+import { logos } from '../logos';
 
 function makeCapital(lower){
     return lower.charAt(0).toUpperCase() + lower.slice(1);
@@ -179,6 +179,7 @@ function Timer(){
 }
 
 export default function Preferences(){
+    document.title = 'Crunch Time Preferences';
     const getCookieValue = (name) => (
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
