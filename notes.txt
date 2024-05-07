@@ -15,11 +15,13 @@ To do:
 2 Put react js files into a folder (?)
 3 Change tab name to reflect current page
 4 Fetch POST instead of cookies (?)
+5 Make so when standings are updated old standings are used until new ones are done scraping
 6 ctrl+f todo/to do
-5 (Evergreen) Document code and check for unneeded parts
-6 (Evergreen) See if specific errors above still exist
-7 (Evergreen) Update readme
-8 (Evergreen/do if any new links show up) Add streaming/other online links
+7 is there a way to distinguish btwn espn+ and espn on cable? most people just have latter
+(Evergreen) Document code and check for unneeded parts
+(Evergreen) See if specific errors above still exist
+(Evergreen) Update readme
+(Evergreen/do if any new links show up) Add streaming/other online links
 - Pie in the sky/longterm:   
    - Add upcoming days
    - Combine multiple sports 
@@ -28,7 +30,8 @@ To do:
    - Add favorite teams(?)
       - Might make sense to wait until adding multiple sports
    - Don't re-scrape ended games to improve efficiency (?)
-   - Host on netlify or simlar (?)
+   - Host on netlify or simlar (?) 
+      -> Scott said AWS
    - Let user enter their local streams (?)
 
 Recently completed (since last push, so put in commit msg):

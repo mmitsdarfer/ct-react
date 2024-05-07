@@ -2,7 +2,7 @@ import { useState } from "react";
 import prefData from './json/preferences.json';
 
 export default function Stream(){
-    let netLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN', 'https://www.espn.com/watch/'], ['FOX', 'https://www.foxsports.com/live'],
+    let netLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], ['FOX', 'https://www.foxsports.com/live'],
             ['ABC', 'https://abc.com/watch-live/abc'], ['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
             ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], ['MLB Network', 'https://www.mlb.com/network/live?success=true'],
             ['MLBTV', 'https://www.mlb.com/tv'], ['NBA TV', 'https://www.nba.com/watch/nba-tv'],

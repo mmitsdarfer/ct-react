@@ -14,7 +14,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
         for(let j = 0; j < locTeams.length; j++){
             if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){ 
                 nets[i] = 'NBCSP';
-                if(availNets.find(chan => chan[0] === 'NBC Sports (local)') !== undefined) channels[i] = availNets.find(chan => chan[0] === 'NBC Sports (local)')[1];
+                if(availNets.find(chan => chan === 'NBC Sports (local)') !== undefined) channels[i] = availNets.find(chan => chan === 'NBC Sports (local)')[1];
                 else channels[i] = '/stream';
                 notPlus++;
                 return true;
