@@ -1,0 +1,111 @@
+/*for league.html */
+.games{                 
+    font-size: 24;
+    color: #1c1c1c;
+    padding-bottom: 10px;
+}
+.blank-btn{
+  opacity: 0;
+}
+.btn {
+    font: bold 14px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #1c1c1c;
+    border-bottom: 1px solid #1c1c1c;
+    border-left: 1px solid #CCCCCC;
+}
+.time{
+    padding: 0.35em;
+    text-align: center;
+    font: bold 14px Arial;        
+    text-decoration: none;
+    color: white;
+    background-color: #1c1c1c;
+    padding-top: 10px;  
+    padding-bottom: 5px; 
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-bottom: 1px solid #1c1c1c;
+    border-left: 1px solid #1c1c1c;
+}
+.scores{
+    text-align: right;
+    float: right;
+}
+.net{
+    text-align:center; 
+    padding-top: 10px;
+    font: bold 14px Arial;
+}  
+
+/*for leagueIndex.html */
+h1{font-size:50px;
+    text-align: center;
+    clear:left;
+    background-color: rgb(50, 120, 167);
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+h2{
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 20px;
+}
+.regbutton{background-color: rgb(50, 120, 167);
+    border: 0px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+body{background-color: rgb(50, 120, 167);}  
+.league-column{background-color: rgb(70, 120, 167);
+    padding: 16px;
+    display: table-cell;
+    border: solid;
+    width: 25%;
+}
+#alt-column{
+    background-color: rgb(50, 97, 141); 
+    width: 25%;
+}
+.league-row{display: table;
+    width: 100%;
+}
+img {display: block;
+    margin-left: auto;
+    margin-right: auto;
+} 
+.home{
+    background-color: rgb(50, 120, 167);
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: 0px;
+}
+.prefs{
+    background-color: rgb(50, 120, 167);
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    border: 0px;
+}
+.page-content{
+    position: relative;
+}
+.date{
+    background-color: rgb(56, 127, 175);
+    border: solid;
+    margin-top: 10px;
+}
+p{
+    text-align: center;
+}

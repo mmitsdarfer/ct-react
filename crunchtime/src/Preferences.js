@@ -1,6 +1,6 @@
 import { useState } from "react";
-import data from '../json/preferences.json';
-import { logos } from '../logos';
+import data from './json/preferences.json';
+import { logos } from "./logos";
 
 function makeCapital(lower){
     return lower.charAt(0).toUpperCase() + lower.slice(1);
@@ -53,7 +53,7 @@ function Dropdowns(){
                 <select className="select-priority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
                     <option value="diffs">Diffs</option>
                     <option value="times">Times</option> 
-                    <option value="stands">Stands</option>
+                    <option value="standings">Standings</option>
                 </select>            
             </div>
         )
@@ -66,7 +66,7 @@ function Dropdowns(){
                     2nd:
                 <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="times">Times</option> 
-                    <option value="stands">Stands</option>
+                    <option value="standings">Standings</option>
                 </select>
                 </div>
             )
@@ -77,13 +77,13 @@ function Dropdowns(){
                     2nd:
                     <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
                     <option value="diffs">Diffs</option>
-                    <option value="stands">Stands</option>
+                    <option value="standings">Standings</option>
                 </select>
                 </div>
                 
             )
         }
-        else if(topPriority === 'stands'){
+        else if(topPriority === 'standings'){
             return(
                 <div className="drop">
                     2nd:
@@ -116,7 +116,7 @@ function Dropdowns(){
             <br></br>
             Sort by games with closest scores (diffs),
             <br></br>closest to ending (times),
-            <br></br>or highest average of 2 teams' league rankings (stands)
+            <br></br>or highest average of 2 teams' league rankings (standings)
             <br></br><br></br>
         </div>  
     )
@@ -179,7 +179,6 @@ function Timer(){
 }
 
 export default function Preferences(){
-    document.title = 'Crunch Time: Preferences';
     const getCookieValue = (name) => (
         document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
     )
@@ -188,7 +187,7 @@ export default function Preferences(){
 
     function ResetButton(){
         return(
-            <button id="reset" type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
+            <button id="reset"type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
                 Reset visit data 
             </button> 
         )
@@ -228,7 +227,7 @@ export default function Preferences(){
     
         function LeagueList(){
             let leagueList = []; 
-            for(let i = 3; i < data.length; i++){
+            for(let i = 2; i < data.length; i++){
             Object.values(logos).forEach((value, index) => 
             {  
                 if(data[i][0] === Object.keys(logos)[index]){
@@ -240,7 +239,8 @@ export default function Preferences(){
                             <div key={"visitId"+index}>
                                 <Visits current={data[i][1]}></Visits>
                             </div>
-                        </div>      
+                        </div>
+                        
                     )
                 } 
                 index++;
@@ -252,7 +252,8 @@ export default function Preferences(){
         return(
             <div className="logo-vis">
                 <div> 
-                    <div id="vert-space"></div>         
+                    <div id="vert-space">
+                    </div>         
                     Times Visited:
                 </div> 
                 <LeagueList></LeagueList>
@@ -271,12 +272,7 @@ export default function Preferences(){
         <h4>Take me out to the ball (or puck) game:</h4>   
         <Switch></Switch>
         Turn on to be sent to a stream of #1 game by priority if available<br></br>
-        (You must allow popups to automatically be redirected to your stream)<br></br>
-        <br></br>
-
-        <a href={'//localhost:3000/stream'}>
-            <button button id="reset" type="submit">Change stream preferences</button>
-        </a>
+        (You must allow popups to automatically be redirected to your stream)
 
         <br></br>
         <Timer></Timer>

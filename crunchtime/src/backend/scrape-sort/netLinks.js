@@ -132,6 +132,16 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                     else channels[i] = '/stream';
                 }
             }
+            else if(league === 'MLB'){
+                if(!localStream(i)){
+                    nets[i] = 'MLBTV';
+                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                    }
+                    else channels[i] = '/stream';
+                    notPlus++;
+                }
+            }
             else{ 
                 if(!localStream(i)){
                     channels[i] = '';

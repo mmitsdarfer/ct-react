@@ -11,7 +11,6 @@ known errors:
 
 To do:
 1 Fetch POST instead of cookies (?)
-2 Make so when standings are updated old standings are used until new ones are done scraping
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -21,7 +20,7 @@ To do:
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
-   - Add favorite teams(?)
+   - Add favori  te teams(?)
       - Might make sense to wait until adding multiple sports
    - Don't re-scrape ended games to improve efficiency (?)
    - Host on netlify or simlar (?) 
@@ -29,12 +28,11 @@ To do:
    - Let user enter their local streams (?)
 
 Recently completed (since last push, so put in commit msg):
-Fixed reset getting stuck on true
-Made folders for React and Pages
-Made tab names reflect current page
+Fixed logo disappearing when hit count tied
+Made so old standings are used first, then standings are updated 
 
 WIWWO: 
-5/7: Made tab names reflect current page
+5/8: Made so old standings are used first, then standings are updated
 
 Odds, ends, and reminders
    Using git:
@@ -44,3 +42,10 @@ Odds, ends, and reminders
    4. Compare and confirm merge/pull
 
    When using res (like updating cookies) must eventually send res for it to be updated
+
+
+
+td2 things:
+function that just checks exist and needcheck and returns that
+if notexist or needcheck -> use regular data THEN get standings
+else use standings data

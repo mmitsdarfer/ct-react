@@ -94,9 +94,8 @@ function getCookies(req, res){
         parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
     }
     
-    let prefsOut = parsedPrefs;
-    prefsOut[1] = priority;
-    writeFile('../json/preferences.json', (JSON.stringify(prefsOut)), function(err){
+    parsedPrefs[1] = priority;
+    writeFile('../json/preferences.json', (JSON.stringify(parsedPrefs)), function(err){
         if(err) throw err;
     });
 }
@@ -113,7 +112,7 @@ app.use(express.json());
 
 //resets values of preferences.json or creates it with reset values
 async function prefReset(priority = ['diffs', 'times', 'stands']){
-    let prefData = JSON.stringify(["NHL", priority, ["TNT","ESPN","FOX","ABC","AppleTV+","TBS","FS1","MLB Network","NBC Sports (local)"],
+    let prefData = JSON.stringify(["NHL", priority, ["TNT","ESPN","FOX","ABC","AppleTV+","TBS","FS1","MLB Network","MLBTV", "NBATV", "NBC Sports (local)"],
          ["NBA", 0], ["MLB", 0], ["NFL", 0], ["NHL", 0]]);
     writeFile('../json/preferences.json', prefData, function(err){
         if(err) throw err;
@@ -141,17 +140,17 @@ function preferences(league, isLoad){
             if(isLoad) prefsList[i][1]++;
             prefsList[i] = [prefsList[i][0], prefsList[i][1]];
         }
-        prefHits[i-2] = prefsList[i][1];
+        prefHits[i-3] = prefsList[i][1];
     }
     let sorted = mergeSort(prefHits);
     let outList = [league, prefsList[1], prefsList[2]];
 
-    let outCount = 2; //start at lowest league position in preferences.json
+    let outCount = 3; //start at lowest league position in preferences.json
     for(let i = 0; i < sorted.length; i++){
-        for(let j = outCount; j < prefsList.length; j++){
+        for(let j = 3; j < prefsList.length; j++){
             if(sorted.indexOf(prefsList[j][1]) == i){
-                outCount++;
-                outList[outCount] = prefsList[j];                
+                outList[outCount] = prefsList[j]; 
+                outCount++;             
             }
         }
     }
@@ -215,7 +214,6 @@ function leagueCall(league, req, res, streamPrefs){
     res.cookie('Current', 'null');
 
     function callReset(){   
-        
         setTimeout(() => {   
             prefReset(priority);     
         }, );

@@ -15,7 +15,7 @@ var fullNets = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'ht
 ['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']];
 
 export default function League({league, logoData}){
-    document.title = league + ': Crunch Time';
+    document.title = 'Crunch Time: ' + league;
     const navigate = useNavigate();
 
     // line below hides unneeded warning (cookies not used)
