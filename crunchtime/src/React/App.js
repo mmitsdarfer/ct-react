@@ -6,7 +6,7 @@ import Stream from '../Pages/StreamPref.js';
 import { logos } from '../logos.js';
 import prefs from '../json/preferences.json';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
