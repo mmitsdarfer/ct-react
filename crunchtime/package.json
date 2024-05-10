@@ -53,5 +53,6 @@
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "./src/React/App.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "homepage": "https://main.d2xaziz412mdvm.amplifyapp.com/"
 }
