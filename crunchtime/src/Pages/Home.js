@@ -1,16 +1,17 @@
 import data from '../json/preferences.json';
 import { logos } from '../logos';
+import { Link } from 'react-router-dom';
 
 function League({current}){    
     for (let [key, value] of Object.entries(logos)) {
         if (key === current) {
             return(
                 <div>
-                    <a href={'/'+key}>
+                    <Link to={'/'+key}>
                         <button className="logo-img" type="submit">
                             <img width={value.width} height={value.height} src={value.link} alt={key + " logo"}/>
                         </button>
-                    </a>
+                    </Link>
                 </div>
             )    
         }
