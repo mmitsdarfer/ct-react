@@ -8,6 +8,7 @@ known errors:
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
+2 refreshes/clicking logo/timed refreshes are affecting hit count
 
 To do:
 1 Fetch POST instead of cookies (?)
@@ -20,7 +21,7 @@ To do:
    - Combine multiple sports 
       - Would need diffs to be to scale because 3 pt football game != 3 goal hockey game
       - Or could show the 1st of each sport, then the 2nd of each, and so on
-   - Add favori  te teams(?)
+   - Add favorite teams(?)
       - Might make sense to wait until adding multiple sports
    - Don't re-scrape ended games to improve efficiency (?)
    - Host on netlify or simlar (?) 
@@ -28,11 +29,11 @@ To do:
    - Let user enter their local streams (?)
 
 Recently completed (since last push, so put in commit msg):
-Fixed logo disappearing when hit count tied
-Made so old standings are used first, then standings are updated 
+
 
 WIWWO: 
 5/8: Made so old standings are used first, then standings are updated
+Next: check out aws
 
 Odds, ends, and reminders
    Using git:
@@ -43,9 +44,3 @@ Odds, ends, and reminders
 
    When using res (like updating cookies) must eventually send res for it to be updated
 
-
-
-td2 things:
-function that just checks exist and needcheck and returns that
-if notexist or needcheck -> use regular data THEN get standings
-else use standings data

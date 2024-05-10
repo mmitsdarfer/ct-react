@@ -14,7 +14,7 @@ import { callScrape } from './scrape-sort/scrape.js';
 
 var current;
 var takeMe;
-var isLoad
+var isLoad;
 
 //merge and mergesort used to rank leagues by most views
 function merge(left, right){
@@ -259,7 +259,6 @@ app.use(cors({origin:true,credentials: true}));
 
 app.post('/stream', (req, res) => {
     var availNets = req.body;
-   // updateNets(availNets);
     let parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
     parsedPrefs[2] = availNets;
     streamPrefs = availNets;
