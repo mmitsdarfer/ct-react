@@ -6,7 +6,7 @@ function League({current}){
         if (key === current) {
             return(
                 <div>
-                    <a href={'//localhost:3000/'+key}>
+                    <a href={'/'+key}>
                         <button className="logo-img" type="submit">
                             <img width={value.width} height={value.height} src={value.link} alt={key + " logo"}/>
                         </button>
