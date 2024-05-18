@@ -8,7 +8,7 @@ known errors:
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
-2 refreshes/clicking logo/timed refreshes are affecting hit count
+2 timed refreshes are affecting hit count and continue after leaving page
 
 To do:
 1 Fetch POST instead of cookies (?)
@@ -32,8 +32,11 @@ Recently completed (since last push, so put in commit msg):
 
 
 WIWWO: 
-5/8: Made so old standings are used first, then standings are updated
-Next: check out aws
+5/9: Trying to get AWS to work but it just shows a blank page. Maybe try with a starter react app and go
+   from there?
+
+Deploying to web things:
+
 
 Odds, ends, and reminders
    Using git:
