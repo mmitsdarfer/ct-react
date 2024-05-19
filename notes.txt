@@ -32,8 +32,8 @@ Recently completed (since last push, so put in commit msg):
 
 
 WIWWO: 
-5/9: Trying to get AWS to work but it just shows a blank page. Maybe try with a starter react app and go
-   from there?
+5/18: using mongodb tutorial stuff to CRUD to a database 
+doing mongodb tutorial to try to put data on there instead of json
 
 Deploying to web things:
 

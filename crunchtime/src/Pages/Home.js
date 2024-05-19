@@ -1,6 +1,9 @@
 import data from '../json/preferences.json';
 import { logos } from '../logos';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+
+const baseUrl = "http://localhost:8000";
 
 function League({current}){    
     for (let [key, value] of Object.entries(logos)) {
@@ -37,7 +40,16 @@ function LeagueList(){
 }
 
 export default function Home(){
-    
+
+    useEffect(() => {
+        const loadDb = async () => {
+            let results = await fetch(`${baseUrl}/leagues/mlb`).then(resp =>
+                resp.json());
+                console.log(results);
+        }
+        loadDb();
+    }, []);
+
     return(
         <div>        
             <title>Crunch Time</title>
