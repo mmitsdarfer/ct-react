@@ -1,9 +1,8 @@
 import data from '../json/preferences.json';
 import { logos } from '../logos';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-
-const baseUrl = "http://localhost:8000";
+const PORT = process.env.PORT || 5000;
+const baseUrl = `http://localhost:${PORT}`;
 
 function League({current}){    
     for (let [key, value] of Object.entries(logos)) {
@@ -24,15 +23,14 @@ function League({current}){
 function LeagueList(){
     let leagueList = []; 
     for(let i = 3; i < data.length; i++){
-    Object.values(logos).forEach((value, index) => 
-    {  
-            if(data[i][0] === Object.keys(logos)[index]){
-                leagueList[i] = (
-                    <div key={"leagueId"+index} className="column">
-                        <League current={data[i][0]}></League>
-                    </div>
-                )
-            } 
+    Object.values(logos).forEach((value, index) => {  
+        if(data[i][0] === Object.keys(logos)[index]){
+            leagueList[i] = (
+                <div key={"leagueId"+index} className="column">
+                    <League current={data[i][0]}></League>
+                </div>
+            )
+        } 
         index++;
     })
     }
@@ -40,16 +38,18 @@ function LeagueList(){
 }
 
 export default function Home(){
+    //read from pref db
+    //url should be base/preferences/[id for that username]
+    //READ
+    const USER = 'mikeymits'
+    const loadLatest = async () => {
+        let results = await fetch(`${baseUrl}/preferences/${USER}`).then(resp => resp.json());
+        if(results[0] === undefined){
 
-    useEffect(() => {
-        const loadDb = async () => {
-            let results = await fetch(`${baseUrl}/leagues/mlb`).then(resp =>
-                resp.json());
-                console.log(results);
-        }
-        loadDb();
-    }, []);
+        }  
+    }
 
+    //use that for logos
     return(
         <div>        
             <title>Crunch Time</title>

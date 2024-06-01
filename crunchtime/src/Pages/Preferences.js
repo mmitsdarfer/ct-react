@@ -2,6 +2,12 @@ import { useState } from "react";
 import data from '../json/preferences.json';
 import { logos } from '../logos';
 
+/*
+read preference db
+show on this page
+if changes made update db
+*/
+
 function makeCapital(lower){
     return lower.charAt(0).toUpperCase() + lower.slice(1);
 }

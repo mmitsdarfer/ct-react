@@ -231,7 +231,7 @@ function leagueCall(league, req, res, streamPrefs){
             
         }, 100);       
     }
-    writeLeague();  
+    writeLeague();
 }
 
 app.get('/nhl', (req, res) => {

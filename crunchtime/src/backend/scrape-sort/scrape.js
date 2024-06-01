@@ -10,13 +10,6 @@ var url;
 var data = {};  //object json data will be stored in
 var gameData = {};
 
-//league and priority come from preferencs.json on original call
-if (fs.existsSync('../json/preferences.json')) {
-    const parsedPrefs = JSON.parse(fs.readFileSync('../json/preferences.json', 'utf-8'));
-    league = parsedPrefs[0];
-    priority = parsedPrefs[1];
-}
-
 //converts time and saves it to data obj separately
 function timeToObj(data, league){   
     for(let i = 0; i < data.length; i++){

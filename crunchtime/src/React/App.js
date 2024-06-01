@@ -3,7 +3,6 @@ import Home from '../Pages/Home.js';
 import League from '../Pages/League.js';
 import Preferences from '../Pages/Preferences.js';
 import Stream from '../Pages/StreamPref.js';
-import Test from '../Pages/Test.js';
 import { logos } from '../logos.js';
 import prefs from '../json/preferences.json';
 import {
@@ -131,9 +130,6 @@ function App(){
         } />
         <Route exact path='/nba' element={
             <LeaguePage league={'NBA'}></LeaguePage>
-        } />
-        <Route exact path='test' element={
-          <Test></Test>
         } />
       </Routes>
     </Router>      

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import database from './database.js';
 
 //merge & mergesort to rank the diffs
 function merge(left, right){
@@ -166,49 +167,6 @@ function standSort(data){
     }
 
     return data;
-}
-
-//write to league page based on previous sorts
-function toJson(data, league, date){
-    let jsonData = {};
-    jsonData.table = [];
-    let obj = {};
-    for(let i = 0; i < data.length; i++){
-        if(data[i] !== undefined){
-            for(let j = 0; j < data[i].length; j++){
-                obj = {
-                    team1: data[i][j].team1,
-                    score1: data[i][j].score1,
-                    logo1: data[i][j].logo1,
-                    team2: data[i][j].team2,
-                    score2: data[i][j].score2,
-                    logo2: data[i][j].logo2,
-                    progress: data[i][j].progress,
-                    time: data[i][j].time,
-                    network: data[i][j].network,
-                    link: data[i][j].link
-                }
-                jsonData.table.push(obj);
-            }
-        }
-        else{
-            obj = {
-                team1: data[i].team1,
-                score1: data[i].score1,
-                team2: data[i].team2,
-                score2: data[i].score2,
-                progress: data[i].progress,
-                time: data[i].time,
-                network: data[i].network,
-                link: data[i].link
-            }
-            jsonData.table.push(obj);
-        }      
-    }
-    jsonData.table.push({date: date});
-    fs.writeFile('../json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
-        if(err) throw err;
-    }); 
 }
 
 //calls each type of sort and uses those rankings with priorities to come up with final sorted order and send that to json
@@ -449,7 +407,7 @@ export function finalSort(data, priority, league, date){
 
     console.log('Priority: ' + priority);
     console.log(thirdOrder); 
-    toJson(thirdOrder, league, date); 
+    database(thirdOrder, league, date);    
 }
 
 export default finalSort;

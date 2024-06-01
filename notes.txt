@@ -8,10 +8,13 @@ known errors:
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
-2 timed refreshes are affecting hit count and continue after leaving page
+2 double db entries were sometimes being created...possibly fixed
 
 To do:
 1 Fetch POST instead of cookies (?)
+2 See if timezones matter for mongodb vs new Date
+3 instead of delete and create in database.js, figure out update
+4 add NBC
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -27,16 +30,24 @@ To do:
    - Host on netlify or simlar (?) 
       -> Scott said AWS
    - Let user enter their local streams (?)
+   - Add login for each user's preferences
 
 Recently completed (since last push, so put in commit msg):
+Added mongodb server
 
+To do but it's specific:   
+Use mongodb data to update react pages, not json
+Test that new leagueDate creates new db entry
 
 WIWWO: 
-5/18: using mongodb tutorial stuff to CRUD to a database 
-doing mongodb tutorial to try to put data on there instead of json
+5/25: replacing jsons with dbs
+      -> added leagueDate to sort by
 
 Deploying to web things:
-
+Mapping out database things:
+   1) READ from league db
+   2a) if entry for current date UPDATE
+   2b) if no entry for current date CREATE
 
 Odds, ends, and reminders
    Using git:

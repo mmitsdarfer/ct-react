@@ -64,7 +64,7 @@ export async function mlbScrape(priority, availNets){
                     scores[i] = '-';
                     scores[i+1] = '-';              
                 }
-                else if(times[i/2].includes('AM') || times[i/2].includes('PM')){
+                else if(times[i/2].endsWith('AM') || times[i/2].endsWith('PM')){
                     //if(firstUnstart == 0) firstUnstart = i;
                     scores[i] = '-';
                     scores[i+1] = '-';
@@ -74,13 +74,6 @@ export async function mlbScrape(priority, availNets){
                     scores[i] = document.querySelectorAll('.ScoreCell__Score')[i].textContent;
                     scores[i+1] = document.querySelectorAll('.ScoreCell__Score')[i+1].textContent;
                 }
-            }
-        }
-
-        for(let i = 0; i < teamLen; i++){
-            if(scores[i].includes('-') && /^\d/.test(scores[i])){   //if has dash and starts with a number for when espn puts records in place of scores for unstarted games 
-                scores.splice(i, 1);
-                i--;
             }
         }
 
