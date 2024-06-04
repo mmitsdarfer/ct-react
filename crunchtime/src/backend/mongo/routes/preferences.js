@@ -25,9 +25,7 @@ router.get("/", async (req, res) => {
   //Get id from username
   router.get("/:user", async (req, res) => {
     let collection = await db.collection("preferences");
-    let query = {user: params}; //WIWWO: CONVERTING UNAME TO ID. NEED TO FIGURE OUT PROPER PARAMS
-    let result = await collection.findOne(query);
-  
+    let result = await collection.findOne({user: req.params.user});
     if (!result) res.send("Not found").status(404);
     else res.send(result).status(200);
   });

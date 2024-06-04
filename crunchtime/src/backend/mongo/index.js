@@ -6,6 +6,7 @@ import mlb from './routes/mlb.js';
 import nhl from './routes/nhl.js';
 import nfl from './routes/nfl.js';
 import nba from './routes/nba.js';
+import preferences from './routes/preferences.js';
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use('/mlb', mlb);
 app.use('/nhl', nhl);
 app.use('/nfl', nfl);
 app.use('/nba', nba);
+app.use('/preferences', preferences);
 
 // Global error handling
 app.use((err, _req, res, next) => {

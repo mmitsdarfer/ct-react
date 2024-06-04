@@ -9,6 +9,7 @@ known errors:
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
 2 double db entries were sometimes being created...possibly fixed
+3 reset back to getting stuck on true
 
 To do:
 1 Fetch POST instead of cookies (?)
@@ -40,6 +41,9 @@ Use mongodb data to update react pages, not json
 Test that new leagueDate creates new db entry
 
 WIWWO: 
+6/3: Home.js is fully db dependent! (I think). Go to Preferences.js next to:
+   - Update views in db
+   - Change other prefs with db
 5/25: replacing jsons with dbs
       -> added leagueDate to sort by
 
