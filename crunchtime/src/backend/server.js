@@ -12,9 +12,14 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { callScrape } from './scrape-sort/scrape.js';
 
+const dbPORT = process.env.dbPORT || 5000;
+const baseUrl = `http://localhost:${dbPORT}`;
+const USER = 'mikeymits'; //TODO: replace with login
+
 var current;
 var takeMe;
 var isLoad;
+var time = 0;
 
 //merge and mergesort used to rank leagues by most views
 function merge(left, right){
@@ -35,6 +40,15 @@ function mergeSort(arr){
     let left = mergeSort(arr.slice(0, mid));
     let right = mergeSort(arr.slice(mid));
     return merge(left, right);
+}
+
+
+
+async function loadDb(){
+    let results = await fetch(`${baseUrl}/preferences/${USER}`)
+    .then(resp => resp.json())
+    .catch(err => {console.log(`No user "${USER}" found`)});
+    time = parseInt(results.refresh);
 }
 
 app.use(cookieParser());
@@ -162,20 +176,24 @@ function preferences(league, isLoad){
     }); 
 }
 
-function timer(duration, league, req, res){
-    if(duration == 'manual') {
+function timer(league, req, res){
+    loadDb();
+    console.log('timer');
+    console.log(time);
+    console.log(typeof(time))
+    if(time == 0) {
         console.log('Auto-refresh set to manual');
         res.send('Timer on manual');
     }
-    else if (duration == 30 || duration == 60 || duration == 300){
-        console.log('Timer length: ' + duration);
+    else if (time == 30 || time == 60 || time == 300){
+        console.log('Timer length: ' + time);
         function redir(){;
             leagueCall(league, req, res, streamPrefs);
         }
-        setTimeout(redir, duration*1000);
+        setTimeout(redir, time*1000);
     }
     else{
-        duration = 'manual';
+        time = 'manual';
         res.cookie('Timer', 'manual');
         res.send('Timer updated'); //need to send for res to update cookie
     }
@@ -226,8 +244,8 @@ function leagueCall(league, req, res, streamPrefs){
             preferences(current, isLoad); 
             if(league == 'MLB') mlbScrape(priority, streamPrefs); 
             else callScrape(current, priority, streamPrefs);     
-            let duration = req.cookies.Timer;
-            timer(duration, current, req, res);  
+           // let duration = req.cookies.Timer;
+            timer(current, req, res);  
             
         }, 100);       
     }

@@ -21,26 +21,39 @@ function League({current}){
 }
 
 function LeagueList(){
-    const USER = 'mikeymits';
+    const USER = 'mikeymits'; //replace with login
     const [resultKeys, setResultKeys] = useState([])
     useEffect(() => {
         const loadLatest = async () => {
-            let results = await fetch(`${baseUrl}/preferences/${USER}`).then(resp => resp.json());
+            let results = await fetch(`${baseUrl}/preferences/${USER}`)
+            .then(resp => resp.json())
+            .catch(err => {console.log(`No user ${USER} found`)});
             if(results === undefined){
+                results = {
+                    _id: '-',
+                    user: USER,
+                    priority: ['diffs', 'times', 'stands'],
+                    streams: '-',
+                    NBA: 0,
+                    MLB: 0,
+                    NFL: 0,
+                    NHL: 0
+                }
+                setResultKeys(Object.keys(results));
             } 
             else{                
                 setResultKeys(Object.keys(results)); //need order of leagues
             }
         }
         loadLatest();
-    },  // line below hides unneeded warning
+    }, 
     []);  
 
     let leagueList = [];
     for(let i = 0; i < 4; i++){
         leagueList[i] = (
-            <div key={"leagueId"+(i-4)} className="column">
-             <League current={ resultKeys[i+4]}></League>
+        <div key={"leagueId"+(i-4)} className="column">
+            <League current={ resultKeys[i+4]}></League>
         </div>
         )
     }
@@ -49,13 +62,6 @@ function LeagueList(){
 }
 
 export default function Home(){
-    //read from pref db
-    //url should be base/preferences/[id for that username]
-    //READ
-    
-
-    //use that for logos
-    // <LeagueList></LeagueList> 
     return(
         <div>        
             <title>Crunch Time</title>

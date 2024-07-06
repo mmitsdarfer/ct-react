@@ -60,13 +60,18 @@ router.get("/", async (req, res) => {
   });
 
   //replace an entry (keep id, change values)
-  router.patch("/:id", async (req, res) => {
-    const query = { _id: new ObjectId(req.params.id) };
+  //WIWWO: TRYING TO CONVERT USERNAME TO ID TO USE AS QUERY
+  router.patch("/:user", async (req, res) => {
+    let collection = await db.collection("preferences");
+    let convertResult = await collection.findOne({user: req.params.user});
+    let _id = convertResult._id;
+    const query = { _id };
     const newData = req.body;
     newData.date = new Date();
 
-    let collection = await db.collection("preferences");
     let result = await collection.replaceOne(query, newData);
+    let newResult = await collection.findOne(query);
+    console.log(newResult)
 
     res.send(result).status(200);
   });

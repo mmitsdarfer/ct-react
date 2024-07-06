@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from '../json/preferences.json';
 import { logos } from '../logos';
+
+const PORT = process.env.PORT || 5000;
+const baseUrl = `http://localhost:${PORT}`;
 
 /*
 read preference db
@@ -10,178 +13,6 @@ if changes made update db
 
 function makeCapital(lower){
     return lower.charAt(0).toUpperCase() + lower.slice(1);
-}
-
-function Dropdowns(){
-    let priority = [];
-    function readCookies(){
-        const getCookieValue = (name) => (
-            document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-        )
-        priority[0] = getCookieValue('Priority0');
-        priority[1] = getCookieValue('Priority1');
-        priority[2] = getCookieValue('Priority2');
-    }
-    readCookies();
-
-    const [topPriority, setTop] = useState(priority[0]); 
-    const [midPriority, setMid] = useState(priority[1]);
-    const [lastPriority, setLast] = useState(priority[2]);
-
-    function setCookies(choice, rank){
-        if(rank === 0){
-            if(priority[1] === choice){
-                document.cookie = "Priority1="+priority[0];
-                document.cookie = "Priority0="+choice;
-            }
-            else if(priority[2] === choice){
-                document.cookie = "Priority2="+priority[1];
-                document.cookie = "Priority1="+priority[0];
-                document.cookie = "Priority0="+choice;
-            }
-            setMid(priority[0]); 
-        } 
-        else if(rank === 1){
-            if(priority[2] === choice){
-                document.cookie = "Priority2="+priority[1];
-                document.cookie = "Priority1="+choice;
-            }
-        }   
-        readCookies();
-        setLast(priority[2]);
-    }
-
-    function TopDrop(){
-        let topVal = priority[0];
-        return(
-            <div className="drop">
-                Top:
-                <select className="select-priority" value={topVal} onChange={(e) => {setTop(e.target.value); setCookies(e.target.value, 0);}}>
-                    <option value="diffs">Diffs</option>
-                    <option value="times">Times</option> 
-                    <option value="stands">Stands</option>
-                </select>            
-            </div>
-        )
-    }
-
-    function MidDrop(){
-        if(topPriority === 'diffs'){
-            return(
-                <div className="drop">
-                    2nd:
-                <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
-                    <option value="times">Times</option> 
-                    <option value="stands">Stands</option>
-                </select>
-                </div>
-            )
-        }
-        else if(topPriority === 'times'){
-            return(
-                <div className="drop">
-                    2nd:
-                    <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
-                    <option value="diffs">Diffs</option>
-                    <option value="stands">Stands</option>
-                </select>
-                </div>
-                
-            )
-        }
-        else if(topPriority === 'stands'){
-            return(
-                <div className="drop">
-                    2nd:
-                    <select className="select-priority" value={midPriority} onChange={(e) => {setMid(e.target.value); setCookies(e.target.value, 1)}}>
-                        <option value="diffs">Diffs</option>
-                        <option value="times">Times</option> 
-                    </select>
-                </div>             
-            )
-        }
-    }
-
-    function LastDrop(){
-        return(
-            <div className="drop">
-                3rd:
-            <select className="select-priority" defaultValue={lastPriority}>
-                <option value={lastPriority}>{makeCapital(lastPriority)}</option>
-            </select>
-            </div>
-           
-        )
-    }
-
-    return(
-        <div>
-            <TopDrop></TopDrop>     
-            <MidDrop></MidDrop>
-            <LastDrop></LastDrop>     
-            <br></br>
-            Sort by games with closest scores (diffs),
-            <br></br>closest to ending (times),
-            <br></br>or highest average of 2 teams' league rankings (stands)
-            <br></br><br></br>
-        </div>  
-    )
-}
-
-function Switch(){
-    let takeVal;
-    function readCookies(){
-      const getCookieValue = (name) => (
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-      )
-      takeVal = getCookieValue('Take');
-    }
-    readCookies();
-    const [take, setTake] = useState(takeVal === 'true'); //cookies are strings, so turn to boolean
-    
-    function changeTake(){
-        document.cookie = "Take="+!take;
-        setTake(!take);
-        readCookies();
-    }
-
-    function TakeMe(){
-        readCookies();
-        return( 
-            <input className="switch-input" id="check" type="checkbox" onChange={e => changeTake()} checked={take}/>
-        )
-    }
-    return(
-      <div>
-        <label className="switch">
-          <TakeMe></TakeMe>
-          <span className="switch-label" data-on="On" data-off="Off"></span> 
-          <span className="switch-handle"></span> 
-        </label>
-      </div>
-      
-    )
-}
-
-function Timer(){
-    const getCookieValue = (name) => (
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-    )
-    let cookieTime = getCookieValue('Timer');
-    return(
-        <div>
-            <br></br><h4>Choose auto-refresh frequency:</h4>
-            <div id="timer">
-                <select id="select-timer" defaultValue={cookieTime} onChange={e => document.cookie = "Timer="+e.target.value}>
-                    <option value="manual">Don't auto refresh</option>
-                    <option value="30">30 seconds</option> 
-                    <option value="60">1 minute</option> 
-                    <option value="300">5 minutes</option> 
-                </select>
-            </div>
-           
-        </div>  
-    )
 }
 
 export default function Preferences(){
@@ -199,7 +30,252 @@ export default function Preferences(){
             </button> 
         )
     }
+
+    const USER = 'mikeymits'; //TODO: replace with login
+    const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
+    const [nets, setNets] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBC Sports (local)"]);
+    const [leagues, setLeagues] = useState([{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}]);
+    const [take, setTake] = useState(false);
+    const [refresh, setRefresh] = useState(0);
+
+    const [topPriority, setTop] = useState(); 
+    const [midPriority, setMid] = useState();
+    const [lastPriority, setLast] = useState();
     
+    useEffect(() => {
+        async function loadLatest(){
+            let results = await fetch(`${baseUrl}/preferences/${USER}`)
+            .then(resp => resp.json())
+            .catch(err => {console.log(`No user "${USER}" found`)});
+            if(results === undefined){
+                results = {
+                    priority: ['diffs', 'times', 'stands'],
+                    streams: nets,
+                    leagues: [{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}],
+                    take: take,
+                    refresh: refresh
+                }
+                //top = diffs, mid = times, last = stands
+            }
+            else{           
+                setPriority(results.priority);
+                setTop(results.priority[0]);
+                setMid(results.priority[1]);
+                setLast(results.priority[2]);
+                setNets(results.streams);
+                setLeagues(results.leagues);
+                setTake(results.take);
+                setRefresh(results.refresh);
+            }
+            
+        }
+        loadLatest();
+        //line below gets rid of misleading warning
+        // eslint-disable-next-line
+    }, []);   
+    
+    async function updateDbPriority(top, mid, last){
+            await fetch(`${baseUrl}/preferences/${USER}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                user: USER, 
+                priority: [top, mid, last], 
+                streams: nets,
+                leagues: leagues,
+                take: take,
+                refresh: refresh
+            })
+            });
+            console.log('Priority updated');
+    }
+    
+    function Dropdowns({priority}){    
+        function TopDrop(){
+            return(
+                <div className="drop">
+                    Top:
+                    <select className="select-priority" value={topPriority} onChange={(e) => {
+                        setTop(e.target.value); 
+                        if(e.target.value !== priority[1]){
+                            setPriority([e.target.value, priority[0], priority[1]]);
+                            updateDbPriority(e.target.value, priority[0], priority[1]);
+                        }
+                        else{
+                            setPriority([e.target.value, priority[0], priority[2]]);
+                            updateDbPriority(e.target.value, priority[0], priority[2]);
+                        }
+                        setMid(priority[0]);
+                        setLast(priority[2]);                        
+                    }}>
+                        <option value="diffs">Diffs</option>
+                        <option value="times">Times</option> 
+                        <option value="stands">Stands</option>
+                    </select>            
+                </div>
+            )
+        }
+    
+        function MidDrop(){
+            if(priority[0] === 'diffs'){
+                return(
+                    <div className="drop">
+                        2nd:
+                    <select className="select-priority" value={midPriority} onChange={(e) => {
+                        setMid(e.target.value); 
+                        setPriority([priority[0], e.target.value, priority[1]]);
+                        setLast(priority[2]);
+                        updateDbPriority(priority[0], e.target.value, priority[1]);
+                    }
+                    }>
+                        <option value="times">Times</option> 
+                        <option value="stands">Stands</option>
+                    </select>
+                    </div>
+                )
+            }
+            else if(priority[0] === 'times'){
+                return(
+                    <div className="drop">
+                        2nd:
+                        <select className="select-priority" value={midPriority} onChange={(e) => {
+                            setMid(e.target.value);
+                            setPriority([priority[0], e.target.value, priority[1]]);
+                            setLast(priority[2]);
+                            updateDbPriority(priority[0], e.target.value, priority[1]);
+                            }}>
+                        <option value="diffs">Diffs</option>
+                        <option value="stands">Stands</option>
+                    </select>
+                    </div>
+                    
+                )
+            }
+            else if(priority[0] === 'stands'){
+                return(
+                    <div className="drop">
+                        2nd:
+                        <select className="select-priority" value={midPriority} onChange={(e) => 
+                            {setMid(e.target.value);
+                            setPriority([priority[0], e.target.value, priority[1]]);
+                            setLast(priority[2]);
+                            updateDbPriority(priority[0], e.target.value, priority[1]);
+                            }}>
+                            <option value="diffs">Diffs</option>
+                            <option value="times">Times</option> 
+                        </select>
+                    </div>             
+                )
+            }
+        }
+    
+        function LastDrop(){
+            return(
+                <div className="drop">
+                    3rd:
+                <select className="select-priority" defaultValue={lastPriority}>
+                    <option value={priority[2]}>{makeCapital(priority[2])}</option>
+                </select>
+                </div>
+               
+            )
+        }
+    
+        return(
+            <div>
+                <TopDrop></TopDrop>     
+                <MidDrop></MidDrop>
+                <LastDrop></LastDrop>     
+                <br></br>
+                Sort by games with closest scores (diffs),
+                <br></br>closest to ending (times),
+                <br></br>or highest average of 2 teams' league rankings (stands)
+                <br></br><br></br>
+            </div>  
+        )
+    }
+
+    function Switch(){  
+        async function updateDbTake(newTake){
+            await fetch(`${baseUrl}/preferences/${USER}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                user: USER, 
+                priority: [topPriority, midPriority, lastPriority], 
+                streams: nets,
+                leagues: leagues,
+                take: newTake,
+                refresh: refresh
+            })
+            });
+            console.log('Take updated');
+    }
+        
+        function changeTake(){
+            updateDbTake(!take);
+            setTake(!take);
+        }
+    
+        function TakeMe(){
+            return( 
+                <input className="switch-input" id="check" type="checkbox" onChange={e => changeTake()} checked={take}/>
+            )
+        }
+
+        return(
+          <div>
+            <label className="switch">
+              <TakeMe></TakeMe>
+              <span className="switch-label" data-on="On" data-off="Off"></span> 
+              <span className="switch-handle"></span> 
+            </label>
+          </div>
+          
+        )
+    }
+    
+    function Timer(){  
+        async function updateDbTimer(newTime){
+            await fetch(`${baseUrl}/preferences/${USER}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                user: USER, 
+                priority: [topPriority, midPriority, lastPriority], 
+                streams: nets,
+                leagues: leagues,
+                take: take,
+                refresh: newTime
+            })
+            });
+            console.log('Timer updated');
+        }
+
+        return(
+            <div>
+                <br></br><h4>Choose auto-refresh frequency:</h4>
+                <div id="timer">
+                    <select id="select-timer" defaultValue={refresh} onChange={(e) => {
+                        document.cookie = "Timer="+e.target.value;
+                        updateDbTimer(e.target.value);
+                        }}>
+                        <option value="0">Don't auto refresh</option>
+                        <option value="30">30 seconds</option> 
+                        <option value="60">1 minute</option> 
+                        <option value="300">5 minutes</option> 
+                    </select>
+                </div>          
+            </div>  
+        )
+    }
+
     //nested in Preferences function because it uses state of reset
     function VisitData(){
         function League({current}){    
@@ -272,7 +348,7 @@ export default function Preferences(){
     <div>
         <h1>Preferences</h1>
         <h3>Priorities:</h3>
-        <Dropdowns></Dropdowns>
+        <Dropdowns priority={priority}></Dropdowns>
 
         <h4>Take me out to the ball (or puck) game:</h4>   
         <Switch></Switch>
@@ -281,7 +357,7 @@ export default function Preferences(){
         <br></br>
 
         <a href={'//localhost:3000/stream'}>
-            <button button id="reset" type="submit">Change stream preferences</button>
+            <button id="reset" type="submit">Change stream preferences</button>
         </a>
 
         <br></br>

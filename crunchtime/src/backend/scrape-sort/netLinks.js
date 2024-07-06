@@ -1,8 +1,11 @@
 //converts networks to applicable links and determines if those links are available
-let streamLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], ['FOX', 'https://www.foxsports.com/live'],
-    ['ABC', 'https://abc.com/watch-live/abc'], ['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
-    ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], ['MLB Network', 'https://www.mlb.com/network/live?success=true'],
-    ['MLBTV', 'https://www.mlb.com/tv'], ['NBA TV', 'https://www.nba.com/watch/nba-tv'],
+let streamLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], 
+    ['FOX', 'https://www.foxsports.com/live'], ['ABC', 'https://abc.com/watch-live/abc'],
+    ['NBC', 'https://www.nbc.com/live?brand=nbc'], ['CBS', 'https://www.cbs.com/live-tv/stream'],
+    ['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
+    ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], 
+    ['MLB Network', 'https://www.mlb.com/network/live?success=true'], ['MLBTV', 'https://www.mlb.com/tv'],
+    ['NBA TV', 'https://www.nba.com/watch/nba-tv'],
     ['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
 
 export default function netLinks(nets, teams, progress, numGames, links, league, availNets){
@@ -14,7 +17,9 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
         for(let j = 0; j < locTeams.length; j++){
             if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){ 
                 nets[i] = 'NBCSP';
-                if(availNets.find(chan => chan === 'NBC Sports (local)') !== undefined) channels[i] = availNets.find(chan => chan === 'NBC Sports (local)')[1];
+                if(availNets.find(chan => chan === 'NBC Sports (local)') !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === 'NBC Sports (local)')[1];
+                }
                 else channels[i] = '/stream';
                 notPlus++;
                 return true;
@@ -66,6 +71,20 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                 notPlus++;
             }
             else if(nets[i] === 'ABC'){
+                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                }
+                else channels[i] = '/stream';
+                notPlus++;
+            }
+            else if(nets[i] === 'NBC'){
+                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                }
+                else channels[i] = '/stream';
+                notPlus++;
+            }
+            else if(nets[i] === 'CBS'){
                 if(availNets.find(chan => chan === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }

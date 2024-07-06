@@ -59,10 +59,8 @@ router.patch("/:id", async (req, res) => {
   const query = { _id: new ObjectId(req.params.id) };
   const newData = req.body;
   newData.date = new Date();
-
   let collection = await db.collection("mlb");
   let result = await collection.replaceOne(query, newData);
-
   res.send(result).status(200);
 });
 

@@ -56,13 +56,13 @@ export function timeConversion(league, time){
             frame = 0;
         }
         else if(time[0] == 'Mid'){
-            frame = 0.5;
-        }
-        else if(time[0] == 'Bot'){
             frame = 1;
         }
+        else if(time[0] == 'Bot'){
+            frame = 2;
+        }
         else if(time[0] == 'End'){
-            frame = 0.9;
+            frame = 3;
         }
         else if(time[0] == 'Rain'){
             time[1] = parseInt(time[3]);
@@ -70,10 +70,13 @@ export function timeConversion(league, time){
                 frame = 0;
             }
             else if(time[2] == 'Mid'){
-                frame = 0.5;
+                frame = 1;
             }
             else if(time[2] == 'Bot'){
-                frame = 1;
+                frame = 2;
+            }
+            else if(time[2] == 'End'){
+                frame = 3;
             }
         }
         

@@ -8,14 +8,19 @@ known errors:
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
-2 double db entries were sometimes being created...possibly fixed
+2 double db entries sometimes created
+   - seems to be first entry of a new date
 3 reset back to getting stuck on true
+4 button for "watch on..." when it should be "log in..."
+   - changes to how it's supposed to be the next time there's a refresh
 
 To do:
 1 Fetch POST instead of cookies (?)
 2 See if timezones matter for mongodb vs new Date
 3 instead of delete and create in database.js, figure out update
-4 add NBC
+4 tell user if on espn or espn+
+5 Make sure need to configure new IP when changing location only for server, not potential users
+6 fix unexpected token timer on manual not valid json on league pages
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -32,20 +37,26 @@ To do:
       -> Scott said AWS
    - Let user enter their local streams (?)
    - Add login for each user's preferences
+   - Display standings
 
 Recently completed (since last push, so put in commit msg):
 Added mongodb server
 
 To do but it's specific:   
-Use mongodb data to update react pages, not json
-Test that new leagueDate creates new db entry
+Make priority dropdowns update db
+   onchange write setpriority to db
+See if removing priority cookies makes sense
+Add standings to db
 
 WIWWO: 
+7/6: dropdowns and take have been changed to db, have to figure out how to do timer since that's in server
+   - Then:
+      - Visits in db (including reset)
+      - And whole streampref page in db
 6/3: Home.js is fully db dependent! (I think). Go to Preferences.js next to:
    - Update views in db
    - Change other prefs with db
 5/25: replacing jsons with dbs
-      -> added leagueDate to sort by
 
 Deploying to web things:
 Mapping out database things:
@@ -61,4 +72,6 @@ Odds, ends, and reminders
    4. Compare and confirm merge/pull
 
    When using res (like updating cookies) must eventually send res for it to be updated
+
+   When using mongodb from a different location need to configure IP
 
