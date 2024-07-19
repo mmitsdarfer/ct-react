@@ -5,6 +5,8 @@ import fs from 'fs';
 import { timeConversion, standingsScrape, needStandings, reuseStands  } from './standings-time.js';
 import finalSort from './finalSort.js';
 import netLinks from './netLinks.js';
+import nets from '../nets.js';
+const availNets = nets;
 var url;
 
 //converts time and saves it to data obj separately
@@ -14,7 +16,7 @@ function timeToObj(data, league){
     }
 }
 
-export async function mlbScrape(priority, availNets){
+export async function mlbScrape(priority){
     var league = 'MLB'; 
     console.log('Current league: ' + league);
     console.log('Priority: ' + priority);
@@ -41,14 +43,13 @@ export async function mlbScrape(priority, availNets){
         let firstFin = 0;
         //let firstUnstart = 0;
 
-        teamLen = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName').length;
+        let teamLen = document.querySelectorAll('.Scoreboard__Row .ScoreCell__TeamName').length;
         numGames = teamLen/2;
 
         for(let i = 0; i < numGames; i++){
             times[i] = document.querySelectorAll('.Scoreboard .ScoreCell__Time')[i].textContent;
         }
         
-        scoreLen = document.querySelectorAll('.ScoreCell__Score').length;
         let notStarted = 0;
 
         for(let i = 0; i < teamLen; i++){
@@ -87,7 +88,7 @@ export async function mlbScrape(priority, availNets){
                 links[i] = document.querySelectorAll('.Scoreboard .Scoreboard__Callouts .WatchListenButtons .AnchorLink')[i];
             }
         }
-        linkArr = Array.from(links);
+        let linkArr = Array.from(links);
         linkArr = linkArr.map(link => link.href);
 
         return [fullDate, teams, times, scores, nets, numGames, linkArr, logos];

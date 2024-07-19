@@ -3,6 +3,8 @@ import fs from 'fs';
 import { timeConversion, standingsScrape, needStandings, reuseStands } from './standings-time.js';
 import finalSort from './finalSort.js';
 import netLinks from './netLinks.js';
+import nets from '../nets.js';
+const availNets = nets;
 
 var league;
 var priority;
@@ -67,7 +69,7 @@ var scrape = async function scrape(league, priority, availNets){
                 scores[i] = '-';
             } 
         }
-        scoreArr = Array.from(scores);
+        let scoreArr = Array.from(scores);
         scoreArr = scoreArr.map(game => game.textContent);  
         for(let i = scoreLen - endedLen; i < teamLen - endedLen; i++){
             scoreArr[i] = '-';  //placeholder before score exists
@@ -91,9 +93,9 @@ var scrape = async function scrape(league, priority, availNets){
         }
         
         //convert nodelists into arrays
-        teamArr = Array.from(teams);
+        let teamArr = Array.from(teams);
         teamArr = teamArr.map(team => team.textContent);  
-        linkArr = Array.from(links);
+        let linkArr = Array.from(links);
         linkArr = linkArr.map(link => link.href);
 
         return [fullDate, teamArr, timeArr, scoreArr, nets, numGames, linkArr, logos];

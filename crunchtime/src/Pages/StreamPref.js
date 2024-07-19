@@ -1,7 +1,47 @@
-import { useState } from "react";
-import prefData from '../json/preferences.json';
+import { useState, useEffect } from "react";
+
+const PORT = process.env.PORT || 5000;
+const baseUrl = `http://localhost:${PORT}`;
 
 export default function Stream(){
+    const USER = 'mikeymits'; //TODO: replace with login
+    const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
+    const [streams, setStreams] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
+    const [availNets, setAvailNets] = useState(streams); 
+    const [leagues, setLeagues] = useState([{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}]);
+    const [take, setTake] = useState(false);
+    const [refresh, setRefresh] = useState(0);
+
+    useEffect(() => {
+        async function loadLatest(){
+            let results = await fetch(`${baseUrl}/preferences/${USER}`)
+            .then(resp => resp.json())
+            .catch(err => {console.log(`No user "${USER}" found`)});
+            if(results === undefined){
+                results = {
+                    priority: ['diffs', 'times', 'stands'],
+                    streams: streams,
+                    leagues: [{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}],
+                    take: take,
+                    refresh: refresh
+                }
+                //top = diffs, mid = times, last = stands
+            }
+            else{           
+                setPriority(results.priority);
+                setStreams(results.streams);
+                setAvailNets(results.streams)
+                setLeagues(results.leagues);
+                setTake(results.take);
+                setRefresh(results.refresh);
+            }
+            
+        }
+        loadLatest();
+        //line below gets rid of misleading warning
+        // eslint-disable-next-line
+    }, []);  
+
     document.title = 'Crunch Time: Streams';
     let netLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'],
         ['FOX', 'https://www.foxsports.com/live'], ['ABC', 'https://abc.com/watch-live/abc'],
@@ -10,35 +50,32 @@ export default function Stream(){
         ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'],
         ['MLB Network', 'https://www.mlb.com/network/live?success=true'], ['MLBTV', 'https://www.mlb.com/tv'],
         ['NBATV', 'https://www.nba.com/watch/nba-tv'],
-        ['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
-    let nets = prefData[2];
+        ['NBCSP', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
+    let nets = streams;
     if(nets === null) nets = netLinks.map(net => net[0]);    
-
-    const [availNets, setAvailNets] = useState(nets); 
     
-
-        
-    function postNets(data){
-        fetch('http://localhost:8000/stream',{
-            method: "POST",
+    async function updateDbStreams(newNets){
+        await fetch(`${baseUrl}/preferences/${USER}`, {
+            method: "PATCH",
             headers: {
-                'Accept': 'application/json , text/plain',
-                'Content-Type': 'application/json'            
+                "content-type": "application/json"
             },
-            body: JSON.stringify(data),
-        })
-        .then((response) => response.text())
-        .then((result) => {
-           // console.log(JSON.parse(result));
-            //setAvailNets(JSON.parse(result));
-        })
-        .catch(err => {console.log(err)})
+            body: JSON.stringify({
+                user: USER, 
+                priority: priority, 
+                streams: newNets,
+                leagues: leagues,
+                take: take,
+                refresh: refresh
+            })
+        });
+        console.log('Streams updated');
     }
-    
+
     function NetBox(){
         let allNets = [];
         for(let i = 0; i < netLinks.length; i++){
-            function handleCheck(e){ //nested to use i
+            function handleCheck(e){ //nested to be able to use i
                 let temp = availNets;
                 if(e.target.checked){
                     temp[i] = e.target.value; 
@@ -48,7 +85,7 @@ export default function Stream(){
                     temp[i] = false;
                     setAvailNets(temp);
                 }   
-                postNets(availNets);             
+                updateDbStreams(availNets);             
             }
     
             allNets.push(
@@ -62,9 +99,6 @@ export default function Stream(){
         }
         return allNets;
     }
-
-    postNets(availNets);
-    
 
     return(
     <div>

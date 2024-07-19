@@ -219,7 +219,7 @@ export async function standingsScrape(league, data, needUpdate, haveJson){
     await page.goto(url);         
     teamRanks = await page.evaluate(() => {
         let getStands = document.querySelectorAll('span.hide-mobile > a');
-        standArr = Array.from(getStands);
+        let standArr = Array.from(getStands);
         standArr = standArr.map(game => game.textContent);
         return standArr;
     });

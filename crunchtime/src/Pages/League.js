@@ -2,31 +2,88 @@ import nhlData from '../json/nhl.json';
 import nflData from '../json/nfl.json'
 import mlbData from '../json/mlb.json';
 import nbaData from '../json/nba.json';
-import prefData from '../json/preferences.json';
 import {useEffect, useState} from 'react';
-import { useCookies } from 'react-cookie';
 import { noLinks } from '../backend/scrape-sort/netLinks';
 import { useNavigate } from 'react-router-dom';
 
+const PORT = process.env.PORT || 5000;
+const baseUrl = `http://localhost:${PORT}`;
+
 var fullNets = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], ['FOX', 'https://www.foxsports.com/live'],
-['ABC', 'https://abc.com/watch-live/abc'], ['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
+['CBS', 'https://www.cbs.com/live-tv/stream'], ['ABC', 'https://abc.com/watch-live/abc'], 
+['NBC', 'https://www.nbc.com/live?brand=nbc'],
+['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
 ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], ['MLB Network', 'https://www.mlb.com/network/live?success=true'],
 ['MLBTV', 'https://www.mlb.com/tv'], ['NBA TV', 'https://www.nba.com/watch/nba-tv'],
-['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']];
+['NBCSP', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']];
+
+function makeCapital(lower){
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
 
 export default function League({league, logoData}){
     document.title = 'Crunch Time: ' + league;
     const navigate = useNavigate();
 
-    // line below hides unneeded warning (cookies not used)
-    // eslint-disable-next-line 
-    const [cookies, setCookie] = useCookies('Current');
-    const [refreshed, setRefreshed] = useState(true); 
+    const USER = 'mikeymits'; //TODO: replace with login
+    //line below gets rid of misleading warning
+    // eslint-disable-next-line
+    const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
+    const [streams, setStreams] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
+    //line below gets rid of misleading warning
+    // eslint-disable-next-line
+    const [leagues, setLeagues] = useState([{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}]);
+    const [take, setTake] = useState(false);
+    const [refresh, setRefresh] = useState(0);
 
-    const getCookieValue = (name) => (
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-    )
-    let take = getCookieValue('Take');
+    useEffect(() => {
+        async function loadLatest(){
+            let results = await fetch(`${baseUrl}/preferences/${USER}`)
+            .then(resp => resp.json())
+            .catch(err => {console.log(`No user "${USER}" found`)});
+            if(results === undefined){
+                results = {
+                    priority: ['diffs', 'times', 'stands'],
+                    streams: streams,
+                    leagues: [{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}],
+                    take: take,
+                    refresh: refresh
+                }
+                //top = diffs, mid = times, last = stands
+            }
+            else{           
+                setPriority(results.priority);
+                setStreams(results.streams);
+                setLeagues(results.leagues);
+                setTake(results.take);
+                setRefresh(results.refresh);
+            } 
+        }
+        loadLatest();
+        //line below gets rid of misleading warning
+        // eslint-disable-next-line
+    }, []);
+
+    async function leagueCall(){
+       // if(league == 'MLB') mlbScrape(priority, streams); 
+       // else callScrape(league, priority, streams);     
+        timer(league);
+    }
+    leagueCall()
+
+    function timer(){
+        if (refresh === 30 || refresh === 60 || refresh === 300){
+            console.log('Timer length: ' + refresh);
+            function redir(){;
+                leagueCall(league);
+            }
+            setTimeout(redir, refresh*1000);
+        }
+    }
+
+    // line below hides unneeded/misleading warning (refreshed not used)
+    // eslint-disable-next-line 
+    const [refreshed, setRefreshed] = useState(true); 
 
     let leagueData;
     if(league === 'NHL') leagueData = nhlData;
@@ -35,41 +92,42 @@ export default function League({league, logoData}){
     else if(league === 'NBA') leagueData = nbaData;
 
     let haveTopLink = false;
-    if(prefData[2].find(chan => chan === leagueData.table[0].network) !== undefined) haveTopLink = true;
+    if(streams.find(chan => chan === leagueData.table[0].network) !== undefined) haveTopLink = true;
 
     function getLink(net){
         if(fullNets.find(chan => chan[0] === net) !== undefined) return fullNets.find(chan => chan[0] === net)[1];
     }
 
+    //if takeme is on, open that link in new window
     //only want league to be current when opening page so visit count only increments once
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page)
-    if(origin !== window.location.href && performance.navigation.type !== 1) {
-        setOrigin(window.location.href);
-        setCookie('Current', league, { path: '/' });
-        if(!noLinks(leagueData.table[0].network) && take === 'true' && leagueData.table[0].progress !== 'ended' && haveTopLink){
-            window.open(getLink(leagueData.table[0].network)); //use getLink w/ net instead of table.link so it never goes to /stream
-                         //(would only happen if takeMe is on after updating streamPrefs to include top network)
+
+    if(origin !== window.location.href) {
+            if(!noLinks(leagueData.table[0].network) && take && leagueData.table[0].progress !== 'ended' && haveTopLink){
+                window.open(getLink(leagueData.table[0].network)); //use getLink w/ net instead of table.link so it never goes to /stream
+                            //(would only happen if takeMe is on after updating streamPrefs to include top network)
+                setTake(false)
+                setOrigin(window.location.href);
+            } 
         }
-    }    
     
     // line below hides unneeded warning (data not used)
     // eslint-disable-next-line
     const [data, setData] = useState(null);
     
     useEffect(() => {
-        if(league === getCookieValue('Current')  || refreshed){
-            fetch('/'+league)
-            .then((res) => res.json())
-            .then((data) => setData(data.message));
-            setRefreshed(false);
-    }
+        fetch('/'+league)
+        .then((data) => setData(data.message));
+        setRefreshed(false);
     },  // line below hides unneeded warning
         // eslint-disable-next-line react-hooks/exhaustive-deps
     []);    
+    
 
     let len = leagueData.table.length-1
     let rows = Math.ceil(len/4); 
     function Net({i}){
+        if(leagueData.table[i].network === 'ESPN') leagueData.table[i].network = 'ESPN+';
         if(leagueData.table[i].progress !== 'ended'){
             if(leagueData.table[i].network === undefined || leagueData.table[i].network === ''){
                 return <br></br>
@@ -77,7 +135,7 @@ export default function League({league, logoData}){
             else if(noLinks(leagueData.table[i].network)) {
                     return <div className="net">{leagueData.table[i].network} has no available links</div>
             }
-            else if(leagueData.table[i].network !== undefined && leagueData.table[i].link !== '/stream'){
+            else if(leagueData.table[i].network !== undefined && streams.indexOf(leagueData.table[i].network) !== -1){
                 return <a id="btn" href={leagueData.table[i].link} target="_blank" rel="noreferrer">Watch on {leagueData.table[i].network}</a>
             }
             else {
@@ -148,6 +206,18 @@ export default function League({league, logoData}){
         return colArr;
     }
 
+    function Priority(){
+        return(
+            <div>
+                <p>
+                    Priorities: <br></br>
+                    {makeCapital(priority[0])} <br></br>
+                    {makeCapital(priority[1])} <br></br>
+                    {makeCapital(priority[2])}
+                </p>
+            </div>
+        )
+      }
 
     return(
         <div>        
@@ -184,7 +254,8 @@ export default function League({league, logoData}){
                     <Col colVal={3}></Col>
                     </h3>
                 </div>
-            </div>            
+            </div> 
+            <Priority></Priority>           
         </div>
     )
 }

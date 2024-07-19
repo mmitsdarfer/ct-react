@@ -1,296 +1,88 @@
 import express from 'express';
 const app = express();
 const port = 8000;
-import fs from 'fs';
-import { join } from 'path';
-import { dirname } from 'path';
 import { parse } from 'url';
-import { fileURLToPath } from 'url';
-const __dirname = dirname(fileURLToPath(import.meta.url));
-import { existsSync, readFileSync, writeFile } from "fs";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { callScrape } from './scrape-sort/scrape.js';
+import nets from './nets.js';
 
 const dbPORT = process.env.dbPORT || 5000;
 const baseUrl = `http://localhost:${dbPORT}`;
 const USER = 'mikeymits'; //TODO: replace with login
 
 var current;
-var takeMe;
-var isLoad;
 var time = 0;
-
-//merge and mergesort used to rank leagues by most views
-function merge(left, right){
-    let sortedArr = [];
-    while(left.length && right.length){
-        if(left[0] < right[0]){
-            sortedArr.push(left.shift());
-        }
-        else{
-            sortedArr.push(right.shift());
-        }
-    }
-    return [...sortedArr, ...left, ...right];
-}
-function mergeSort(arr){
-    if(arr.length <= 1) return arr;
-    let mid = Math.floor(arr.length /2 );
-    let left = mergeSort(arr.slice(0, mid));
-    let right = mergeSort(arr.slice(mid));
-    return merge(left, right);
-}
-
-
+var priority = [];
 
 async function loadDb(){
     let results = await fetch(`${baseUrl}/preferences/${USER}`)
     .then(resp => resp.json())
     .catch(err => {console.log(`No user "${USER}" found`)});
     time = parseInt(results.refresh);
+    priority = results.priority;
 }
 
 app.use(cookieParser());
 
-//convert cookies to be written into preferences.json and reset if asked to
-function getCookies(req, res){
-    let priority = [];
-    priority[0] = (req.cookies.Priority0); 
-    priority[1] = (req.cookies.Priority1); 
-    priority[2] = (req.cookies.Priority2); 
-    takeMe = req.cookies.Take;
-    let timer = req.cookies.Timer;
-    if(timer === undefined){
-        res.cookie('Timer', 'manual');
-    }
-    if(takeMe === undefined){
-        takeMe = 'off';
-        res.cookie('Take', 'off');
-    }
-    if(priority[0] === undefined){
-        priority[0] = 'diffs';
-        res.cookie('Priority0', 'diffs');
-    }
-    if(priority[1] === undefined){
-        priority[1] = 'times';
-        res.cookie('Priority1', 'times');
-    }
-    if(priority[2] === undefined){
-        priority[2] = 'stands';
-        res.cookie('Priority2', 'stands');
-    }
-
-    let reset = (req.cookies.Reset);
-    if(reset === undefined){
-        reset = 'false';
-        res.cookie('Reset', 'false');
-    }
-
-    if (!existsSync('../json/preferences.json')) {
-        prefReset(priority);
-    }
-    
-    let parsedPrefs;
-    function callReset(){    
-        res.cookie('Reset', 'false');
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-        parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-        return parsedPrefs;
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        parsedPrefs = callReset();
-        reset = 'false';
-    }
-    else{
-        parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-    }
-    
-    parsedPrefs[1] = priority;
-    writeFile('../json/preferences.json', (JSON.stringify(parsedPrefs)), function(err){
-        if(err) throw err;
-    });
-}
-
-//home page
-app.get('/', (req, res) => {
-    getCookies(req, res);
-    res.sendFile(__dirname + '\\index.html');
-});
-
-app.use(express.static(__dirname + '/')); 
-app.use(express.static(join(__dirname, 'public')));
-app.use(express.json());
-
-//resets values of preferences.json or creates it with reset values
-async function prefReset(priority = ['diffs', 'times', 'stands']){
-    let prefData = JSON.stringify(["NHL", priority, ["TNT","ESPN","FOX","ABC","AppleTV+","TBS","FS1","MLB Network","MLBTV", "NBATV", "NBC Sports (local)"],
-         ["NBA", 0], ["MLB", 0], ["NFL", 0], ["NHL", 0]]);
-    writeFile('../json/preferences.json', prefData, function(err){
-        if(err) throw err;
-    });  
-    
-    return true;    
-}
-
-//increases preference value when league selected and updates preferences.json
-function preferences(league, isLoad){
-    var prefData;
-    if (existsSync('../json/preferences.json')) {
-        prefData = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-    }
-    else{
-        prefReset();    //need preferences.json to exist
-        prefData = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-    }
-    let prefsList = (Object.values(prefData));
-    let prefHits = [];
-
-    //increase hit number
-    for(let i = 3; i < prefsList.length; i++){
-        if(prefsList[i][0] == league){
-            if(isLoad) prefsList[i][1]++;
-            prefsList[i] = [prefsList[i][0], prefsList[i][1]];
-        }
-        prefHits[i-3] = prefsList[i][1];
-    }
-    let sorted = mergeSort(prefHits);
-    let outList = [league, prefsList[1], prefsList[2]];
-
-    let outCount = 3; //start at lowest league position in preferences.json
-    for(let i = 0; i < sorted.length; i++){
-        for(let j = 3; j < prefsList.length; j++){
-            if(sorted.indexOf(prefsList[j][1]) == i){
-                outList[outCount] = prefsList[j]; 
-                outCount++;             
-            }
-        }
-    }
-
-    //preferences.json format: [current league selected, [priority], [avail nets], [least visited team, team visits],
-        // [2nd least visit team, team visits], ... [most visited team, team visits]]
-    writeFile('../json/preferences.json', JSON.stringify(outList), function(err){
-        if(err) throw err;
-    }); 
-}
-
 function timer(league, req, res){
-    loadDb();
-    console.log('timer');
-    console.log(time);
-    console.log(typeof(time))
     if(time == 0) {
         console.log('Auto-refresh set to manual');
-        res.send('Timer on manual');
     }
     else if (time == 30 || time == 60 || time == 300){
         console.log('Timer length: ' + time);
         function redir(){;
-            leagueCall(league, req, res, streamPrefs);
+            leagueCall(league, req, res);
         }
         setTimeout(redir, time*1000);
     }
     else{
         time = 'manual';
-        res.cookie('Timer', 'manual');
-        res.send('Timer updated'); //need to send for res to update cookie
     }
 }
 
-function checkJson(){
-    if(!existsSync('../json/preferences.json')) {
-        prefReset();
-    }
-    let leagueArr = ['nhl', 'nfl', 'mlb', 'nba'];
-    for(let i = 0; i < leagueArr.length; i++){
-        let blankData = {};
-        blankData.table = [];
-        blankData.table.push({"date":"December 21, 2000"});
-        if (!existsSync('../json/'+leagueArr[i]+'.json')) {
-            writeFile('../json/'+leagueArr[i]+'.json', (JSON.stringify(blankData)), function(err){
-                if(err) throw err;
-            });
-        }
-    }
-}
 
-var streamPrefs = ['TNT', 'ESPN+','FOX','ABC','AppleTV+','TBS','FS1','MLB Network','MLBTV','NBATV','NBC Sports (local)'];
-//read from prefs
-
-function leagueCall(league, req, res, streamPrefs){
-    checkJson();
-    getCookies(req, res);
-    let priority = [];
-    priority[0] = req.cookies.Priority0; 
-    priority[1] = req.cookies.Priority1; 
-    priority[2] = req.cookies.Priority2;   
-    let reset = req.cookies.Reset;
-    res.cookie('Reset', 'false');
-    isLoad = (req.cookies.Current == current);
+function leagueCall(league, req, res){
     res.cookie('Current', 'null');
+    loadDb();
 
-    function callReset(){   
-        setTimeout(() => {   
-            prefReset(priority);     
-        }, );
-    }
-    if(reset === 'true'){   //cookies are read as strings, so == would just be if they exist
-        callReset();
-    }
-    async function writeLeague(){
+    async function callLeague(){
         setTimeout(function () {
-            preferences(current, isLoad); 
-            if(league == 'MLB') mlbScrape(priority, streamPrefs); 
-            else callScrape(current, priority, streamPrefs);     
-           // let duration = req.cookies.Timer;
+            if(league == 'MLB') mlbScrape(priority, nets); 
+            else callScrape(current, priority, nets);     
             timer(current, req, res);  
             
         }, 100);       
     }
-    writeLeague();
+    callLeague();
 }
 
 app.get('/nhl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res, streamPrefs);
+    leagueCall(current, req, res);
 });
 
 app.get('/nfl', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res, streamPrefs);    
+    leagueCall(current, req, res);    
 });
 
 app.get('/nba', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res, streamPrefs);
+    leagueCall(current, req, res);
 });
 
 import mlbScrape from './scrape-sort/mlbScrape.js';
 app.get('/mlb', (req, res) => {
     current = parse(req.url).pathname.replace('/', '').toUpperCase();
-    leagueCall(current, req, res, streamPrefs);
+    leagueCall(current, req, res);
 });
 
 app.use(cors({origin:true,credentials: true}));
 
-app.post('/stream', (req, res) => {
-    var availNets = req.body;
-    let parsedPrefs = JSON.parse(readFileSync('../json/preferences.json', 'utf-8'));
-    parsedPrefs[2] = availNets;
-    streamPrefs = availNets;
-    writeFile('../json/preferences.json', (JSON.stringify(parsedPrefs)), function(err){
-        if(err) throw err;
-    });
-    res.send(JSON.stringify(availNets));
-})
-
 app.post((req, res) => {
     res.status(404).send('Page not found');
 })
-
-checkJson();
 
 app.listen(port, () => {
     console.log('Running on ' + port);

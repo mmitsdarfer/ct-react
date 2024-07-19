@@ -4,7 +4,6 @@ import League from '../Pages/League.js';
 import Preferences from '../Pages/Preferences.js';
 import Stream from '../Pages/StreamPref.js';
 import { logos } from '../logos.js';
-import prefs from '../json/preferences.json';
 import {
   BrowserRouter as Router,
   Routes,
@@ -12,11 +11,6 @@ import {
 } from "react-router-dom";
 import React from 'react';
 import { useCookies } from 'react-cookie';
-
-function makeCapital(lower){
-  return lower.charAt(0).toUpperCase() + lower.slice(1);
-}
-
 
 function HomeButton(){
   // line below hides unneeded warning (cookies not used)
@@ -44,19 +38,6 @@ function PrefButton(){
   )
 }
 
-function Priority(){
-  return(
-      <div>
-          <p>
-              Priorities: <br></br>
-              {makeCapital(prefs[1][0])} <br></br>
-              {makeCapital(prefs[1][1])} <br></br>
-              {makeCapital(prefs[1][2])}
-          </p>
-      </div>
-  )
-}
-
 function LeaguePage({league}){
   function leagueLogo(){
     if(league === 'NHL') return logos.NHL;
@@ -70,24 +51,8 @@ function LeaguePage({league}){
     <HomeButton></HomeButton>
     <PrefButton></PrefButton>
     <League league={league} logoData={leagueLogo()}></League>
-    <Priority></Priority>
   </div>
   )
-}
-
-function checkCookies(){
-  const getCookieValue = (name) => (
-    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-  )
-  if(getCookieValue('Priority0') === '' || getCookieValue('Priority1') === '' || getCookieValue('Priority2') === ''){
-    document.cookie = 'Priority0=diffs';
-    document.cookie = 'Priority1=times';
-    document.cookie = 'Priority2=stands';
-  }
-  if(getCookieValue('Current') === '') document.cookie = 'Current=null';
-  if(getCookieValue('Reset') === '') document.cookie = 'Reset=false';
-  if(getCookieValue('Take') === '') document.cookie = 'Take=false';
-  if(getCookieValue('Timer') === '') document.cookie = 'Timer=manual';
 }
 
 function App(){
@@ -95,7 +60,6 @@ function App(){
   // eslint-disable-next-line 
   const [cookies, setCookie] = useCookies('Current');
   setCookie('Current', null, { path: '/' });
-  checkCookies();
   
   return (
     <Router>

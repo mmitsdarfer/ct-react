@@ -6,7 +6,7 @@ let streamLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 
     ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], 
     ['MLB Network', 'https://www.mlb.com/network/live?success=true'], ['MLBTV', 'https://www.mlb.com/tv'],
     ['NBA TV', 'https://www.nba.com/watch/nba-tv'],
-    ['NBC Sports (local)', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
+    ['NBCSP', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
 
 export default function netLinks(nets, teams, progress, numGames, links, league, availNets){
     const locTeams = ['Flyers', 'Phillies', '76ers'];
@@ -17,8 +17,8 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
         for(let j = 0; j < locTeams.length; j++){
             if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){ 
                 nets[i] = 'NBCSP';
-                if(availNets.find(chan => chan === 'NBC Sports (local)') !== undefined){
-                    channels[i] = streamLinks.find(chan => chan[0] === 'NBC Sports (local)')[1];
+                if(availNets.find(chan => chan === 'NBCSP') !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === 'NBCSP')[1];
                 }
                 else channels[i] = '/stream';
                 notPlus++;
@@ -101,6 +101,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                 }
             }
             else if(nets[i] === 'MLBN'){
+                nets[i] = 'MLB Network';
                 if(!localStream(i)){
                     if(availNets.find(chan => chan === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
@@ -173,7 +174,6 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             notPlus++;
         }
     }
-
     return channels;
 }
 

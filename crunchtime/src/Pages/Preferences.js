@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import data from '../json/preferences.json';
 import { logos } from '../logos';
 
 const PORT = process.env.PORT || 5000;
@@ -11,21 +10,58 @@ show on this page
 if changes made update db
 */
 
+//merge and mergesort used to rank leagues by most views
+function merge(left, right){
+    let sortedArr = [];
+    while(left.length && right.length){
+        if(left[0] < right[0]){
+            sortedArr.push(left.shift());
+        }
+        else{
+            sortedArr.push(right.shift());
+        }
+    }
+    return [...sortedArr, ...left, ...right];
+}
+function mergeSort(arr){
+    if(arr.length <= 1) return arr;
+    let mid = Math.floor(arr.length /2 );
+    let left = mergeSort(arr.slice(0, mid));
+    let right = mergeSort(arr.slice(mid));
+    return merge(left, right);
+}
+
 function makeCapital(lower){
     return lower.charAt(0).toUpperCase() + lower.slice(1);
 }
 
 export default function Preferences(){
-    document.title = 'Crunch Time: Preferences';
-    const getCookieValue = (name) => (
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-    )
-    let resVal = getCookieValue('Reset');
-    const [reset, setReset] = useState(resVal); 
+    const [reset, setReset] = useState(false); 
 
     function ResetButton(){
+        async function updateDbReset(){
+            await fetch(`${baseUrl}/preferences/${USER}`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    user: USER, 
+                    priority: priority, 
+                    streams: nets,
+                    leagues: [{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}],
+                    take: take,
+                    refresh: refresh
+                })
+            });
+            console.log('Visits reset');
+        }
         return(
-            <button id="reset" type="button" onClick={(e) => {document.cookie = "Reset=true"; setReset('true')}}> 
+            <button id="reset" type="button" onClick={(e) => {
+                setLeagues([{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}]);
+                setReset(true);
+                updateDbReset();
+                }}> 
                 Reset visit data 
             </button> 
         )
@@ -33,7 +69,7 @@ export default function Preferences(){
 
     const USER = 'mikeymits'; //TODO: replace with login
     const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
-    const [nets, setNets] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBC Sports (local)"]);
+    const [nets, setNets] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
     const [leagues, setLeagues] = useState([{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}]);
     const [take, setTake] = useState(false);
     const [refresh, setRefresh] = useState(0);
@@ -73,6 +109,22 @@ export default function Preferences(){
         //line below gets rid of misleading warning
         // eslint-disable-next-line
     }, []);   
+
+    let prefHits = [];
+    for(let i = 0; i < leagues.length; i++){
+        prefHits[i] = leagues[i][Object.keys(leagues[i])];
+    }
+    let sorted = mergeSort(prefHits);
+    let outList = [];
+    let outCt = 0;
+    for(let i = 0; i < sorted.length+1; i++){
+        for(let j = 0; j < leagues.length; j++){
+            if(sorted.indexOf(leagues[j][Object.keys(leagues[j])]) === i){
+                outList[outCt] = leagues[j];  
+                outCt++;            
+            }
+        }
+    }
     
     async function updateDbPriority(top, mid, last){
             await fetch(`${baseUrl}/preferences/${USER}`, {
@@ -185,15 +237,15 @@ export default function Preferences(){
     
         return(
             <div>
-                <TopDrop></TopDrop>     
-                <MidDrop></MidDrop>
-                <LastDrop></LastDrop>     
-                <br></br>
+                <div className="drop-list">
+                <TopDrop></TopDrop><MidDrop></MidDrop><LastDrop></LastDrop>     
+                </div> 
                 Sort by games with closest scores (diffs),
                 <br></br>closest to ending (times),
                 <br></br>or highest average of 2 teams' league rankings (stands)
-                <br></br><br></br>
-            </div>  
+                <br></br>
+            </div>
+             
         )
     }
 
@@ -260,11 +312,18 @@ export default function Preferences(){
 
         return(
             <div>
-                <br></br><h4>Choose auto-refresh frequency:</h4>
+                <h4>Choose auto-refresh frequency:</h4>
                 <div id="timer">
                     <select id="select-timer" defaultValue={refresh} onChange={(e) => {
-                        document.cookie = "Timer="+e.target.value;
-                        updateDbTimer(e.target.value);
+                        //this if/else protects against people changing reset via dev tools because refreshing too much can crash
+                        if(e.target.value !== '0' & e.target.value !== '30' & e.target.value !== '60' & e.target.value !== '300'){
+                            updateDbTimer('0');
+                            console.log('set to 0')
+                        }
+                        else{
+                            updateDbTimer(e.target.value);
+                            console.log('working normally')
+                        }
                         }}>
                         <option value="0">Don't auto refresh</option>
                         <option value="30">30 seconds</option> 
@@ -276,6 +335,34 @@ export default function Preferences(){
         )
     }
 
+    async function addDbVisit(key){
+        let leagueStrs = [];
+        for(let i = 0; i < leagues.length; i++){
+            leagueStrs[i] = Object.keys(leagues[i])[0];
+        } 
+        for(let i = 0; i < leagueStrs.length; i++){
+            if(leagueStrs[i] === key){
+                ++leagues[i][Object.keys(leagues[i])];
+                break;
+            }  
+        }
+        
+        await fetch(`${baseUrl}/preferences/${USER}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                user: USER, 
+                priority: priority, 
+                streams: nets,
+                leagues: leagues,
+                take: take,
+                refresh: refresh
+            })
+        });      
+    }
+
     //nested in Preferences function because it uses state of reset
     function VisitData(){
         function League({current}){    
@@ -284,7 +371,7 @@ export default function Preferences(){
                     return(
                         <div>
                             <a href={'//localhost:3000/'+key}>
-                                <button className="logo-img" type="submit">
+                                <button className="logo-img" type="submit" onClick={(e) => {addDbVisit(key)}}>
                                     <img width={value.width} height={value.height} src={value.link} alt={key + " logo"}/>
                                 </button>
                             </a>
@@ -294,7 +381,7 @@ export default function Preferences(){
             }
         }
         function Visits({current}){
-            if(reset === 'true'){
+            if(reset){
                 return(
                     <div>
                      <br></br>0 
@@ -310,26 +397,28 @@ export default function Preferences(){
     
         function LeagueList(){
             let leagueList = []; 
-            for(let i = 3; i < data.length; i++){
+            for(let i = 0; i < leagues.length; i++){
             Object.values(logos).forEach((value, index) => 
-            {  
-                if(data[i][0] === Object.keys(logos)[index]){
-                    leagueList[i] = (
-                        <div key={"leagueList"+(i-2)}>
-                            <div key={"leagueId"+index} className="column">
-                                <League current={data[i][0]}></League>
-                            </div>
-                            <div key={"visitId"+index}>
-                                <Visits current={data[i][1]}></Visits>
-                            </div>
-                        </div>      
-                    )
-                } 
-                index++;
-            })
-        }
+                {  
+                    if(Object.keys(leagues[i])[0] === Object.keys(logos)[index]){
+                        //if name of league object === name of logo object, send them and visit # to <League> and <Visits>
+                        leagueList[i] = (
+                            <div key={"leagueList"+(i)}>
+                                <div key={"leagueId"+index} className="column">
+                                    <League current={Object.keys(outList[i])[0]}></League>
+                                </div>
+                                <div key={"visitId"+index}>
+                                    <Visits current={outList[i][Object.keys(outList[i])]}></Visits>
+                                </div>
+                            </div>      
+                        )
+                    } 
+                    index++;
+                })
+            }
             return leagueList.reverse();
         }
+    
 
         return(
             <div className="logo-vis">
@@ -347,25 +436,35 @@ export default function Preferences(){
     return(
     <div>
         <h1>Preferences</h1>
-        <h3>Priorities:</h3>
-        <Dropdowns priority={priority}></Dropdowns>
+        <div className="top">     
+            <div className="top-left">
+                <h4>Priorities:</h4>
+                <Dropdowns priority={priority}></Dropdowns>
+                <br></br>
+            </div>
+            <div className="top-right">
+            <h4>Take me out to the ball (or puck) game:</h4> 
+                <Switch></Switch>
+                Turn on to be sent to a stream of #1 game by priority if available<br></br>
+                (You must allow popups to automatically be redirected to your stream)<br></br>
+            </div>
+        </div>
 
-        <h4>Take me out to the ball (or puck) game:</h4>   
-        <Switch></Switch>
-        Turn on to be sent to a stream of #1 game by priority if available<br></br>
-        (You must allow popups to automatically be redirected to your stream)<br></br>
+        <div className="middle">
+            <div className="mid-left">
+                <a href={'//localhost:3000/stream'}>
+                    <button id="reset" type="submit">Go to stream preferences</button>
+                </a>
+            </div>
+            <div className="mid-right">
+                <Timer></Timer>
+            </div>
+        </div>
+
         <br></br>
-
-        <a href={'//localhost:3000/stream'}>
-            <button id="reset" type="submit">Change stream preferences</button>
-        </a>
-
-        <br></br>
-        <Timer></Timer>
-
-        <br></br><br></br>
-        <ResetButton></ResetButton>
         <VisitData></VisitData>
+        <ResetButton></ResetButton>
     </div>
+    
     )
 }
