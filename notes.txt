@@ -16,6 +16,7 @@ known errors:
 
 To do:
 0 add peacock support
+1 make sure all database info is formatted the same to fit League.js (may need to check during games)
 1 Fetch POST instead of cookies (?)
 2 See if timezones matter for mongodb vs new Date
 3 instead of delete and create in database.js, figure out update
@@ -27,6 +28,8 @@ To do:
 8 see what "Note that the development build is not optimized. [CLIENT] To create a production build, use npm run build." means
 9 can I consolidate/get rid of multiple package.json's?
 10 move update/load/etc db to their own file?
+11 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
+   but haven't been able to figure it out
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -55,13 +58,13 @@ Delete (all) cookies
 Add standings to db
 
 WIWWO: 
+7/21: next: standings.json to db
+get rid of where jsons are made
+League.js is fully db dependent
 7/14: trying to get rid of server.js so want to replace the fetch to that with a fetch to database.js
 7/13: I read thru all of server.js...think it makes sense/is doable to fully get rid of that and work directly w/ db
  Trying to get rid of all cookies except current and Want to read over all of server.js to get rid of 
       what I know I don't need
-7/7: Added take via db and fixed it taking even after refreshing
-   - Then:
-      - Turn [league].json's into db
 
 Deleted from server.js:
 takeMe (it's in League)

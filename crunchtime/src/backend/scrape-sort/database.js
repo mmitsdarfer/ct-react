@@ -3,47 +3,6 @@ const PORT = process.env.PORT || 5000;
 const baseUrl = `http://localhost:${PORT}`;
 
 //write to league page based on previous sorts
-function toJson(data, league, date){
-    let jsonData = {};
-    jsonData.table = [];
-    let obj = {};
-    for(let i = 0; i < data.length; i++){
-        if(data[i] !== undefined){
-            for(let j = 0; j < data[i].length; j++){
-                obj = {
-                    team1: data[i][j].team1,
-                    score1: data[i][j].score1,
-                    logo1: data[i][j].logo1,
-                    team2: data[i][j].team2,
-                    score2: data[i][j].score2,
-                    logo2: data[i][j].logo2,
-                    progress: data[i][j].progress,
-                    time: data[i][j].time,
-                    network: data[i][j].network,
-                    link: data[i][j].link
-                }
-                jsonData.table.push(obj);
-            }
-        }
-        else{
-            obj = {
-                team1: data[i].team1,
-                score1: data[i].score1,
-                team2: data[i].team2,
-                score2: data[i].score2,
-                progress: data[i].progress,
-                time: data[i].time,
-                network: data[i].network,
-                link: data[i].link
-            }
-            jsonData.table.push(obj);
-        }      
-    }
-    jsonData.table.push({date: date});
-    fs.writeFile('../json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
-        if(err) throw err;
-    }); 
-}
 
 export async function database(sorted, league, date){
     let leagueDate = new Date(Date.parse(date.replace(',',''))); //date scraped from espn.com, but temp so it doesn't change on page
@@ -87,28 +46,77 @@ export async function database(sorted, league, date){
     } 
     */
 
-    const updateDb = async () => {
-        await fetch(`${baseUrl}/${league}/${id}`, {
-          method: "PATCH",
-          headers: {
-            "content-type": "application/json"
-          },
-          body: JSON.stringify({
-            sorted, leagueDate
-          })
-        });
+    async function toJson(data, league, date, update){
+        let jsonData = {};
+        jsonData.table = [];
+        let obj = {};
+        for(let i = 0; i < data.length; i++){
+            if(data[i] !== undefined){
+                for(let j = 0; j < data[i].length; j++){
+                    obj = {
+                        team1: data[i][j].team1,
+                        score1: data[i][j].score1,
+                        logo1: data[i][j].logo1,
+                        team2: data[i][j].team2,
+                        score2: data[i][j].score2,
+                        logo2: data[i][j].logo2,
+                        progress: data[i][j].progress,
+                        time: data[i][j].time,
+                        network: data[i][j].network,
+                        link: data[i][j].link
+                    }
+                    jsonData.table.push(obj);
+                }
+            }
+            else{
+                obj = {
+                    team1: data[i].team1,
+                    score1: data[i].score1,
+                    team2: data[i].team2,
+                    score2: data[i].score2,
+                    progress: data[i].progress,
+                    time: data[i].time,
+                    network: data[i].network,
+                    link: data[i].link
+                }
+                jsonData.table.push(obj);
+            }      
+        }
+    
+        let dbData = jsonData.table;
+    
+        const updateDb = async () => {
+            await fetch(`${baseUrl}/${league}/${id}`, {
+              method: "PATCH",
+              headers: {
+                "content-type": "application/json"
+              },
+              body: JSON.stringify({
+                sorted: dbData, leagueDate
+              })
+            });
+        }
+        if(update){ 
+            await updateDb();
+        }
+        else{
+            await createDb();
+        }
+    
+        /*jsonData.table.push({date: date});
+        fs.writeFile('../json/' + league.toLowerCase()+'.json', JSON.stringify(jsonData), function(err){
+            if(err) throw err;
+        }); 
+        */
     }
 
+    
+
     await loadLatest();
-    if(update){ 
-        await updateDb();
-    }
-    else{
-        await createDb();
-    }
+    
     
     async function sendFinal(){
-        toJson(sorted, league, date);
+        toJson(sorted, league, date, update);
     }
     sendFinal();
 }

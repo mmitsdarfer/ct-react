@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs'; //TODO: can probably get rid of this
 import database from './database.js';
 
 //merge & mergesort to rank the diffs
