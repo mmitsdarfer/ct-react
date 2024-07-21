@@ -3,6 +3,9 @@
 import fs from 'fs';
 import puppeteer from 'puppeteer';
 
+const PORT = process.env.PORT || 5000;
+const baseUrl = `http://localhost:${PORT}`;
+
 //take in time left in a game and convert it in order to compare
 export function timeConversion(league, time){
     time = String(time);
@@ -139,6 +142,7 @@ function dateAndTime(last, current){
 
 //if league is in standings, how long since it was updated?
 export async function needStandings(league){ 
+    /*
     let currentDate = new Date().getTime();
     const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
     for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
@@ -147,10 +151,12 @@ export async function needStandings(league){
             return dateAndTime(last, currentDate);
         }
     }
+        */
     return null;
 }
 
 export async function reuseStands(league, data){
+    /*
     const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
     let leagueIndex; 
     let standings = {};
@@ -187,6 +193,7 @@ export async function reuseStands(league, data){
         data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
     }
     return data;
+    */
 }
 
 export async function standingsScrape(league, data, needUpdate, haveJson){
@@ -197,6 +204,44 @@ export async function standingsScrape(league, data, needUpdate, haveJson){
     let leagueIndex;  
     let dateOut;
 
+    let results;
+
+    const loadLatest = async () => {
+        results = await fetch(`${baseUrl}/standings`).then(resp => resp.json());
+        if(results[0] === undefined){
+            update = false;
+            return;
+        }
+        
+       /* let dbDate = new Date (Date.parse(results[0].leagueDate)); //date of most recent db entry
+        dbDate = dbDate.getFullYear() + '-' + (dbDate.getMonth()+1) + '-' + dbDate.getDate();
+        if(leagueDate === dbDate) {
+            id = results[0]._id;
+        }
+        else update = false;  
+        */
+    }
+    await loadLatest();
+   // console.log(results[0].MLB)
+    standings = results[0].MLB;
+    console.log('11111111')
+    console.log(standings)
+
+    const updateDb = async () => {
+        await fetch(`${baseUrl}/standings/${league}`, {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify(
+            {
+                league: league,
+            standings: standings
+          })
+        });
+    }
+
+    /*
     if(haveJson){
         const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
         standings = parsedStands;
@@ -207,6 +252,8 @@ export async function standingsScrape(league, data, needUpdate, haveJson){
         }
         if(needUpdate) standings.table.splice(leagueIndex, 1); //if already in json, remove to replace it
     }
+    */
+    console.log(standings)
     
 
     console.log(league + ' standings');
@@ -225,11 +272,11 @@ export async function standingsScrape(league, data, needUpdate, haveJson){
     });
     
     await browser.close();
-    standings.table.push({
-        league: league,
+    standings = {
         time: dateOut,
         standings: teamRanks
-    });
+    };
+    updateDb();
 
     fs.writeFile('../json/standings.json', JSON.stringify(standings), function(err){
         if(err) throw err;

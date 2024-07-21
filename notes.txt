@@ -11,8 +11,7 @@ known errors:
 2 double db entries sometimes created
    - seems to be first entry of a new date
 3 reset back to getting stuck on true
-4 button for "watch on..." when it should be "log in..."
-   - changes to how it's supposed to be the next time there's a refresh
+4 auto-refresh choice changes back to manual on its own
 
 To do:
 0 add peacock support
@@ -30,6 +29,7 @@ To do:
 10 move update/load/etc db to their own file?
 11 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
+12 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -58,7 +58,8 @@ Delete (all) cookies
 Add standings to db
 
 WIWWO: 
-7/21: next: standings.json to db
+7/21: formatting db standings and otherwise converting it
+now: standings.json to db
 get rid of where jsons are made
 League.js is fully db dependent
 7/14: trying to get rid of server.js so want to replace the fetch to that with a fetch to database.js

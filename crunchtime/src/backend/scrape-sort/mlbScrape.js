@@ -165,6 +165,10 @@ export async function mlbScrape(priority){
         }
         if(standsExist){
             needUpdate = await needStandings(league);
+
+             //REMOVE:
+             needUpdate = true;
+            
             if(needUpdate === true){ //true = in json & out of date
                 //use outdated stands for quick response (it's just an extra scrape)
                 await reuseStands(league, data.table);
