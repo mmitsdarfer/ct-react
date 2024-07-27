@@ -4,12 +4,6 @@ import { logos } from '../logos';
 const PORT = process.env.PORT || 5000;
 const baseUrl = `http://localhost:${PORT}`;
 
-/*
-read preference db
-show on this page
-if changes made update db
-*/
-
 //merge and mergesort used to rank leagues by most views
 function merge(left, right){
     let sortedArr = [];

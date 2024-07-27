@@ -209,7 +209,7 @@ export async function standingsScrape(league, data, needUpdate, haveJson){
     const loadLatest = async () => {
         results = await fetch(`${baseUrl}/standings`).then(resp => resp.json());
         if(results[0] === undefined){
-            update = false;
+            
             return;
         }
         

@@ -71,7 +71,6 @@ router.get("/", async (req, res) => {
     newData.date = new Date();
 
     let result = await collection.replaceOne(query, newData);
-    let newResult = await collection.findOne(query);
 
     res.send(result).status(200);
   });

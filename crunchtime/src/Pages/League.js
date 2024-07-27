@@ -81,7 +81,7 @@ export default function League({league, logoData}){
             setLeagueData(loadLeague[loadLeague.length-1]);
         }
         loadLeague();
-    }, [league]);
+    }, []);
 
    
     
@@ -89,7 +89,7 @@ export default function League({league, logoData}){
     useEffect(() => {
         fetch('/'+league)
         .then((data) => console.log(data.message));        
-    }, [league]);  
+    }, []);  
     
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page
     function writeData(){
@@ -99,6 +99,8 @@ export default function League({league, logoData}){
         function getLink(net){
             if(fullNets.find(chan => chan[0] === net) !== undefined) return fullNets.find(chan => chan[0] === net)[1];
         }
+
+        console.log(leagueData.sorted)
 
         //if coming from different page (not refreshing) with takeMe on, open in a new window so this only happens once
         if(origin !== window.location.href) { 
@@ -131,7 +133,6 @@ export default function League({league, logoData}){
                         </div>
                         )
                 }
-                
             }
             else{
                 return <br></br>

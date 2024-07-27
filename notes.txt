@@ -58,7 +58,8 @@ Delete (all) cookies
 Add standings to db
 
 WIWWO: 
-7/21: formatting db standings and otherwise converting it
+7/21: trying to fix League.js re-rendering constantly
+formatting db standings and otherwise converting it
 now: standings.json to db
 get rid of where jsons are made
 League.js is fully db dependent
@@ -66,21 +67,6 @@ League.js is fully db dependent
 7/13: I read thru all of server.js...think it makes sense/is doable to fully get rid of that and work directly w/ db
  Trying to get rid of all cookies except current and Want to read over all of server.js to get rid of 
       what I know I don't need
-
-Deleted from server.js:
-takeMe (it's in League)
-isLoad and hit count
-merge/mergesort
-getCookies
-app.get('/'...
-app.use(express.static(__dirname + '/')); 
-app.use(express.static(join(__dirname, 'public')));
-app.use(express.json());
-prefReset
-preferences
-app.post('/stream'...
-checkjson
-a bunch of imports
 
 Probs can delete from server.js:
 all cookies? cookieparser?
