@@ -2,7 +2,7 @@
 
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { timeConversion, standingsScrape, needStandings  } from './standings-time.js';
+import { timeConversion, standingsScrape } from './standings-time.js';
 import finalSort from './finalSort.js';
 import netLinks from './netLinks.js';
 import nets from '../nets.js';

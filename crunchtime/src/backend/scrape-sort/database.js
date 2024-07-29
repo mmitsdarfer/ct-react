@@ -7,21 +7,15 @@ export async function database(sorted, league, date){
     let leagueDate = new Date(Date.parse(date.replace(',',''))); //date scraped from espn.com, but temp so it doesn't change on page
     leagueDate = leagueDate.getFullYear() + '-' + (leagueDate.getMonth()+1) + '-' + leagueDate.getDate();
 
-    let update = true;
     let id; //id of previous db entry
 
     const loadLatest = async () => {
         let results = await fetch(`${baseUrl}/${league}/latest`).then(resp => resp.json());
         if(results[0] === undefined){
-            update = false;
             return;
         }
-        let dbDate = new Date (Date.parse(results[0].leagueDate)); //date of most recent db entry
-        dbDate = dbDate.getFullYear() + '-' + (dbDate.getMonth()+1) + '-' + dbDate.getDate();
-        if(leagueDate === dbDate) {
-            id = results[0]._id;
-        }
-        else update = false;  
+        id = results[0]._id;
+        
     }
 
    const createDb = async () => {
@@ -86,12 +80,7 @@ export async function database(sorted, league, date){
               })
             });
         }
-        if(update){ 
-            await updateDb();
-        }
-        else{
-            await createDb();
-        }
+        await updateDb();
     }
 
     await loadLatest();    

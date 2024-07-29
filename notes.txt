@@ -10,29 +10,23 @@ known errors:
    - curious if this happens on my desktop...could be a RAM thing (?)
 2 double db entries sometimes created
    - seems to be first entry of a new date
-3 reset back to getting stuck on true
-4 auto-refresh choice changes back to manual on its own
+3 when first running program the league data isn't always ready 
+   - (look more into all of this because I'm not certain that's even the problem)
 
 To do:
 0 add peacock support
-0 did date format change on league pages?
-1 make sure all database info is formatted the same to fit League.js (may need to check during games)
-1 Fetch POST instead of cookies (?)
-2 See if timezones matter for mongodb vs new Date
-3 instead of delete and create in database.js, figure out update
-4 tell user if on espn or espn+
-5 Make sure need to configure new IP when changing location only for server, not potential users
-6 fix unexpected token timer on manual not valid json on league pages
-7 switch to sql
+1 did date format change on league pages?
+2 tell user if on espn or espn+
+3 Make sure need to configure new IP when changing location only for server, not potential users
+4 switch to sql
    - map out schema
-8 see what "Note that the development build is not optimized. [CLIENT] To create a production build, use npm run build." means
-9 can I consolidate/get rid of multiple package.json's?
-10 move update/load/etc db to their own file?
-11 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
+5 see what "Note that the development build is not optimized. [CLIENT] To create a production build, use npm run build." means
+6 can I consolidate/get rid of multiple package.json's?
+7 move update/load/etc db to their own file?
+8 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
-12 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
-13 update instead of recreating league scores
-14 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
+9 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
+10 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -55,16 +49,7 @@ To do:
 Recently completed (since last push, so put in commit msg):
 
 WIWWO: 
-7/29: got rid of cookies, added delayed re-render
-7/21: trying to fix League.js re-rendering constantly
-formatting db standings and otherwise converting it
-now: standings.json to db
-get rid of where jsons are made
-League.js is fully db dependent
-7/14: trying to get rid of server.js so want to replace the fetch to that with a fetch to database.js
-7/13: I read thru all of server.js...think it makes sense/is doable to fully get rid of that and work directly w/ db
- Trying to get rid of all cookies except current and Want to read over all of server.js to get rid of 
-      what I know I don't need
+7/29: changed league db to update
 
 Probs can delete from server.js:
 all cookies? cookieparser?

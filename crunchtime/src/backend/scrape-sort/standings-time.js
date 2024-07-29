@@ -142,21 +142,6 @@ function dateAndTime(last){
     return false;
 }
 
-//if league is in standings, how long since it was updated?
-export async function needStandings(league){ 
-    /*
-    let currentDate = new Date().getTime();
-    const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
-    for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
-        if(parsedStands.table[i].league == league){
-            let last = parsedStands.table[i].time;
-            return dateAndTime(last, currentDate);
-        }
-    }
-        */
-    return null;
-}
-
 export async function standingsScrape(league, data){
     let standings = [];
     let leagueIndex;  
