@@ -2,7 +2,7 @@
 
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { timeConversion, standingsScrape, needStandings, reuseStands  } from './standings-time.js';
+import { timeConversion, standingsScrape, needStandings  } from './standings-time.js';
 import finalSort from './finalSort.js';
 import netLinks from './netLinks.js';
 import nets from '../nets.js';
@@ -158,45 +158,12 @@ export async function mlbScrape(priority){
     }
 
     const callStandings = async () => {
-        let standsExist = true; //if file exists
-        let needUpdate = false; 
-        if(!fs.existsSync('../json/standings.json')){
-            standsExist = false;
-        }
-        if(standsExist){
-            needUpdate = await needStandings(league);
-
-             //REMOVE:
-             needUpdate = true;
-            
-            if(needUpdate === true){ //true = in json & out of date
-                //use outdated stands for quick response (it's just an extra scrape)
-                await reuseStands(league, data.table);
-                timeToObj(data.table, league);
-                finalSort(data.table, priority, league, date);
-
-                //then scrape standings and update if needed
-                standingsScrape(league, data, needUpdate, standsExist);
-                timeToObj(data.table, league);
-                finalSort(data.table, priority, league, date);
-            }
-            else if(needUpdate === null){ //null = not in json
-                standingsScrape(league, data, needUpdate, standsExist);
-                timeToObj(data.table, league);
-                finalSort(data.table, priority, league, date);
-            }
-            else{ //false = in json & updated
-                 await reuseStands(league, data.table);
-                 timeToObj(data.table, league);
-                 finalSort(data.table, priority, league, date);
-            }
-        }
-        else{
-            standingsScrape(league, data, false, standsExist);
-            timeToObj(data.table, league);
-            finalSort(data.table, priority, league, date);
-        }        
-      }
+        await standingsScrape(league, data.table);
+       // console.log(data.table)
+        timeToObj(data.table, league);
+        finalSort(data.table, priority, league, date);
+        finalSort(data.table, priority, league, date);
+    }
     callStandings();
       
     await browser.close();

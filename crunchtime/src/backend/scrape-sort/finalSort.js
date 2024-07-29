@@ -405,7 +405,6 @@ export function finalSort(data, priority, league, date){
         } 
     }
 
-    console.log('Priority: ' + priority);
     console.log(thirdOrder); 
     database(thirdOrder, league, date);    
 }

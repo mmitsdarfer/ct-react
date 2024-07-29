@@ -2,7 +2,6 @@ import express from 'express';
 const app = express();
 const port = 8000;
 import { parse } from 'url';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { callScrape } from './scrape-sort/scrape.js';
 import nets from './nets.js';
@@ -23,8 +22,6 @@ async function loadDb(){
     priority = results.priority;
 }
 
-app.use(cookieParser());
-
 function timer(league, req, res){
     if(time == 0) {
         console.log('Auto-refresh set to manual');
@@ -43,7 +40,6 @@ function timer(league, req, res){
 
 
 function leagueCall(league, req, res){
-    res.cookie('Current', 'null');
     loadDb();
 
     async function callLeague(){

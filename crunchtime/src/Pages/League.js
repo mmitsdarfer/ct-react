@@ -26,7 +26,6 @@ export default function League({league, logoData}){
     const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
     const [streams, setStreams] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
     const [take, setTake] = useState(false);
-    const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
         //load in user preferences from db
@@ -35,26 +34,14 @@ export default function League({league, logoData}){
             .then(resp => resp.json())
             .catch(err => {console.log(`No user "${USER}" found`)});
 
-            //if no user is found create dummy preferences so scores can still be shown
-            if(results === undefined){
-                results = {
-                    priority: ['diffs', 'times', 'stands'],
-                    streams: streams,
-                    leagues: [{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}],
-                    take: take,
-                    refresh: refresh
-                }
-            }
-            else{           
+            if(results !== undefined){        
                 setPriority(results.priority);
                 setStreams(results.streams);
                 setTake(results.take);
-                setRefresh(results.refresh);
             } 
         }
         loadLatest();
-
-    }, [refresh, streams, take]);
+    }, [take]);
 
     function Priority(){
         return(
@@ -81,7 +68,8 @@ export default function League({league, logoData}){
             setLeagueData(loadLeague[loadLeague.length-1]);
         }
         loadLeague();
-    }, []);
+        setTimeout(() => {loadLeague()}, 5000);
+    }, [league]);
 
    
     
@@ -89,7 +77,7 @@ export default function League({league, logoData}){
     useEffect(() => {
         fetch('/'+league)
         .then((data) => console.log(data.message));        
-    }, []);  
+    }, [league]);  
     
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page
     function writeData(){
@@ -99,8 +87,6 @@ export default function League({league, logoData}){
         function getLink(net){
             if(fullNets.find(chan => chan[0] === net) !== undefined) return fullNets.find(chan => chan[0] === net)[1];
         }
-
-        console.log(leagueData.sorted)
 
         //if coming from different page (not refreshing) with takeMe on, open in a new window so this only happens once
         if(origin !== window.location.href) { 

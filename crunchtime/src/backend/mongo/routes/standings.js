@@ -63,8 +63,8 @@ router.get("/", async (req, res) => {
   router.patch("/:league", async (req, res) => {
     let collection = await db.collection("standings");
     let convertResult = await collection.findOne({league: req.params.league});
-    console.log(req.params.league)
-    console.log(convertResult)
+    //console.log(req.params.league)
+    //console.log(convertResult)
     let _id = convertResult._id;
     const query = { _id };
     const newData = req.body;

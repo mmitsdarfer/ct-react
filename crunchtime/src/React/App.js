@@ -10,15 +10,11 @@ import {
   Route,
 } from "react-router-dom";
 import React from 'react';
-import { useCookies } from 'react-cookie';
 
 function HomeButton(){
-  // line below hides unneeded warning (cookies not used)
-  // eslint-disable-next-line 
-  const [cookies, setCookie] = useCookies('Current');
   return (
     <a href="//localhost:3000">
-      <button id="home" type="submit" onClick={() => setCookie('Current', null, { path: '/' })}> 
+      <button id="home" type="submit" > 
           <br></br><img type="image" width="70" height="70" src="./goHome.png" alt="home"/>
       </button> 
     </a>
@@ -26,12 +22,9 @@ function HomeButton(){
 }
 
 function PrefButton(){
-  // line below hides unneeded warning (cookies not used)
-  // eslint-disable-next-line 
-  const [cookies, setCookie] = useCookies('Current');
   return(
     <a href="//localhost:3000/preferences">
-      <button id="prefs" type="submit"  onClick={() => setCookie('Current', null, { path: '/' })}>
+      <button id="prefs" type="submit"  >
         Preferences <img type="image" width="60" height="60" src="./podium.png" alt="prefImage"/>
       </button>
     </a>      
@@ -55,12 +48,7 @@ function LeaguePage({league}){
   )
 }
 
-function App(){
-  // line below hides unneeded warning (cookies not used)
-  // eslint-disable-next-line 
-  const [cookies, setCookie] = useCookies('Current');
-  setCookie('Current', null, { path: '/' });
-  
+function App(){  
   return (
     <Router>
       <Routes>

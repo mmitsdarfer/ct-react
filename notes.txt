@@ -15,6 +15,7 @@ known errors:
 
 To do:
 0 add peacock support
+0 did date format change on league pages?
 1 make sure all database info is formatted the same to fit League.js (may need to check during games)
 1 Fetch POST instead of cookies (?)
 2 See if timezones matter for mongodb vs new Date
@@ -30,6 +31,8 @@ To do:
 11 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
 12 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
+13 update instead of recreating league scores
+14 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist
 (Evergreen) Update readme
@@ -50,14 +53,9 @@ To do:
    - Display standings
 
 Recently completed (since last push, so put in commit msg):
-Added mongodb server
-Made /preferences fit on one page
-
-To do but it's specific:   
-Delete (all) cookies
-Add standings to db
 
 WIWWO: 
+7/29: got rid of cookies, added delayed re-render
 7/21: trying to fix League.js re-rendering constantly
 formatting db standings and otherwise converting it
 now: standings.json to db

@@ -127,7 +127,9 @@ export function timeConversion(league, time){
 }
 
 //compares current timestamp with last standings check
-function dateAndTime(last, current){  
+function dateAndTime(last){  
+    let current = new Date().getTime();
+    last = new Date(last).getTime();
     let timeDiff = current - last; 
     let diffHrs = Math.round(timeDiff / (1000 * 3600));
     var cDate = new Date(current); 
@@ -155,77 +157,24 @@ export async function needStandings(league){
     return null;
 }
 
-export async function reuseStands(league, data){
-    /*
-    const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
-    let leagueIndex; 
-    let standings = {};
-    standings.table = [];
-    standings = parsedStands;
-    for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
-        if(parsedStands.table[i].league == league){
-            leagueIndex = i;
-        }
-    }
-
-    let dateOut = parsedStands.table[leagueIndex].time;
-    let teamRanks = parsedStands.table[leagueIndex].standings;
-    standings.table.splice(leagueIndex, 1);
-    standings.table.push({
-        league: league,
-        time: dateOut,
-        standings: teamRanks
-    });
-
-    let gameRanks = [];
-    for(let i = 0; i < data.length; i++){
-        gameRanks[i] = [];
-        for(let j = 0; j < teamRanks.length; j++){
-            if(teamRanks[j].includes(data[i].team1)){        
-                gameRanks[i].push(data[i].team1, j);    
-            }
-        }
-        for(let j = 0; j < teamRanks.length; j++){
-            if(teamRanks[j].includes(data[i].team2)){        
-                gameRanks[i].push(data[i].team2, j);      
-            }
-        }
-        data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
-    }
-    return data;
-    */
-}
-
-export async function standingsScrape(league, data, needUpdate, haveJson){
-    let standings = {};
-    standings.table = [];
-    let teamRanks = [];
-    let currentDate = new Date().getTime();
+export async function standingsScrape(league, data){
+    let standings = [];
     let leagueIndex;  
-    let dateOut;
 
-    let results;
+    function getLeague(){
+        for(let i = 0; i < standings.length; i++){
+            if( league === standings[i].league){
+                leagueIndex = i;
+            }
+        }
+    }
 
     const loadLatest = async () => {
-        results = await fetch(`${baseUrl}/standings`).then(resp => resp.json());
-        if(results[0] === undefined){
-            
-            return;
-        }
-        
-       /* let dbDate = new Date (Date.parse(results[0].leagueDate)); //date of most recent db entry
-        dbDate = dbDate.getFullYear() + '-' + (dbDate.getMonth()+1) + '-' + dbDate.getDate();
-        if(leagueDate === dbDate) {
-            id = results[0]._id;
-        }
-        else update = false;  
-        */
+        standings = await fetch(`${baseUrl}/standings`).then(resp => resp.json());
     }
     await loadLatest();
-   // console.log(results[0].MLB)
-    standings = results[0].MLB;
-    console.log('11111111')
-    console.log(standings)
+    getLeague();  
+   // standings = standings[leagueIndex];
 
     const updateDb = async () => {
         await fetch(`${baseUrl}/standings/${league}`, {
@@ -239,63 +188,49 @@ export async function standingsScrape(league, data, needUpdate, haveJson){
             standings: standings
           })
         });
-    }
+    }    
 
-    /*
-    if(haveJson){
-        const parsedStands = JSON.parse(fs.readFileSync('../json/standings.json', 'utf-8'));
-        standings = parsedStands;
-        for(let i = 0; i < Object.keys(parsedStands.table).length; i++){
-            if(parsedStands.table[i].league == league){
-                leagueIndex = i;
-            }
-        }
-        if(needUpdate) standings.table.splice(leagueIndex, 1); //if already in json, remove to replace it
+    async function scrapeStands(){
+        let url;
+        if(league === 'MLB') url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/overall'; 
+        else url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.goto(url);         
+        standings = await page.evaluate(() => {
+            let getStands = document.querySelectorAll('span.hide-mobile > a');
+            let standArr = Array.from(getStands);
+            standArr = standArr.map(game => game.textContent);
+            return standArr;
+        });
+        await browser.close();
     }
-    */
-    console.log(standings)
     
+    let last = standings.date
 
-    console.log(league + ' standings');
-    dateOut = currentDate;
-    let url;
-    if(league === 'MLB') url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/overall'; 
-    else url = 'https://www.espn.com/'+league.toLowerCase()+'/standings/_/group/league';
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);         
-    teamRanks = await page.evaluate(() => {
-        let getStands = document.querySelectorAll('span.hide-mobile > a');
-        let standArr = Array.from(getStands);
-        standArr = standArr.map(game => game.textContent);
-        return standArr;
-    });
+    if(standings.standings === undefined || dateAndTime(last)){
+        await scrapeStands();
+    }
     
-    await browser.close();
-    standings = {
-        time: dateOut,
-        standings: teamRanks
-    };
     updateDb();
 
-    fs.writeFile('../json/standings.json', JSON.stringify(standings), function(err){
-        if(err) throw err;
-     });
     let gameRanks = [];
     for(let i = 0; i < data.length; i++){
         gameRanks[i] = [];
-        for(let j = 0; j < teamRanks.length; j++){
-            if(teamRanks[j].includes(data[i].team1)){        
+        for(let j = 0; j < standings.length; j++){
+            if(standings[j].includes(data[i].team1)){        
                 gameRanks[i].push(data[i].team1, j);    
             }
         }
-        for(let j = 0; j < teamRanks.length; j++){
-            if(teamRanks[j].includes(data[i].team2)){        
+        for(let j = 0; j < standings.length; j++){
+            if(standings[j].includes(data[i].team2)){        
                 gameRanks[i].push(data[i].team2, j);      
             }
         }
         data[i].avgStanding = (gameRanks[i][1] + gameRanks[i][3]) / 2;
+        
     }
+
     return data;
 }
 
