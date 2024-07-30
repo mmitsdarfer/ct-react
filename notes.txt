@@ -9,20 +9,18 @@ known errors:
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
       - DOES happen
-2 when first running program the league data isn't always ready 
+2!! when first running program the league data isn't always ready 
    - (look more into all of this because I'm not certain that's even the problem)
 
 To do:
-2 tell user if on espn or espn+
-3 Make sure need to configure new IP when changing location only for server, not potential users
-4 switch to sql
+1 tell user if on espn or espn+
+2 switch to sql
    - map out schema
-5 see what "Note that the development build is not optimized. [CLIENT] To create a production build, use npm run build." means
-6 can I consolidate/get rid of multiple package.json's?
-7 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
+3 can I consolidate/get rid of multiple package.json's?
+4 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
-8 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
-9 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
+5 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
+6 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
    -generally find a way to re-render league after changing priority
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist and ctrl+f "TODO"
@@ -38,6 +36,7 @@ To do:
    - Don't re-scrape ended games to improve efficiency (?)
    - Host on netlify or simlar (?) 
       -> Scott said AWS
+      -> Make sure need to configure new IP when changing location only for server, not potential users
    - Add login for each user's preferences
    - Let user enter their local streams (?)
       - if so replace "NBCSP" with this...really NBCSP shouldn't be in the publicly available options
