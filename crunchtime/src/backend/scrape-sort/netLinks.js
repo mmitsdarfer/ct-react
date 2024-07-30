@@ -1,12 +1,5 @@
 //converts networks to applicable links and determines if those links are available
-let streamLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'], 
-    ['FOX', 'https://www.foxsports.com/live'], ['ABC', 'https://abc.com/watch-live/abc'],
-    ['NBC', 'https://www.nbc.com/live?brand=nbc'], ['CBS', 'https://www.cbs.com/live-tv/stream'],
-    ['AppleTV+', 'https://tv.apple.com/us/room/apple-tv-major-league-baseball/edt.item.62327df1-6874-470e-98b2-a5bbeac509a2'],
-    ['TBS', 'https://www.tbs.com/watchtbs/east'], ['FS1', 'https://www.foxsports.com/live/fs1'], 
-    ['MLB Network', 'https://www.mlb.com/network/live?success=true'], ['MLBTV', 'https://www.mlb.com/tv'],
-    ['NBA TV', 'https://www.nba.com/watch/nba-tv'],
-    ['NBCSP', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
+import streamLinks from "../nets.js";
 
 export default function netLinks(nets, teams, progress, numGames, links, league, availNets){
     const locTeams = ['Flyers', 'Phillies', '76ers'];
@@ -14,10 +7,11 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
     let notPlus = 0; //need non-ESPN+ links since I can get specific games just for ESPN+
 
     function localStream(i){
+        
         for(let j = 0; j < locTeams.length; j++){
             if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){ 
                 nets[i] = 'NBCSP';
-                if(availNets.find(chan => chan === 'NBCSP') !== undefined){
+                if(availNets.find(chan => chan[0] === 'NBCSP') !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === 'NBCSP')[1];
                 }
                 else channels[i] = '/stream';
@@ -45,7 +39,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                 }
             }
             if(nets[i] === 'TNT'){
-                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }
                 else channels[i] = '/stream';
@@ -56,7 +50,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                     if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
                     else {
                         nets[i] = 'ESPN+';
-                        if(availNets.find(chan => chan === nets[i]) !== undefined){
+                        if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                             channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                         }
                         else channels[i] = '/stream';
@@ -64,28 +58,28 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                 }
             }
             else if(nets[i] === 'FOX'){
-                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }
                 else channels[i] = '/stream';
                 notPlus++;
             }
             else if(nets[i] === 'ABC'){
-                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }
                 else channels[i] = '/stream';
                 notPlus++;
             }
             else if(nets[i] === 'NBC'){
-                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }
                 else channels[i] = '/stream';
                 notPlus++;
             }
             else if(nets[i] === 'CBS'){
-                if(availNets.find(chan => chan === nets[i]) !== undefined){
+                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }
                 else channels[i] = '/stream';
@@ -93,7 +87,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             }
             else if(nets[i] === 'Apple TV+'){
                 if(!localStream(i)){
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';
@@ -103,7 +97,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             else if(nets[i] === 'MLBN'){
                 nets[i] = 'MLB Network';
                 if(!localStream(i)){
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';
@@ -112,7 +106,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             }
             else if(nets[i] === 'TBS'){
                 if(!localStream(i)){
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';
@@ -121,7 +115,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             }
             else if(nets[i] === 'FS1'){
                 if(!localStream(i)){
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';
@@ -131,7 +125,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             else if((nets[i].includes('NESN') && league === 'MLB') || nets[i].includes('MLBTV')){
                 if(!localStream(i)){
                     nets[i] = 'MLBTV';
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';
@@ -146,7 +140,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             }
             else if(nets[i] === 'NBA TV'){
                 if(!localStream(i)){
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';
@@ -155,7 +149,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
             else if(league === 'MLB'){
                 if(!localStream(i)){
                     nets[i] = 'MLBTV';
-                    if(availNets.find(chan => chan === nets[i]) !== undefined){
+                    if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                         channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                     }
                     else channels[i] = '/stream';

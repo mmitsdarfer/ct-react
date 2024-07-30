@@ -1,4 +1,3 @@
-import fs from 'fs'; //TODO: can probably get rid of this
 import database from './database.js';
 
 //merge & mergesort to rank the diffs
@@ -65,7 +64,6 @@ function timeSort(data){
             }
         }
     }
-
     return data;
 }
 
@@ -143,7 +141,6 @@ function standSort(data){
         }
     }
     
-    
     let onStandSort = mergeSort(ongoingStands);
     let unstartStandSort = mergeSort(unstartedStands);
     let endStandSort = mergeSort(endedStands);
@@ -165,7 +162,6 @@ function standSort(data){
             }
         }
     }
-
     return data;
 }
 
@@ -361,8 +357,7 @@ export function finalSort(data, priority, league, date){
                             for(let k = 0; k < secondOrder[i].length; k++){
                                 if(secondOrder[i][k].diffRank == j) thirdOrder[i].push(secondOrder[i][k]);
                             }
-                        }
-                        
+                        }    
                     }
                     else if(secondOrder[i].length == 1){
                         thirdOrder[i].push(secondOrder[i][0]);
@@ -370,7 +365,7 @@ export function finalSort(data, priority, league, date){
                 }
             }
         }
-        else  if(priority[1] == 'times'){
+        else if(priority[1] == 'times'){
             for(let i = 0; i < firstOrder.length; i++){
                 secondOrder[i] = [];
                 if(firstOrder[i] !== undefined){

@@ -3,32 +3,29 @@ The what (my original idea):
 - It refreshes the scores every [set time period] but when you click "It's a commercial!" it refreshes and takes you to the next game
 
 known errors:
-1 clicking logo fails to fetch sometimes
+1 fails to fetch sometimes
    - just occasionally really slow
       - every time I try to fix this it stops happening or at least isn't as slow as before 
          - this is because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
-2 double db entries sometimes created
-   - seems to be first entry of a new date
-3 when first running program the league data isn't always ready 
+      - DOES happen
+2 when first running program the league data isn't always ready 
    - (look more into all of this because I'm not certain that's even the problem)
 
 To do:
-0 add peacock support
-1 did date format change on league pages?
 2 tell user if on espn or espn+
 3 Make sure need to configure new IP when changing location only for server, not potential users
 4 switch to sql
    - map out schema
 5 see what "Note that the development build is not optimized. [CLIENT] To create a production build, use npm run build." means
 6 can I consolidate/get rid of multiple package.json's?
-7 move update/load/etc db to their own file?
-8 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
+7 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
-9 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
-10 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
+8 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
+9 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
+   -generally find a way to re-render league after changing priority
 (Evergreen) Document code and check for unneeded parts
-(Evergreen) See if specific errors above still exist
+(Evergreen) See if specific errors above still exist and ctrl+f "TODO"
 (Evergreen) Update readme
 (Evergreen/do if any new links show up) Add streaming/other online links
 - Pie in the sky/longterm:   
@@ -44,21 +41,13 @@ To do:
    - Add login for each user's preferences
    - Let user enter their local streams (?)
       - if so replace "NBCSP" with this...really NBCSP shouldn't be in the publicly available options
+      - OR basically suggestion box of channels to add
    - Display standings
 
 Recently completed (since last push, so put in commit msg):
 
 WIWWO: 
-7/29: changed league db to update
-
-Probs can delete from server.js:
-all cookies? cookieparser?
-
-Deploying to web things:
-Mapping out database things:
-   1) READ from league db
-   2a) if entry for current date UPDATE
-   2b) if no entry for current date CREATE
+7/30: adjusted nets
 
 Odds, ends, and reminders
    Using git:

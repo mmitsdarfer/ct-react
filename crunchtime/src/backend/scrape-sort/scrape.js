@@ -3,11 +3,7 @@ import fs from 'fs';
 import { timeConversion, standingsScrape } from './standings-time.js';
 import finalSort from './finalSort.js';
 import netLinks from './netLinks.js';
-import nets from '../nets.js';
-const availNets = nets;
 
-var league;
-var priority;
 var url;
 var data = {};  //object json data will be stored in
 var gameData = {};

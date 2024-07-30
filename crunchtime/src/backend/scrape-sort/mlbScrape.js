@@ -1,7 +1,6 @@
 //MLB has many edge cases (e.g. innings, bottom/top), so it has its own scrape file
 
 import puppeteer from 'puppeteer';
-import fs from 'fs';
 import { timeConversion, standingsScrape } from './standings-time.js';
 import finalSort from './finalSort.js';
 import netLinks from './netLinks.js';

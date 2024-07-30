@@ -92,6 +92,8 @@ img {
 #date{
     background-color: rgb(56, 127, 175);
     border: 2px solid;
+    padding-top: 4px;
+    padding-bottom: 0px;
 }
 #league-row{
     display: table;

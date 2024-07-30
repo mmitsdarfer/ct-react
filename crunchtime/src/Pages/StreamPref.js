@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import netLinks from "../backend/nets";
 
 const PORT = process.env.PORT || 5000;
 const baseUrl = `http://localhost:${PORT}`;
@@ -6,7 +7,7 @@ const baseUrl = `http://localhost:${PORT}`;
 export default function Stream(){
     const USER = 'mikeymits'; //TODO: replace with login
     const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
-    const [streams, setStreams] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
+    const [streams, setStreams] = useState(netLinks);
     const [availNets, setAvailNets] = useState(streams); 
     const [leagues, setLeagues] = useState([{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}]);
     const [take, setTake] = useState(false);
@@ -43,6 +44,7 @@ export default function Stream(){
     }, []);  
 
     document.title = 'Crunch Time: Streams';
+    /*
     let netLinks = [['TNT', 'https://www.tntdrama.com/watchtnt/east'], ['ESPN+', 'https://www.espn.com/watch/'],
         ['FOX', 'https://www.foxsports.com/live'], ['ABC', 'https://abc.com/watch-live/abc'],
         ['NBC', 'https://www.nbc.com/live?brand=nbc'], ['CBS', 'https://www.cbs.com/live-tv/stream'], 
@@ -51,7 +53,8 @@ export default function Stream(){
         ['MLB Network', 'https://www.mlb.com/network/live?success=true'], ['MLBTV', 'https://www.mlb.com/tv'],
         ['NBATV', 'https://www.nba.com/watch/nba-tv'],
         ['NBCSP', 'https://www.nbc.com/live?brand=rsn-philadelphia&callsign=nbcsphiladelphia']]; 
-    let nets = streams;
+    */
+        let nets = streams;
     if(nets === null) nets = netLinks.map(net => net[0]);    
     
     async function updateDbStreams(newNets){

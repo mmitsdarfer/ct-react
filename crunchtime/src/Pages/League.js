@@ -26,7 +26,8 @@ export default function League({league, logoData}){
     const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
     const [streams, setStreams] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
     const [take, setTake] = useState(false);
-
+    const [date, setDate] = useState('Dec 21 2000')
+    
     useEffect(() => {
         //load in user preferences from db
         async function loadLatest(){
@@ -62,16 +63,18 @@ export default function League({league, logoData}){
         //gets league score data from db
         async function loadLeague(){
             let loadLeague = await fetch(`${baseUrl}/${league}`)
+            
             .then(resp => resp.json())
             .catch(err => {console.log(`Failed to load ${league} data`)});
-            setLen(loadLeague.length-1);
+            setLen(loadLeague[0].sorted.length);
             setLeagueData(loadLeague[loadLeague.length-1]);
+            let date = new Date(loadLeague[loadLeague.length-1].leagueDate);
+            date = date.toLocaleString('default', { day: 'numeric', month: 'long', year: 'numeric'});
+            setDate(date)
         }
         loadLeague();
         setTimeout(() => {loadLeague()}, 5000);
-    }, [league]);
-
-   
+    }, [league]);   
     
     //fetches the server which calls the scrape function, updates db, etc.
     useEffect(() => {
@@ -146,6 +149,7 @@ export default function League({league, logoData}){
         function Game({i}){
             if(typeof leagueData.sorted[i] === 'undefined'){
                 return;
+                
             }
             return(
                 <div>
@@ -189,7 +193,7 @@ export default function League({league, logoData}){
                 </div>
                 <h2>Click the league logo to refresh scores</h2>
                 <div id="date">
-                        <h2>{leagueData.leagueDate}</h2>
+                        <h2>{date}</h2>
                     </div>
                 <div id='league-row'>
                     <div className='league-column'>
@@ -213,7 +217,8 @@ export default function League({league, logoData}){
                         </h3>
                     </div>
                 </div> 
-                <Priority></Priority>           
+                <Priority></Priority>  
+          
             </div>
         )
     }

@@ -155,11 +155,12 @@ export async function standingsScrape(league, data){
     }
 
     const loadLatest = async () => {
-        standings = await fetch(`${baseUrl}/standings`).then(resp => resp.json());
+        standings = await fetch(`${baseUrl}/standings`)
+        .then(resp => resp.json())
+        .catch(err => {console.log(`Standings for ${league} not found`)});
     }
     await loadLatest();
     getLeague();  
-   // standings = standings[leagueIndex];
 
     const updateDb = async () => {
         await fetch(`${baseUrl}/standings/${league}`, {

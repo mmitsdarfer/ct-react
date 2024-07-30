@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import "express-async-errors";
-//import posts from "./routes/posts.mjs";
 import mlb from './routes/mlb.js';
 import nhl from './routes/nhl.js';
 import nfl from './routes/nfl.js';
@@ -18,7 +17,6 @@ app.use(cors());
 app.use(express.json());
 
 // Load the /posts routes
-//app.use("/posts", posts);
 app.use('/mlb', mlb);
 app.use('/nhl', nhl);
 app.use('/nfl', nfl);

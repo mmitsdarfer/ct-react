@@ -1,8 +1,6 @@
 const PORT = process.env.PORT || 5000;
 const baseUrl = `http://localhost:${PORT}`;
 
-//write to league page based on previous sorts
-
 export async function database(sorted, league, date){
     let leagueDate = new Date(Date.parse(date.replace(',',''))); //date scraped from espn.com, but temp so it doesn't change on page
     leagueDate = leagueDate.getFullYear() + '-' + (leagueDate.getMonth()+1) + '-' + leagueDate.getDate();
@@ -15,24 +13,11 @@ export async function database(sorted, league, date){
             return;
         }
         id = results[0]._id;
-        
-    }
-
-   const createDb = async () => {
-        await fetch(`${baseUrl}/${league}`, {
-            method: "POST",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify({
-                sorted, leagueDate
-            })
-        }).then(resp => resp.json());
     }
 
     async function dbFormat(){
-        let jsonData = {};
-        jsonData.table = [];
+        let dbData = {};
+        dbData.table = [];
         let obj = {};
         for(let i = 0; i < sorted.length; i++){
             if(sorted[i] !== undefined){
@@ -49,7 +34,7 @@ export async function database(sorted, league, date){
                         network: sorted[i][j].network,
                         link: sorted[i][j].link
                     }
-                    jsonData.table.push(obj);
+                    dbData.table.push(obj);
                 }
             }
             else{
@@ -63,11 +48,9 @@ export async function database(sorted, league, date){
                     network: sorted[i].network,
                     link: sorted[i].link
                 }
-                jsonData.table.push(obj);
+                dbData.table.push(obj);
             }      
         }
-    
-        let dbData = jsonData.table;
     
         const updateDb = async () => {
             await fetch(`${baseUrl}/${league}/${id}`, {
@@ -76,7 +59,7 @@ export async function database(sorted, league, date){
                 "content-type": "application/json"
               },
               body: JSON.stringify({
-                sorted: dbData, leagueDate
+                sorted: dbData.table, leagueDate
               })
             });
         }
@@ -92,36 +75,3 @@ export async function database(sorted, league, date){
 }
 
 export default database;
-
-/*
-Philadelphia Phillies
-Baltimore Orioles
-Cleveland Guardians
-New York Yankees
-Los Angeles Dodgers
-Milwaukee Brewers
-Atlanta Braves
-Minnesota Twins
-Boston Red Sox
-Kansas City Royals
-Houston Astros
-St. Louis Cardinals
-Seattle Mariners
-New York Mets
-Arizona Diamondbacks
-Pittsburgh Pirates
-San Diego Padres
-Tampa Bay Rays
-Detroit Tigers
-San Francisco Giants
-Cincinnati Reds
-Chicago Cubs
-Texas Rangers
-Washington Nationals
-Toronto Blue Jays
-Los Angeles Angels
-Oakland Athletics
-Colorado Rockies
-Miami Marlins
-Chicago White Sox
-*/
