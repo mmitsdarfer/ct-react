@@ -158,7 +158,6 @@ export async function mlbScrape(priority){
 
     const callStandings = async () => {
         await standingsScrape(league, data.table);
-       // console.log(data.table)
         timeToObj(data.table, league);
         finalSort(data.table, priority, league, date);
         finalSort(data.table, priority, league, date);

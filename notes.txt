@@ -16,11 +16,10 @@ To do:
 1 tell user if on espn or espn+
 2 switch to sql
    - map out schema
-3 can I consolidate/get rid of multiple package.json's?
-4 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
+3 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
-5 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
-6 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
+4 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
+5 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
    -generally find a way to re-render league after changing priority
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist and ctrl+f "TODO"
