@@ -12,6 +12,8 @@
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
     "fs": "^0.0.1-security",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.4",
     "puppeteer": "^22.9.0",
     "react": "^18.2.0",
     "react-cookie": "^7.1.4",

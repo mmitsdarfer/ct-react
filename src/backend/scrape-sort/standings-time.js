@@ -1,6 +1,6 @@
 //handles scraping standings and anything with time
 
-import fs from 'fs';
+import fetch from 'node-fetch';
 import puppeteer from 'puppeteer';
 
 const PORT = process.env.PORT || 5000;

@@ -84,8 +84,11 @@ export default function League({league, logoData}){
     
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page
     function writeData(){
+        console.log(leagueData) 
         let haveTopLink = false;
-        if(streams.find(chan => chan === leagueData.sorted[0].network) !== undefined) haveTopLink = true;
+        if(leagueData.sorted[0].network !== undefined){
+            if(streams.find(chan => chan === leagueData.sorted[0].network) !== undefined) haveTopLink = true;
+        }
 
         function getLink(net){
             if(fullNets.find(chan => chan[0] === net) !== undefined) return fullNets.find(chan => chan[0] === net)[1];

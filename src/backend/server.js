@@ -1,4 +1,5 @@
 import express from 'express';
+import fetch from 'node-fetch';
 
 const app = express();
 const port = 8000;
@@ -40,8 +41,8 @@ function timer(league, req, res){
 }
 
 
-function leagueCall(league, req, res){
-    loadDb();
+async function leagueCall(league, req, res){
+    await loadDb(); //need to get priority from db first
 
     async function callLeague(){
         setTimeout(function () {

@@ -399,8 +399,7 @@ export function finalSort(data, priority, league, date){
             }
         } 
     }
-
-    console.log(thirdOrder); 
+    console.log(thirdOrder);
     database(thirdOrder, league, date);    
 }
 
