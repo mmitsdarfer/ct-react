@@ -7,7 +7,6 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
     let notPlus = 0; //need non-ESPN+ links since I can get specific games just for ESPN+
 
     function localStream(i){
-        
         for(let j = 0; j < locTeams.length; j++){
             if((locTeams[j] === teams[i*2] || locTeams[j] === teams[i*2+1]) && !(nets[j] === 'ABC' || nets[j] === 'TNT' || nets[j] === 'FOX')){ 
                 nets[i] = 'NBCSP';
@@ -22,7 +21,7 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
         return false;
     }
 
-    for(let i = 0; i < numGames; i++){
+     for(let i = 0; i < numGames; i++){
         if(progress[i] !== 'ended' && nets[i] !== undefined){
             if(i > 0){
                 if(nets[i-1] === 'ESPN+' && nets[i] === 'Hulu'){
@@ -45,6 +44,13 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                 else channels[i] = '/stream';
                 notPlus++;
             }
+            else if(nets[i] === 'ABC'){
+                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
+                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
+                }
+                else channels[i] = '/stream';
+                notPlus++;
+            }
             else if(nets[i].includes('ESPN') || nets[i].includes('Hulu')){
                 if(!localStream(i)){
                     if(links[i-notPlus] != null && links[i-notPlus] !== undefined) channels[i] = links[i-notPlus];
@@ -58,13 +64,6 @@ export default function netLinks(nets, teams, progress, numGames, links, league,
                 }
             }
             else if(nets[i] === 'FOX'){
-                if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
-                    channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
-                }
-                else channels[i] = '/stream';
-                notPlus++;
-            }
-            else if(nets[i] === 'ABC'){
                 if(availNets.find(chan => chan[0] === nets[i]) !== undefined){
                     channels[i] = streamLinks.find(chan => chan[0] === nets[i])[1];
                 }

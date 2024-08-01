@@ -145,9 +145,6 @@ var scrape = async function scrape(league, priority, availNets){
     gameData.table = [];
     var gameObj = {};
     for(let i = 0; i < numGames; i++){
-
-        //if nets[i] defined call netLinks.js to set links
-
         gameObj = {
             team1: teams[2*i],
             score1: scores[2*i],
