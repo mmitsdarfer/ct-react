@@ -17,7 +17,6 @@ To do:
    but haven't been able to figure it out
 3 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
    -generally find a way to re-render league after changing priority
-4 add whatever form the "it's commercial button" has morphed into since idea stage
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist and ctrl+f "TODO"
 (Evergreen) Update readme
