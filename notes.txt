@@ -9,18 +9,15 @@ known errors:
          - is this because opening devtools changes how it loads
    - curious if this happens on my desktop...could be a RAM thing (?)
       - DOES happen
-2 refresh time not changing
-   - when it is enabled the page doesn't re-render (see 4 below)
 
 To do:
 1 switch to sql
    - map out schema
 2 server.js just calls the scrapes when League.js fetches it, so I tried to find a way to do this w/o having a server,
    but haven't been able to figure it out
-3 change auto refresh options? 30/60/300 feels like it lacks a good middle option to me
-4 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
+3 add each sort order to db so there doesn't have to be a time-based league re-render after changing priorities
    -generally find a way to re-render league after changing priority
-5 add whatever form the "it's commercial button" has morphed into since idea stage
+4 add whatever form the "it's commercial button" has morphed into since idea stage
 (Evergreen) Document code and check for unneeded parts
 (Evergreen) See if specific errors above still exist and ctrl+f "TODO"
 (Evergreen) Update readme
@@ -44,6 +41,7 @@ To do:
 
 Recently completed (since last push, so put in commit msg):
 fixed blank leagueData on launch
+fixed refresh getting stuck
 
 WIWWO: 
 7/31: fixed blank leagueData on first scrape (priority wasn't loaded yet)

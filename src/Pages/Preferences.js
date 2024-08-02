@@ -77,17 +77,7 @@ export default function Preferences(){
             let results = await fetch(`${baseUrl}/preferences/${USER}`)
             .then(resp => resp.json())
             .catch(err => {console.log(`No user "${USER}" found`)});
-            if(results === undefined){
-                results = {
-                    priority: ['diffs', 'times', 'stands'],
-                    streams: nets,
-                    leagues: [{NBA: 0}, {MLB: 0}, {NFL: 0}, {NHL: 0}],
-                    take: take,
-                    refresh: refresh
-                }
-                //top = diffs, mid = times, last = stands
-            }
-            else{           
+            if(results !== undefined){          
                 setPriority(results.priority);
                 setTop(results.priority[0]);
                 setMid(results.priority[1]);
@@ -96,12 +86,9 @@ export default function Preferences(){
                 setLeagues(results.leagues);
                 setTake(results.take);
                 setRefresh(results.refresh);
-            }
-            
+            }   
         }
         loadLatest();
-        //line below gets rid of misleading warning
-        // eslint-disable-next-line
     }, []);   
 
     let prefHits = [];
@@ -287,6 +274,7 @@ export default function Preferences(){
     
     function Timer(){  
         async function updateDbTimer(newTime){
+            setRefresh(newTime);
             await fetch(`${baseUrl}/preferences/${USER}`, {
             method: "PATCH",
             headers: {
@@ -312,11 +300,9 @@ export default function Preferences(){
                         //this if/else protects against people changing reset via dev tools because refreshing too much can crash
                         if(e.target.value !== '0' & e.target.value !== '30' & e.target.value !== '60' & e.target.value !== '300'){
                             updateDbTimer('0');
-                            console.log('set to 0')
                         }
                         else{
                             updateDbTimer(e.target.value);
-                            console.log('working normally')
                         }
                         }}>
                         <option value="0">Don't auto refresh</option>

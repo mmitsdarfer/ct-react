@@ -26,7 +26,8 @@ export default function League({league, logoData}){
     const [priority, setPriority] = useState(['times', 'diffs', 'stands']);
     const [streams, setStreams] = useState(["TNT","ESPN+","FOX","ABC","NBC","CBS","AppleTV+","TBS","FS1","MLB Network","MLBTV","NBATV","NBCSP"]);
     const [take, setTake] = useState(false);
-    const [date, setDate] = useState('Dec 21 2000')
+    const [date, setDate] = useState('Dec 21 2000');
+    const [refresh, setRefresh] = useState(0);
     
     useEffect(() => {
         //load in user preferences from db
@@ -39,6 +40,7 @@ export default function League({league, logoData}){
                 setPriority(results.priority);
                 setStreams(results.streams);
                 setTake(results.take);
+                setRefresh(results.refresh);
             } 
         }
         loadLatest();
@@ -84,7 +86,6 @@ export default function League({league, logoData}){
     
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page
     function writeData(){
-        console.log(leagueData) 
         let haveTopLink = false;
         if(leagueData.sorted[0].network !== undefined){
             if(streams.find(chan => chan === leagueData.sorted[0].network) !== undefined) haveTopLink = true;
