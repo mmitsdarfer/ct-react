@@ -49,19 +49,37 @@ export default function League({league, logoData}){
     }, [take]);
 
     const [events, setEvents] = useState([]);
+    const [leagueData, setLeagueData] = useState();
+    const [len, setLen] = useState(0);  
     useEffect(() => {
         const  login = async () => {
-            // Connect to the database
+            // Connect to db so changes cause page to re-render
             const  mongodb = app.currentUser.mongoClient("mongodb-atlas");
             let leagueLower = league.toLowerCase()
             const  collection = mongodb.db("crunchtime").collection(leagueLower);
 
-            // on change update state so league can be reloaded
             for  await (const  change  of  collection.watch()) {
                 setEvents(events  => [...events, change]);
             }
         }
         login();
+
+        //gets league score data from db
+        async function loadLeague(){
+            let loadLeague = await fetch(`${baseUrl}/${league}`)
+            .then(resp => resp.json())
+            .catch(err => {console.log(`Failed to load ${league} data`)});
+            setLen(loadLeague[0].sorted.length);
+            setLeagueData(loadLeague[loadLeague.length-1]);
+            let date = new Date(loadLeague[loadLeague.length-1].leagueDate);
+            date = date.toLocaleString('default', { day: 'numeric', month: 'long', year: 'numeric'});
+            setDate(date)
+        }
+        loadLeague();
+
+        //fetches the server which calls the scrape function, updates db, etc.
+        fetch('/'+league)
+        .then((data) => console.log(data.message));  
     }, [league]);
 
     function Priority(){
@@ -75,30 +93,7 @@ export default function League({league, logoData}){
                 </p>
             </div>
         )
-      }
-
-    const [leagueData, setLeagueData] = useState();
-    const [len, setLen] = useState(0);
-    useEffect(() => {
-        //gets league score data from db
-        async function loadLeague(){
-            let loadLeague = await fetch(`${baseUrl}/${league}`)
-            .then(resp => resp.json())
-            .catch(err => {console.log(`Failed to load ${league} data`)});
-            setLen(loadLeague[0].sorted.length);
-            setLeagueData(loadLeague[loadLeague.length-1]);
-            let date = new Date(loadLeague[loadLeague.length-1].leagueDate);
-            date = date.toLocaleString('default', { day: 'numeric', month: 'long', year: 'numeric'});
-            setDate(date)
-        }
-        loadLeague();
-    }, [league]);   
-    
-    //fetches the server which calls the scrape function, updates db, etc.
-    useEffect(() => {
-        fetch('/'+league)
-        .then((data) => console.log(data.message));        
-    }, [league]);  
+      } 
     
     const [origin, setOrigin] = useState(document.referrer); // gives url of previous page
     function writeData(){
@@ -253,7 +248,7 @@ export default function League({league, logoData}){
             }, []);  
             return <FullLeague></FullLeague> 
         }
-        
+
         return(
             <div>        
                 <h1>{league} Games</h1>
