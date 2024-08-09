@@ -1,7 +1,9 @@
 import {useEffect, useState} from 'react';
 import { noLinks } from '../backend/scrape-sort/netLinks';
 import { useNavigate } from 'react-router-dom';
+import * as Realm from 'realm-web';
 
+const app = new Realm.App({id: 'application-0-ejwdagr'});
 const PORT = process.env.PORT || 5000;
 const baseUrl = `http://localhost:${PORT}`;
 
@@ -20,6 +22,8 @@ function makeCapital(lower){
 export default function League({league, logoData}){
     document.title = 'Crunch Time: ' + league;
     const navigate = useNavigate();
+
+
 
     const USER = 'mikeymits'; //TODO: replace with login
 
@@ -44,6 +48,22 @@ export default function League({league, logoData}){
         loadLatest();
     }, [take]);
 
+    const [events, setEvents] = useState([]);
+    useEffect(() => {
+        const  login = async () => {
+            // Connect to the database
+            const  mongodb = app.currentUser.mongoClient("mongodb-atlas");
+            let leagueLower = league.toLowerCase()
+            const  collection = mongodb.db("crunchtime").collection(leagueLower);
+
+            // on change update state so league can be reloaded
+            for  await (const  change  of  collection.watch()) {
+                setEvents(events  => [...events, change]);
+            }
+        }
+        login();
+    }, [league]);
+
     function Priority(){
         return(
             <div>
@@ -63,7 +83,6 @@ export default function League({league, logoData}){
         //gets league score data from db
         async function loadLeague(){
             let loadLeague = await fetch(`${baseUrl}/${league}`)
-            
             .then(resp => resp.json())
             .catch(err => {console.log(`Failed to load ${league} data`)});
             setLen(loadLeague[0].sorted.length);
@@ -73,7 +92,6 @@ export default function League({league, logoData}){
             setDate(date)
         }
         loadLeague();
-        setTimeout(() => {loadLeague()}, 5000);
     }, [league]);   
     
     //fetches the server which calls the scrape function, updates db, etc.
@@ -122,7 +140,7 @@ export default function League({league, logoData}){
                                 onClick={() => {navigate('/stream'); alert('Select ok to go to login for '+leagueData.sorted[i].network+
                                 ', then make sure to update your stream preferences')}}>Log in to {leagueData.sorted[i].network}</a>
                         </div>
-                        )
+                    )
                 }
             }
             else{
@@ -183,20 +201,13 @@ export default function League({league, logoData}){
             }
             return colArr;
         }
-        return(
-            <div>        
-                <h1>{league} Games</h1>
-                <div id="league-logo">
-                    <a href={'//localhost:3000/'+league}>
-                        <button className="logo-img" type="submit">
-                            <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
-                        </button>
-                    </a>
-                </div>
-                <h2>Click the league logo to refresh scores</h2>
+
+        function FullLeague(){
+            return(
+                <div>
                 <div id="date">
                         <h2>{date}</h2>
-                    </div>
+                </div>
                 <div id='league-row'>
                     <div className='league-column'>
                         <h3>
@@ -219,8 +230,43 @@ export default function League({league, logoData}){
                         </h3>
                     </div>
                 </div> 
+                </div>
+            )
+        }
+        function Loaded(){
+            useEffect(() => {
+                if(events.length > 0){
+                //gets league score data from db
+                async function loadLeague(){
+                    let loadLeague = await fetch(`${baseUrl}/${league}`)
+                    
+                    .then(resp => resp.json())
+                    .catch(err => {console.log(`Failed to load ${league} data`)});
+                    setLen(loadLeague[0].sorted.length);
+                    setLeagueData(loadLeague[loadLeague.length-1]);
+                    let date = new Date(loadLeague[loadLeague.length-1].leagueDate);
+                    date = date.toLocaleString('default', { day: 'numeric', month: 'long', year: 'numeric'});
+                    setDate(date)
+                }
+                loadLeague();
+                }
+            }, []);  
+            return <FullLeague></FullLeague> 
+        }
+        
+        return(
+            <div>        
+                <h1>{league} Games</h1>
+                <div id="league-logo">
+                    <a href={'//localhost:3000/'+league}>
+                        <button className="logo-img" type="submit">
+                            <img width={logoData.width} height={logoData.height} src={logoData.link} alt={league + " logo"}/>
+                        </button>
+                    </a>
+                </div>
+                <h2>Click the league logo to refresh scores</h2>
+                <Loaded></Loaded>
                 <Priority></Priority>  
-          
             </div>
         )
     }

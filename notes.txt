@@ -39,11 +39,11 @@ To do:
    - Display standings
 
 Recently completed (since last push, so put in commit msg):
-fixed blank leagueData on launch
-fixed refresh getting stuck
+
 
 WIWWO: 
-7/31: fixed blank leagueData on first scrape (priority wasn't loaded yet)
+8/9: restoring detect when db changes 
+   -> then see if I can combine useEffects in League.js
 
 Odds, ends, and reminders
    Using git:
